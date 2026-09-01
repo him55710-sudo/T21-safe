@@ -1,0 +1,14 @@
+downloads/
+samples/
+private/
+__pycache__/
+*.pyc
+*.part
+*.vital
+*.dat
+*.mat
+*.dcm
+*.edf
+*.h5
+*.hdf5
+*.parquet
