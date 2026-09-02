@@ -66,16 +66,43 @@ def compute_research_instability_index(
 
     values = features.values
     score = 0.0
-    score += _decline_component(values.get("delta_hr_pct"), 35.0, 25.0)
-    score += _decline_component(values.get("delta_map_pct"), 35.0, 35.0)
-    score += _decline_component(values.get("ppg_amp_delta_pct"), 60.0, 15.0)
+    risk_config = config.risk
+    score += _decline_component(
+        values.get("delta_hr_pct"),
+        risk_config.relative_hr_decline_full_scale_pct,
+        risk_config.relative_hr_decline_weight,
+    )
+    score += _decline_component(
+        values.get("delta_map_pct"),
+        risk_config.relative_map_decline_full_scale_pct,
+        risk_config.relative_map_decline_weight,
+    )
+    score += _decline_component(
+        values.get("ppg_amp_delta_pct"),
+        risk_config.relative_ppg_amplitude_decline_full_scale_pct,
+        risk_config.relative_ppg_amplitude_decline_weight,
+    )
     hr_slope = values.get("hr_slope_bpm_min")
     map_slope = values.get("map_slope_mm_hg_min")
-    score += 5.0 * float(np.clip(-(hr_slope or 0.0) / 12.0, 0.0, 1.0))
-    score += 10.0 * float(np.clip(-(map_slope or 0.0) / 15.0, 0.0, 1.0))
+    score += risk_config.hr_slope_weight * float(
+        np.clip(-(hr_slope or 0.0) / risk_config.hr_slope_full_scale_bpm_min, 0.0, 1.0)
+    )
+    score += risk_config.map_slope_weight * float(
+        np.clip(
+            -(map_slope or 0.0) / risk_config.map_slope_full_scale_mm_hg_min,
+            0.0,
+            1.0,
+        )
+    )
     spo2 = values.get("current_spo2_pct")
     if spo2 is not None:
-        score += 10.0 * float(np.clip((94.0 - spo2) / 10.0, 0.0, 1.0))
+        score += risk_config.low_spo2_weight * float(
+            np.clip(
+                (risk_config.spo2_reference_pct - spo2) / risk_config.spo2_full_scale_decline_pct,
+                0.0,
+                1.0,
+            )
+        )
     score = float(np.clip(score, 0.0, 100.0))
 
     sqi_values = [

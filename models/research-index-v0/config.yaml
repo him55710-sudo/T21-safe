@@ -1,21 +1,35 @@
-model_version: rii-v0.1
-model_type: transparent_weighted_research_index
-feature_schema_version: features-v0.1
-pipeline_config_version: pipeline-v0.1
-calibrated_probability: false
-weights:
-  relative_hr_decline: 25
-  relative_map_decline: 35
-  relative_ppg_amplitude_decline: 15
-  hr_slope: 5
-  map_slope: 10
-  low_spo2: 10
-levels:
-  watch: 25
-  elevated: 50
-  high: 75
-safety:
-  withhold_on_invalid_quality: true
-  withhold_on_incomplete_baseline: true
-  ds_clinically_validated: false
-  pediatric_clinically_validated: false
+{
+  "model_version": "rii-v0.1",
+  "model_type": "transparent_weighted_research_index",
+  "feature_schema_version": "features-v0.1",
+  "pipeline_config_version": "pipeline-v0.1",
+  "calibrated_probability": false,
+  "weights": {
+    "relative_hr_decline": 25.0,
+    "relative_map_decline": 35.0,
+    "relative_ppg_amplitude_decline": 15.0,
+    "hr_slope": 5.0,
+    "map_slope": 10.0,
+    "low_spo2": 10.0
+  },
+  "full_scales": {
+    "relative_hr_decline_pct": 35.0,
+    "relative_map_decline_pct": 35.0,
+    "relative_ppg_amplitude_decline_pct": 60.0,
+    "hr_slope_bpm_min": 12.0,
+    "map_slope_mm_hg_min": 15.0,
+    "spo2_reference_pct": 94.0,
+    "spo2_decline_pct": 10.0
+  },
+  "levels": {
+    "watch": 25.0,
+    "elevated": 50.0,
+    "high": 75.0
+  },
+  "safety": {
+    "withhold_on_invalid_quality": true,
+    "withhold_on_incomplete_baseline": true,
+    "ds_clinically_validated": false,
+    "pediatric_clinically_validated": false
+  }
+}

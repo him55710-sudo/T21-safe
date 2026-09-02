@@ -1,11 +1,14 @@
 from __future__ import annotations
 
+import json
+from pathlib import Path
+
 import numpy as np
 import pytest
 from t21_engine.adapters.synthetic_adapter import SyntheticAdapter
 from t21_engine.baseline.calibration import calibrate_baseline
 from t21_engine.beats.rpeak import detect_r_peaks
-from t21_engine.config import PipelineConfig
+from t21_engine.config import PipelineConfig, RiskConfig
 from t21_engine.features import extract_feature_windows, extract_features
 from t21_engine.features.hrv import rr_intervals_ms, time_domain_hrv
 from t21_engine.features.respiratory import extract_respiratory_features
@@ -364,3 +367,47 @@ def test_explanations_are_non_prescriptive() -> None:
     assert "ppg" in combined
     assert "dose" not in combined
     assert "administer" not in combined
+
+
+def test_committed_research_index_config_matches_runtime_defaults() -> None:
+    repository_root = Path(__file__).resolve().parents[3]
+    artifact = json.loads(
+        (repository_root / "models/research-index-v0/config.yaml").read_text(
+            encoding="utf-8"
+        )
+    )
+    runtime = PipelineConfig().risk
+
+    assert artifact["model_version"] == runtime.model_version
+    assert artifact["calibrated_probability"] is False
+    assert artifact["weights"] == {
+        "relative_hr_decline": runtime.relative_hr_decline_weight,
+        "relative_map_decline": runtime.relative_map_decline_weight,
+        "relative_ppg_amplitude_decline": runtime.relative_ppg_amplitude_decline_weight,
+        "hr_slope": runtime.hr_slope_weight,
+        "map_slope": runtime.map_slope_weight,
+        "low_spo2": runtime.low_spo2_weight,
+    }
+    assert artifact["full_scales"] == {
+        "relative_hr_decline_pct": runtime.relative_hr_decline_full_scale_pct,
+        "relative_map_decline_pct": runtime.relative_map_decline_full_scale_pct,
+        "relative_ppg_amplitude_decline_pct": (
+            runtime.relative_ppg_amplitude_decline_full_scale_pct
+        ),
+        "hr_slope_bpm_min": runtime.hr_slope_full_scale_bpm_min,
+        "map_slope_mm_hg_min": runtime.map_slope_full_scale_mm_hg_min,
+        "spo2_reference_pct": runtime.spo2_reference_pct,
+        "spo2_decline_pct": runtime.spo2_full_scale_decline_pct,
+    }
+    assert artifact["levels"] == {
+        "watch": runtime.watch_threshold,
+        "elevated": runtime.elevated_threshold,
+        "high": runtime.high_threshold,
+    }
+
+
+def test_research_index_config_rejects_unbounded_weight_or_threshold_drift() -> None:
+    with pytest.raises(ValueError, match="sum to 100"):
+        RiskConfig(low_spo2_weight=11.0)
+    with pytest.raises(ValueError, match="thresholds"):
+        RiskConfig(watch_threshold=60.0, elevated_threshold=50.0)
