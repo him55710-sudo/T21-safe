@@ -1,10 +1,14 @@
 from __future__ import annotations
 
+import json
+from pathlib import Path
+
 import numpy as np
 import pytest
 from t21_engine.adapters.synthetic_adapter import SyntheticAdapter
 from t21_engine.config import PipelineConfig
 from t21_engine.streaming.export_manifest import build_export_manifest
+from t21_engine.streaming.local_capture_writer import LocalCaptureJsonlWriter
 from t21_engine.streaming.replay import ReplayPipeline
 from t21_engine.types import SourceMetadata
 
@@ -81,6 +85,41 @@ async def test_synthetic_replay_can_emit_local_observe_only_shadow_capture() -> 
     assert manifest["includes_waveforms"] is False
     assert manifest["includes_phi"] is False
     assert manifest["controls"] == capture["controls"]
+
+
+@pytest.mark.asyncio
+async def test_synthetic_shadow_capture_writes_and_reads_back_from_local_jsonl(
+    tmp_path: Path,
+) -> None:
+    batch = await SyntheticAdapter().load_case(
+        "synthetic:stable-baseline", duration_seconds=8
+    )
+    final = None
+    async for event in ReplayPipeline().events(
+        batch,
+        baseline_seconds=3,
+        speed=1000.0,
+        real_time=False,
+        shadow_session_id="shadow-synthetic-jsonl-001",
+    ):
+        final = event
+
+    assert final is not None
+    capture = final["shadow_capture"]
+    manifest = build_export_manifest(
+        export_id="synthetic-export-jsonl-001",
+        session_id=capture["session"]["session_id"],
+        event_ids=(capture["event_id"],),
+    )
+    writer = LocalCaptureJsonlWriter(tmp_path)
+    writer.append_capture(capture)
+    writer.append_manifest(manifest)
+
+    lines = [json.loads(line) for line in writer.path.read_text(encoding="utf-8").splitlines()]
+    assert lines == [capture, manifest]
+    assert lines[0]["waveform_persistence"] == "NONE"
+    assert lines[1]["includes_waveforms"] is False
+    assert lines[1]["includes_phi"] is False
 
 
 @pytest.mark.asyncio
