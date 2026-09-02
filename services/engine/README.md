@@ -47,6 +47,10 @@ Unavailable tracks do not crash the pipeline. A public-source failure can explic
 fall back to the local fixture, and the output then identifies the source as Local
 synthetic fixture rather than VitalDB or a patient record.
 
+For offline sessions the four-second local fixture is cyclically repeated to the
+requested duration, with that synthetic transform recorded in provenance. This permits
+the ordinary baseline gate to complete without treating the fixture as validation data.
+
 See [SIGNAL_PIPELINE.md](SIGNAL_PIPELINE.md),
 [FEATURE_DICTIONARY.md](FEATURE_DICTIONARY.md), and
 [VALIDATION_LIMITATIONS.md](VALIDATION_LIMITATIONS.md).

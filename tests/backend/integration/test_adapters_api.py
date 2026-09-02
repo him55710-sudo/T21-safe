@@ -4,14 +4,17 @@ import json
 from pathlib import Path
 
 import httpx
+import numpy as np
 import pytest
 from fastapi.testclient import TestClient
 from t21_api.main import app, create_app
 from t21_api.schemas import StreamEvent
 from t21_api.settings import Settings
+from t21_api.streaming.sessions import SessionManager
 from t21_engine.adapters.local_fixture_adapter import LocalFixtureAdapter
 from t21_engine.adapters.vitaldb_adapter import VitalDBAdapter
 from t21_engine.adapters.wfdb_adapter import WFDBAdapter
+from t21_engine.types import PipelineMode
 
 FIXTURE = Path(__file__).resolve().parents[1] / "fixtures/local_waveform.csv"
 
@@ -25,6 +28,21 @@ async def test_local_fixture_replay_adapter() -> None:
     assert batch.source.is_synthetic is True
     assert batch.source.ds_status == "synthetic_not_applicable"
     assert batch.source.clinical_use_allowed is False
+
+
+@pytest.mark.asyncio
+async def test_local_fixture_can_repeat_for_an_offline_baseline() -> None:
+    batch = await LocalFixtureAdapter(FIXTURE).load_case(
+        "local:fixture", duration_seconds=8
+    )
+
+    assert batch.timestamps_s.size == 80
+    assert batch.timestamps_s[-1] == pytest.approx(7.9)
+    assert np.array_equal(batch.signals["ecg_ii"][:40], batch.signals["ecg_ii"][40:])
+    assert batch.source.is_synthetic is True
+    assert all(
+        "cyclic synthetic repetition" in value for value in batch.provenance.values()
+    )
 
 
 @pytest.mark.asyncio
@@ -46,6 +64,32 @@ async def test_vitaldb_network_failure_uses_explicit_local_fallback() -> None:
     assert batch.source.dataset == "Local synthetic fixture"
     assert batch.source.is_synthetic is True
     assert "fallback_reason" in batch.provenance
+
+
+@pytest.mark.asyncio
+async def test_default_vitaldb_failure_fallback_covers_the_requested_baseline() -> None:
+    manager = SessionManager(
+        fixture_path=FIXTURE,
+        vitaldb_base_url="http://127.0.0.1:9",
+        vitaldb_timeout_seconds=0.05,
+    )
+
+    session = await manager.create(
+        "vitaldb:public-live",
+        speed=1000.0,
+        baseline_seconds=180,
+        mode=PipelineMode.GENERIC_VALIDATION_MODE,
+    )
+
+    assert session.batch.source.dataset == "Local synthetic fixture"
+    assert session.batch.source.is_synthetic is True
+    assert session.batch.timestamps_s.size == 1850
+    assert "fallback_reason" in session.batch.provenance
+    assert all(
+        "cyclic synthetic repetition" in value
+        for name, value in session.batch.provenance.items()
+        if name != "fallback_reason"
+    )
 
 
 @pytest.mark.asyncio
@@ -112,6 +156,26 @@ def test_local_fixture_sse_and_replay_session_is_single_use() -> None:
     assert first.status_code == 200
     assert "event: signal" in first.text
     assert second.status_code == 404
+
+
+def test_local_fixture_default_baseline_reaches_a_valid_research_index() -> None:
+    with TestClient(create_app(Settings(fixture_path=FIXTURE))) as client:
+        created = client.post(
+            "/v1/replays",
+            json={"case_id": "local:fixture", "speed": 1000.0},
+        )
+        stream = client.get(created.json()["stream_url"])
+        data_lines = [
+            line.removeprefix("data: ")
+            for line in stream.text.splitlines()
+            if line.startswith("data: ")
+        ]
+        final = StreamEvent.model_validate(json.loads(data_lines[-1]))
+
+    assert final.source.is_synthetic is True
+    assert final.baseline.calibrated is True
+    assert final.risk.valid is True
+    assert final.risk.score is not None
 
 
 def test_committed_openapi_and_event_schema_match_runtime_models() -> None:
