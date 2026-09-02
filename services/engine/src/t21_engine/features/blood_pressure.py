@@ -33,7 +33,13 @@ def duration_below_threshold(
     samples = np.asarray(values, dtype=np.float64)
     if timestamps.size < 2:
         return 0.0
-    intervals = np.diff(timestamps, append=timestamps[-1])
+    timestamp_intervals = np.diff(timestamps)
+    positive_intervals = timestamp_intervals[timestamp_intervals > 0.0]
+    if not positive_intervals.size:
+        return 0.0
+    sample_interval = float(np.median(positive_intervals))
+    intervals = np.diff(timestamps, append=timestamps[-1] + sample_interval)
+    intervals[intervals > 2.5 * sample_interval] = sample_interval
     valid_below = np.isfinite(samples) & (samples < threshold)
     return float(np.sum(intervals[valid_below]))
 

@@ -75,8 +75,24 @@ class RiskConfig:
             raise ValueError("risk weights must sum to 100")
         if not all(isfinite(value) and value > 0.0 for value in scales):
             raise ValueError("risk full-scale values must be positive and finite")
-        if not 0.0 <= self.watch_threshold < self.elevated_threshold < self.high_threshold <= 100.0:
+        if not (
+            0.0 <= self.watch_threshold < self.elevated_threshold < self.high_threshold <= 100.0
+        ):
             raise ValueError("risk thresholds must be ordered within 0..100")
+        if self.horizon_seconds <= 0:
+            raise ValueError("risk horizon must be positive")
+        if not isfinite(self.hypotension_map_mm_hg) or self.hypotension_map_mm_hg <= 0.0:
+            raise ValueError("hypotension MAP threshold must be positive and finite")
+        if (
+            not isfinite(self.hypotension_duration_seconds)
+            or self.hypotension_duration_seconds <= 0.0
+        ):
+            raise ValueError("hypotension duration must be positive and finite")
+        if not all(
+            isfinite(value) and value <= 0.0
+            for value in (self.relative_hr_decline_pct, self.relative_map_decline_pct)
+        ):
+            raise ValueError("relative decline thresholds must be finite and non-positive")
 
 
 @dataclass(frozen=True, slots=True)

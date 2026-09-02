@@ -422,6 +422,12 @@ def test_committed_research_index_config_matches_runtime_defaults() -> None:
         "elevated": runtime.elevated_threshold,
         "high": runtime.high_threshold,
     }
+    assert artifact["research_label_thresholds"] == {
+        "adult_generic_hypotension_map_mm_hg": runtime.hypotension_map_mm_hg,
+        "adult_generic_hypotension_duration_seconds": runtime.hypotension_duration_seconds,
+        "relative_hr_decline_pct": runtime.relative_hr_decline_pct,
+        "relative_map_decline_pct": runtime.relative_map_decline_pct,
+    }
 
 
 def test_research_index_config_rejects_unbounded_weight_or_threshold_drift() -> None:
@@ -429,3 +435,26 @@ def test_research_index_config_rejects_unbounded_weight_or_threshold_drift() -> 
         RiskConfig(low_spo2_weight=11.0)
     with pytest.raises(ValueError, match="thresholds"):
         RiskConfig(watch_threshold=60.0, elevated_threshold=50.0)
+
+
+def test_feature_extraction_uses_configured_generic_map_threshold() -> None:
+    timestamps = np.arange(0.0, 10.0, 1.0, dtype=np.float64)
+    map_values = np.full(timestamps.size, 70.0, dtype=np.float64)
+    baseline = BaselineState(
+        True,
+        1.0,
+        0.9,
+        median_hr=72.0,
+        median_map=82.0,
+    )
+
+    features = extract_features(
+        timestamps,
+        {"hr_bpm": np.full(timestamps.size, 72.0), "map_mm_hg": map_values},
+        baseline,
+        1.0,
+        window_seconds=10,
+        hypotension_threshold_mm_hg=75.0,
+    )
+
+    assert features.values["map_duration_below_threshold_s"] == pytest.approx(10.0)

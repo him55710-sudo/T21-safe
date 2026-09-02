@@ -39,6 +39,7 @@ def extract_features(
     *,
     window_seconds: int = 60,
     raw_signals: dict[str, FloatArray] | None = None,
+    hypotension_threshold_mm_hg: float = 65.0,
 ) -> FeatureSet:
     timestamps = np.asarray(timestamps_s, dtype=np.float64)
     if not timestamps.size:
@@ -118,7 +119,12 @@ def extract_features(
     ppg_amp_delta, ppg_amp_delta_pct = _relative_delta(
         ppg_features["ppg_amplitude"], baseline.median_ppg_amplitude
     )
-    bp_features = extract_blood_pressure_features(window_times, window_signals, sample_rate_hz)
+    bp_features = extract_blood_pressure_features(
+        window_times,
+        window_signals,
+        sample_rate_hz,
+        hypotension_threshold=hypotension_threshold_mm_hg,
+    )
     delta_map, delta_map_pct = _relative_delta(
         bp_features["current_map_mm_hg"], baseline.median_map
     )
@@ -168,6 +174,7 @@ def extract_feature_windows(
     *,
     windows_seconds: tuple[int, ...] = (30, 60, 180),
     raw_signals: dict[str, FloatArray] | None = None,
+    hypotension_threshold_mm_hg: float = 65.0,
 ) -> dict[int, FeatureSet]:
     """Calculate each configured research window without changing the flat API view."""
     if not windows_seconds or any(window <= 0 for window in windows_seconds):
@@ -182,6 +189,7 @@ def extract_feature_windows(
             sample_rate_hz,
             window_seconds=window,
             raw_signals=raw_signals,
+            hypotension_threshold_mm_hg=hypotension_threshold_mm_hg,
         )
         for window in windows_seconds
     }

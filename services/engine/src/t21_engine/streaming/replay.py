@@ -183,6 +183,7 @@ class ReplayPipeline:
                     fs,
                     windows_seconds=effective_config.feature_windows_seconds,
                     raw_signals=snapshot.signals,
+                    hypotension_threshold_mm_hg=(effective_config.risk.hypotension_map_mm_hg),
                 )
                 primary_window = min(feature_windows, key=lambda window: abs(window - 60))
                 feature_set = feature_windows[primary_window]
