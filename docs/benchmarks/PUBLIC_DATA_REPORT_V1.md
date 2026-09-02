@@ -12,7 +12,7 @@
 | Dataset | Role in v1 | Notes |
 | --- | --- | --- |
 | BIDMC PPG and Respiration v1.0.0 | Master VERIFIED public path | Local-first sample root `data/public/bidmc/1.0.0/` or CI fixture-equivalent + `sha256-manifest.json` |
-| MIT-BIH Arrhythmia (catalog `wfdb:mitdb-100`) | Harness catalogued in CODEX-006 | Governance: live default download gated pending Auditor Master promote (CODEX-006b); **do not treat as DS validation** |
+| MIT-BIH Arrhythmia v1.0.0 (catalog `wfdb:mitdb-100`) | Master VERIFIED **PROXY** public path, unlocked in CODEX-006b | Local-first root `data/public/mitdb/1.0.0/` or clearly labeled synthetic CI fixture-equivalent; `clinical_validation=false`; **no DS validation claim** |
 
 Harness: `t21_engine.evaluation.public_data_bench` — seeded, fail-closed, machine-readable PASS/FAIL.
 
@@ -25,10 +25,10 @@ Harness: `t21_engine.evaluation.public_data_bench` — seeded, fail-closed, mach
 | CODEX-006 initial harness (MIT-BIH + BIDMC catalog + offline bench) | `f4b36f5` |
 | BIDMC-first local sha256 / wfdb I/O refine | `44ed44c` |
 | BIDMC `data/public/...` resolution + tracked manifest (006a) | `b816efa` |
-| MIT-BIH `public_bench_enabled=false` / `DATASET_NOT_PROMOTED` gate | `698b147` |
+| MIT-BIH promoted for local-first PROXY bench (CODEX-006b) | see commit for this slice |
 | Related replay JSONL sink (pre-req path) | `25586c8` (CODEX-005 #3) |
 
-Unit coverage at 006a gate landing: **10** `test_public_data_bench` cases passed (local CI; FastAPI adapter suite may be env-gated).
+Unit coverage at CODEX-006b landing: **12** `test_public_data_bench` cases passed (local CI; FastAPI adapter suite may be env-gated).
 
 ---
 
@@ -44,11 +44,11 @@ Reports include: `schema_version`, `status`, `seed`, dataset name/version/licens
 
 | Code | Meaning |
 | --- | --- |
-| `MISSING_SAMPLE` | No local BIDMC root / fixture |
+| `MISSING_SAMPLE` | No per-case local public-data root / fixture |
 | `SHA256_MISMATCH` | Manifest digests ≠ files on disk |
 | `WFDB_LOAD_FAILURE` | Local wfdb I/O failed |
 | `MISSING_PUBLIC_METADATA` | Catalog metadata incomplete |
-| `DATASET_NOT_PROMOTED` | e.g. MIT-BIH until Auditor Master promote |
+| `DATASET_NOT_PROMOTED` | Catalog exists but has not been Master-promoted |
 | Smoke integrity | `NO_SUPPORTED_SIGNALS`, `INVALID_TIMESTAMPS`, `MISALIGNED_SIGNAL`, `NONFINITE_SIGNAL`, `MISSING_SOURCE_ATTRIBUTION` |
 
 ---
@@ -61,5 +61,4 @@ Reports include: `schema_version`, `status`, `seed`, dataset name/version/licens
 
 ## Next
 
-- CODEX-006b: MIT-BIH after Auditor Master promote  
-- Fill numeric engineering digests from a recorded local BIDMC sample when operator places files under `data/public/bidmc/1.0.0/`
+- Fill numeric engineering digests from recorded local public samples when an operator places them under the corresponding `data/public/...` roots

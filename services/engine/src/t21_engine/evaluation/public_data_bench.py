@@ -14,21 +14,35 @@ from t21_engine.adapters.base import DataAdapter
 from t21_engine.adapters.wfdb_adapter import WFDB_CATALOG, WFDBAdapter, WFDBCatalogMetadata
 from t21_engine.types import SignalBatch
 
-DEFAULT_PUBLIC_CASES = ("wfdb:bidmc01",)
+DEFAULT_PUBLIC_CASES = ("wfdb:bidmc01", "wfdb:mitdb-100")
 MANIFEST_FILENAME = "sha256-manifest.json"
+
+# Ordered local-first roots and the WFDB header basename for each promoted case.
+PUBLIC_CASE_SAMPLES: dict[str, tuple[tuple[str, ...], str]] = {
+    "wfdb:bidmc01": (
+        ("data/public/bidmc/1.0.0", "tests/backend/fixtures/wfdb_bidmc_synthetic"),
+        "bidmc01",
+    ),
+    "wfdb:mitdb-100": (
+        ("data/public/mitdb/1.0.0", "tests/backend/fixtures/wfdb_mitdb_synthetic"),
+        "100",
+    ),
+}
 
 
 def _repository_root() -> Path:
     return Path(__file__).resolve().parents[5]
 
 
-def _resolve_default_sample() -> Path | None:
-    """Prefer an operator-provided local sample, then the bounded CI fixture."""
+def _resolve_default_sample(case_id: str) -> Path | None:
+    """Prefer an operator-provided local sample, then its bounded CI fixture."""
     repository = _repository_root()
-    candidates = (
-        Path("data/public/bidmc/1.0.0"),
-        repository / "data/public/bidmc/1.0.0",
-        repository / "tests/backend/fixtures/wfdb_bidmc_synthetic",
+    specification = PUBLIC_CASE_SAMPLES.get(case_id)
+    if specification is None:
+        return None
+    roots, _basename = specification
+    candidates = tuple(Path(root) for root in roots) + tuple(
+        repository / root for root in roots
     )
     seen: set[Path] = set()
     for candidate in candidates:
@@ -71,11 +85,11 @@ def _sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
-def _local_record_files(sample: Path) -> tuple[Path, list[Path]]:
+def _local_record_files(sample: Path, header_basename: str) -> tuple[Path, list[Path]]:
     """Resolve one bounded, local WFDB header and its directly referenced data files."""
-    header = sample / "bidmc01.hea" if sample.is_dir() else sample
+    header = sample / f"{header_basename}.hea" if sample.is_dir() else sample
     if header.suffix.lower() != ".hea" or not header.is_file():
-        raise FileNotFoundError("local BIDMC sample header is missing")
+        raise FileNotFoundError("local WFDB sample header is missing")
     lines = [line.split() for line in header.read_text(encoding="utf-8-sig").splitlines()]
     if not lines or len(lines[0]) < 2:
         raise ValueError("invalid WFDB header")
@@ -136,37 +150,8 @@ async def run_public_data_bench(
     cases: list[dict[str, Any]] = []
     datasets: dict[tuple[str, str], dict[str, str]] = {}
 
-    local_adapter = adapter
-    checksums: dict[str, str] = {}
-    local_failure: str | None = None
-    resolved_sample = Path(local_sample) if local_sample is not None else _resolve_default_sample()
-    if resolved_sample is None:
-        local_failure = "MISSING_SAMPLE"
-    else:
-        try:
-            header, files = _local_record_files(resolved_sample)
-            checksums = {path.name: _sha256(path) for path in files}
-            expected = expected_sha256
-            if expected is None:
-                expected = _manifest_sha256(header.parent)
-            if (
-                set(expected) != set(checksums)
-                or any(
-                    expected[name].lower().removeprefix("sha256:") != digest
-                    for name, digest in checksums.items()
-                )
-            ):
-                local_failure = "SHA256_MISMATCH"
-            else:
-                local_adapter = WFDBAdapter(
-                    {"wfdb:bidmc01": (str(header.with_suffix("")), None)}
-                )
-        except FileNotFoundError:
-            local_failure = "MISSING_SAMPLE"
-        except (OSError, UnicodeError, ValueError):
-            local_failure = "WFDB_LOAD_FAILURE"
-
     for case_id in ordered_ids:
+        checksums: dict[str, str] = {}
         catalog_entry = WFDB_CATALOG.get(case_id)
         if catalog_entry is not None and not catalog_entry.public_bench_enabled:
             cases.append(
@@ -190,7 +175,37 @@ async def run_public_data_bench(
             )
             continue
         datasets[(metadata["dataset_name"], metadata["dataset_version"])] = metadata
-        reason = local_failure
+        reason: str | None = None
+        local_adapter = adapter
+        specification = PUBLIC_CASE_SAMPLES.get(case_id)
+        resolved_sample = (
+            Path(local_sample)
+            if local_sample is not None
+            else _resolve_default_sample(case_id)
+        )
+        if resolved_sample is None or specification is None:
+            reason = "MISSING_SAMPLE"
+        else:
+            try:
+                _roots, basename = specification
+                header, files = _local_record_files(resolved_sample, basename)
+                checksums = {path.name: _sha256(path) for path in files}
+                expected = expected_sha256
+                if expected is None:
+                    expected = _manifest_sha256(header.parent)
+                if set(expected) != set(checksums) or any(
+                    expected[name].lower().removeprefix("sha256:") != digest
+                    for name, digest in checksums.items()
+                ):
+                    reason = "SHA256_MISMATCH"
+                elif local_adapter is None:
+                    local_adapter = WFDBAdapter(
+                        {case_id: (str(header.with_suffix("")), None)}
+                    )
+            except FileNotFoundError:
+                reason = "MISSING_SAMPLE"
+            except (OSError, UnicodeError, ValueError):
+                reason = "WFDB_LOAD_FAILURE"
         if reason is None:
             try:
                 if local_adapter is None:

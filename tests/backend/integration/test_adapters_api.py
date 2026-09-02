@@ -100,6 +100,7 @@ async def test_wfdb_catalog_retains_source_attribution_and_license() -> None:
 
     assert {case.case_id for case in cases} == {
         "wfdb:bidmc01",
+        "wfdb:mitdb-100",
         "wfdb:ptt-s10-sit",
         "wfdb:mimic4-preview",
     }

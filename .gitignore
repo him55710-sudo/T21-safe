@@ -13,3 +13,5 @@ __pycache__/
 *.dat
 !tests/backend/fixtures/wfdb_bidmc_synthetic/
 !tests/backend/fixtures/wfdb_bidmc_synthetic/**
+!tests/backend/fixtures/wfdb_mitdb_synthetic/
+!tests/backend/fixtures/wfdb_mitdb_synthetic/**

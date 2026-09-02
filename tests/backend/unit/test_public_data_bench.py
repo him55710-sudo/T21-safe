@@ -7,15 +7,21 @@ from types import SimpleNamespace
 
 import numpy as np
 import pytest
+from t21_engine.adapters.wfdb_adapter import WFDB_CATALOG
 from t21_engine.evaluation.public_data_bench import (
     DEFAULT_PUBLIC_CASES,
     run_public_data_bench,
 )
 
 FIXTURE = Path(__file__).parents[1] / "fixtures" / "wfdb_bidmc_synthetic"
+MITDB_FIXTURE = Path(__file__).parents[1] / "fixtures" / "wfdb_mitdb_synthetic"
 EXPECTED_SHA256 = {
     "bidmc01.hea": "5267d168d1d7527767feeb609120fc0c072146c01e99f921409f420562e8ac6e",
     "bidmc01.dat": "7ea84b78a0a97e88018b90def1d180f622889bfd2930bfffbe54e536ab8fd0d1",
+}
+MITDB_EXPECTED_SHA256 = {
+    "100.hea": "2f15c8cbb32d8dc5b50c39867ae73299e9d2a30fc2a23222c00c14700f596d86",
+    "100.dat": "a047efbd949b1d8d4e2850435d8b05a07db4f2fbc5d6431a538414e09753f097",
 }
 
 
@@ -33,7 +39,7 @@ def mock_wfdb(monkeypatch: pytest.MonkeyPatch) -> dict[str, object]:
         return SimpleNamespace(
             fs=10.0,
             p_signal=np.linspace(0.0, 1.0, samples, dtype=np.float64)[:, None],
-            sig_name=["PLETH"],
+            sig_name=["MLII" if Path(record_name).name == "100" else "PLETH"],
         )
 
     monkeypatch.setitem(
@@ -47,13 +53,14 @@ async def test_bidmc_local_fixture_passes_with_checksums_and_wfdb_io(
     mock_wfdb: dict[str, object],
 ) -> None:
     report = await run_public_data_bench(
+        case_ids=("wfdb:bidmc01",),
         local_sample=FIXTURE,
         expected_sha256=EXPECTED_SHA256,
         seed=17,
         duration_seconds=1.0,
     )
 
-    assert DEFAULT_PUBLIC_CASES == ("wfdb:bidmc01",)
+    assert DEFAULT_PUBLIC_CASES == ("wfdb:bidmc01", "wfdb:mitdb-100")
     assert report["schema_version"] == "public-data-auto-bench/1.0"
     assert report["status"] == "PASS"
     assert report["clinical_validation"] is False
@@ -75,7 +82,9 @@ async def test_default_fixture_and_manifest_are_resolved(
     del mock_wfdb
     monkeypatch.chdir(tmp_path)
 
-    report = await run_public_data_bench(seed=17, duration_seconds=1.0)
+    report = await run_public_data_bench(
+        case_ids=("wfdb:bidmc01",), seed=17, duration_seconds=1.0
+    )
 
     assert report["status"] == "PASS"
     assert report["cases"][0]["sha256"] == EXPECTED_SHA256
@@ -95,7 +104,7 @@ async def test_default_local_root_is_preferred_and_manifest_verified(
     (local_root / "sha256-manifest.json").write_text(json.dumps(manifest))
     monkeypatch.chdir(tmp_path)
 
-    report = await run_public_data_bench()
+    report = await run_public_data_bench(case_ids=("wfdb:bidmc01",))
 
     assert report["status"] == "FAIL"
     assert report["cases"][0]["failure_reason_code"] == "SHA256_MISMATCH"
@@ -112,7 +121,11 @@ async def test_default_local_root_is_preferred_and_manifest_verified(
 async def test_local_input_failures_are_machine_readable(
     sample: Path, checksums: dict[str, str], reason: str
 ) -> None:
-    report = await run_public_data_bench(local_sample=sample, expected_sha256=checksums)
+    report = await run_public_data_bench(
+        case_ids=("wfdb:bidmc01",),
+        local_sample=sample,
+        expected_sha256=checksums,
+    )
 
     assert report["status"] == "FAIL"
     assert report["cases"][0]["failure_reason_code"] == reason
@@ -130,7 +143,9 @@ async def test_wfdb_load_failure_is_machine_readable(
 
     monkeypatch.setattr(sys.modules["wfdb"], "rdrecord", fail_load)
     report = await run_public_data_bench(
-        local_sample=FIXTURE, expected_sha256=EXPECTED_SHA256
+        case_ids=("wfdb:bidmc01",),
+        local_sample=FIXTURE,
+        expected_sha256=EXPECTED_SHA256,
     )
 
     assert report["status"] == "FAIL"
@@ -143,6 +158,14 @@ async def test_missing_catalog_metadata_fails_closed_without_loading() -> None:
 
     assert report["status"] == "FAIL"
     assert report["cases"][0]["failure_reason_code"] == "MISSING_PUBLIC_METADATA"
+
+
+@pytest.mark.asyncio
+async def test_unpromoted_catalog_still_fails_closed() -> None:
+    report = await run_public_data_bench(case_ids=("wfdb:ptt-s10-sit",))
+
+    assert report["status"] == "FAIL"
+    assert report["cases"][0]["failure_reason_code"] == "DATASET_NOT_PROMOTED"
 
 
 @pytest.mark.asyncio
@@ -174,9 +197,30 @@ async def test_path_b_safety_is_local_observe_only() -> None:
 
 
 @pytest.mark.asyncio
-async def test_mitbih_is_gated_until_auditor_promote() -> None:
-    report = await run_public_data_bench(case_ids=("wfdb:mitdb-100",))
+async def test_mitbih_promoted_fixture_passes_with_checksum(
+    mock_wfdb: dict[str, object],
+) -> None:
+    del mock_wfdb
+    report = await run_public_data_bench(
+        case_ids=("wfdb:mitdb-100",),
+        local_sample=MITDB_FIXTURE,
+        expected_sha256=MITDB_EXPECTED_SHA256,
+    )
 
-    assert report["status"] == "FAIL"
-    assert report["cases"][0]["failure_reason_code"] == "DATASET_NOT_PROMOTED"
-    assert DEFAULT_PUBLIC_CASES == ("wfdb:bidmc01",)
+    assert report["status"] == "PASS"
+    assert report["clinical_validation"] is False
+    assert report["cases"][0]["sha256"] == MITDB_EXPECTED_SHA256
+    assert report["cases"][0]["failure_reason_code"] is None
+    assert report["datasets"][0]["dataset_name"] == "MIT-BIH Arrhythmia Database"
+    assert WFDB_CATALOG["wfdb:mitdb-100"].public_bench_enabled is True
+    assert DEFAULT_PUBLIC_CASES == ("wfdb:bidmc01", "wfdb:mitdb-100")
+
+
+@pytest.mark.asyncio
+async def test_default_promoted_fixtures_both_pass(mock_wfdb: dict[str, object]) -> None:
+    del mock_wfdb
+    report = await run_public_data_bench(seed=17, duration_seconds=1.0)
+
+    assert report["status"] == "PASS"
+    assert {case["case_id"] for case in report["cases"]} == set(DEFAULT_PUBLIC_CASES)
+    assert all(case["failure_reason_code"] is None for case in report["cases"])

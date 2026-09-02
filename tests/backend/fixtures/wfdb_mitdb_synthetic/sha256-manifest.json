@@ -1,0 +1,10 @@
+{
+  "dataset_name": "MIT-BIH Arrhythmia Database",
+  "dataset_version": "1.0.0",
+  "license_note": "Synthetic fixture-equivalent only; NOT real MIT-BIH or PhysioNet bytes. The public MIT-BIH dataset is distributed under the ODC Attribution License v1.0.",
+  "sample_kind": "synthetic_fixture_equivalent",
+  "files": {
+    "100.dat": "a047efbd949b1d8d4e2850435d8b05a07db4f2fbc5d6431a538414e09753f097",
+    "100.hea": "2f15c8cbb32d8dc5b50c39867ae73299e9d2a30fc2a23222c00c14700f596d86"
+  }
+}
