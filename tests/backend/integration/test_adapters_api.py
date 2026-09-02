@@ -11,6 +11,7 @@ from t21_api.schemas import StreamEvent
 from t21_api.settings import Settings
 from t21_engine.adapters.local_fixture_adapter import LocalFixtureAdapter
 from t21_engine.adapters.vitaldb_adapter import VitalDBAdapter
+from t21_engine.adapters.wfdb_adapter import WFDBAdapter
 
 FIXTURE = Path(__file__).resolve().parents[1] / "fixtures/local_waveform.csv"
 
@@ -47,6 +48,19 @@ async def test_vitaldb_network_failure_uses_explicit_local_fallback() -> None:
     assert "fallback_reason" in batch.provenance
 
 
+@pytest.mark.asyncio
+async def test_wfdb_catalog_retains_source_attribution_and_license() -> None:
+    cases = await WFDBAdapter().list_cases()
+
+    assert {case.case_id for case in cases} == {
+        "wfdb:bidmc01",
+        "wfdb:ptt-s10-sit",
+        "wfdb:mimic4-preview",
+    }
+    assert all("PhysioNet" in case.attribution for case in cases)
+    assert all("DOI" in case.attribution for case in cases)
+
+
 def test_api_health_cases_synthetic_sse_and_schema() -> None:
     settings = Settings(fixture_path=FIXTURE, vitaldb_timeout_seconds=0.1)
     with TestClient(create_app(settings)) as client:
@@ -81,6 +95,7 @@ def test_api_health_cases_synthetic_sse_and_schema() -> None:
         assert data_lines
         final = StreamEvent.model_validate(json.loads(data_lines[-1]))
         assert final.risk.valid
+        assert final.risk.data_source == "T21 synthetic generator"
         assert final.disclaimer.startswith("Research prototype")
 
 

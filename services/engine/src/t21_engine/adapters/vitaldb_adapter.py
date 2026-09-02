@@ -123,6 +123,7 @@ class VitalDBAdapter(DataAdapter):
         signals: dict[str, np.ndarray[Any, np.dtype[np.float64]]] = {}
         sample_rates: dict[str, float] = {}
         source_case_id = "unknown"
+        source_case_ids: set[str] = set()
         effective_starts: list[float] = []
         for canonical, observation in observations.items():
             sampled = observation["valueSampledData"]
@@ -140,7 +141,10 @@ class VitalDBAdapter(DataAdapter):
                 continue
             signals[canonical] = resampled.astype(np.float64)
             sample_rates[canonical] = target_fs
-            source_case_id = self._case_id(observation) or source_case_id
+            observation_case_id = self._case_id(observation)
+            if observation_case_id is not None:
+                source_case_id = observation_case_id
+                source_case_ids.add(observation_case_id)
             effective_start = observation.get("effectivePeriod", {}).get("start")
             if effective_start:
                 with suppress(ValueError):
@@ -172,9 +176,16 @@ class VitalDBAdapter(DataAdapter):
             provenance={
                 name: "raw:VitalDB FHIR virtual real-time API; resampled to 100 Hz"
                 for name in signals
+            }
+            | {
+                "source_case_consistency": (
+                    "consistent" if len(source_case_ids) <= 1 else "mismatched_across_tracks"
+                )
             },
             latency_ms=(time.perf_counter() - started) * 1000.0,
-            timestamp_synchronized=synchronization_error_ms <= 100.0,
+            timestamp_synchronized=(
+                synchronization_error_ms <= 100.0 and len(source_case_ids) <= 1
+            ),
             synchronization_error_ms=synchronization_error_ms,
         )
 

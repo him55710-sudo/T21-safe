@@ -80,6 +80,15 @@ class BeatSeries:
 
 
 @dataclass(frozen=True, slots=True)
+class DistributionSummary:
+    minimum: float
+    p25: float
+    median: float
+    p75: float
+    maximum: float
+
+
+@dataclass(frozen=True, slots=True)
 class BaselineState:
     calibrated: bool
     progress: float
@@ -93,6 +102,8 @@ class BaselineState:
     quality_median: float | None = None
     available_modalities: tuple[str, ...] = ()
     reasons: tuple[str, ...] = ()
+    hr_distribution: DistributionSummary | None = None
+    quality_distribution: DistributionSummary | None = None
 
 
 @dataclass(frozen=True, slots=True)

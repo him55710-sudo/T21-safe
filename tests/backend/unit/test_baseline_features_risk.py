@@ -40,6 +40,8 @@ async def test_baseline_calibration_and_features_use_patient_baseline() -> None:
 
     assert baseline.calibrated
     assert baseline.median_hr == pytest.approx(72.0, abs=0.2)
+    assert baseline.hr_distribution is not None
+    assert baseline.quality_distribution is not None
     assert features.values["delta_hr_pct"] == pytest.approx(0.0, abs=0.5)
     assert features.valid_beat_count >= 4
 

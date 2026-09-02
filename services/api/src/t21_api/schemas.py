@@ -104,6 +104,7 @@ class RiskEvent(StrictModel):
     confidence: float = Field(ge=0.0, le=1.0)
     reasons: list[str]
     model_version: str
+    data_source: str
     population_validated_on: str
     limitations: list[str]
 

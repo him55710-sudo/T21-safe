@@ -220,6 +220,7 @@ class ReplayPipeline:
                         "confidence": risk.confidence,
                         "reasons": list(risk.reasons),
                         "model_version": risk.model_version,
+                        "data_source": risk.data_source,
                         "population_validated_on": risk.population_validated_on,
                         "limitations": list(risk.limitations),
                     },

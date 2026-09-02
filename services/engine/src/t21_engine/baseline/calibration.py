@@ -8,7 +8,21 @@ from t21_engine.beats.pulse_peak import detect_pulse_peaks
 from t21_engine.beats.rpeak import detect_r_peaks
 from t21_engine.features.hrv import rr_intervals_ms, time_domain_hrv
 from t21_engine.features.ppg import pulse_amplitudes
-from t21_engine.types import BaselineState, FloatArray, QualityResult
+from t21_engine.types import BaselineState, DistributionSummary, FloatArray, QualityResult
+
+
+def _distribution(values: FloatArray) -> DistributionSummary | None:
+    finite = np.asarray(values, dtype=np.float64)
+    finite = finite[np.isfinite(finite)]
+    if not finite.size:
+        return None
+    return DistributionSummary(
+        minimum=float(np.min(finite)),
+        p25=float(np.percentile(finite, 25)),
+        median=float(np.median(finite)),
+        p75=float(np.percentile(finite, 75)),
+        maximum=float(np.max(finite)),
+    )
 
 
 def calibrate_baseline(
@@ -51,13 +65,16 @@ def calibrate_baseline(
         finite_hr = hr_values[np.isfinite(hr_values)]
         median_hr = float(np.median(finite_hr))
         hr_iqr = float(np.percentile(finite_hr, 75) - np.percentile(finite_hr, 25))
+        hr_distribution = _distribution(finite_hr)
     elif ecg_beats is not None:
         rr_ms = rr_intervals_ms(ecg_beats)
         median_hr = float(60000.0 / np.median(rr_ms)) if rr_ms.size else None
         hr_iqr = None
+        hr_distribution = _distribution(60000.0 / rr_ms) if rr_ms.size else None
     else:
         median_hr = None
         hr_iqr = None
+        hr_distribution = None
 
     map_values = baseline_signals.get("map_mm_hg")
     if map_values is None:
@@ -80,6 +97,7 @@ def calibrate_baseline(
         value for value in (quality.ecg_sqi, quality.ppg_sqi, quality.abp_sqi) if value is not None
     ]
     quality_median = float(np.median(sqi_values)) if sqi_values else 0.0
+    quality_distribution = _distribution(np.asarray(sqi_values, dtype=np.float64))
     modalities = tuple(
         name
         for name in ("ecg_ii", "ppg", "abp", "map_mm_hg", "spo2_pct", "etco2_mm_hg")
@@ -120,4 +138,6 @@ def calibrate_baseline(
         quality_median=quality_median,
         available_modalities=modalities,
         reasons=tuple(dict.fromkeys(reasons)),
+        hr_distribution=hr_distribution,
+        quality_distribution=quality_distribution,
     )

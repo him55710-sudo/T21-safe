@@ -274,6 +274,10 @@
           "title": "Confidence",
           "type": "number"
         },
+        "data_source": {
+          "title": "Data Source",
+          "type": "string"
+        },
         "horizon_seconds": {
           "exclusiveMinimum": 0,
           "title": "Horizon Seconds",
@@ -336,6 +340,7 @@
         "confidence",
         "reasons",
         "model_version",
+        "data_source",
         "population_validated_on",
         "limitations"
       ],

@@ -3,6 +3,10 @@
 All features are research variables. None is a diagnosis, treatment instruction, or
 validated DS risk factor.
 
+Baseline state also stores labeled minimum, quartile, median, and maximum summaries for
+heart rate and available signal-quality indices; these are calibration diagnostics, not
+population reference ranges.
+
 | Feature | Unit | Window / minimum | Meaning and limitation |
 |---|---:|---|---|
 | `current_hr_bpm` | bpm | 5 s current summary | Numeric HR or plausible RR-derived HR |
