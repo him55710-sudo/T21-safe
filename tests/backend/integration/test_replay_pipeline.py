@@ -5,6 +5,7 @@ import pytest
 from t21_engine.adapters.synthetic_adapter import SyntheticAdapter
 from t21_engine.config import PipelineConfig
 from t21_engine.streaming.replay import ReplayPipeline
+from t21_engine.types import SourceMetadata
 
 
 async def _final_event(batch, *, baseline_seconds: int):  # type: ignore[no-untyped-def]
@@ -31,6 +32,66 @@ async def test_synthetic_replay_reaches_valid_sse_payload() -> None:
     assert final["quality"]["usable"] is True
     assert final["risk"]["valid"] is True
     assert final["risk"]["name"] == "Research Instability Index"
+
+
+@pytest.mark.asyncio
+async def test_synthetic_replay_can_emit_local_observe_only_shadow_capture() -> None:
+    batch = await SyntheticAdapter().load_case(
+        "synthetic:stable-baseline", duration_seconds=8
+    )
+    final = None
+    async for event in ReplayPipeline().events(
+        batch,
+        baseline_seconds=3,
+        speed=1000.0,
+        real_time=False,
+        shadow_session_id="shadow-synthetic-001",
+    ):
+        final = event
+
+    assert final is not None
+    capture = final["shadow_capture"]
+    assert capture["session"]["storage_scope"] == "LOCAL_ONLY"
+    assert capture["session"]["contains_phi"] is False
+    assert capture["waveform_persistence"] == "NONE"
+    assert capture["controls"] == {
+        "actuation": False,
+        "dosing": False,
+        "closed_loop": False,
+        "drug_advice": False,
+        "emr_write": False,
+    }
+    assert capture["quality_gate"]["baseline_bypass"] is False
+    assert capture["feature_windows"]
+    assert all(
+        window["evidence_status"] == "RESEARCH_HYPOTHESIS"
+        and window["clinical_decision_thresholds"] == "PI_TO_DEFINE"
+        for window in capture["feature_windows"]
+    )
+    assert not any(name in capture for name in ("signals", "waveforms", "raw_waveforms"))
+
+
+@pytest.mark.asyncio
+async def test_shadow_capture_rejects_non_synthetic_replay() -> None:
+    batch = await SyntheticAdapter().load_case(
+        "synthetic:stable-baseline", duration_seconds=8
+    )
+    batch.source = SourceMetadata(
+        dataset="Public research data",
+        case_id="public-case-001",
+        is_synthetic=False,
+    )
+
+    with pytest.raises(ValueError, match="limited to synthetic/local replay"):
+        await anext(
+            ReplayPipeline().events(
+                batch,
+                baseline_seconds=3,
+                speed=1000.0,
+                real_time=False,
+                shadow_session_id="shadow-public-001",
+            )
+        )
 
 
 @pytest.mark.asyncio

@@ -16,6 +16,7 @@ from t21_engine.preprocessing.filters import preprocess_abp, preprocess_ecg, pre
 from t21_engine.quality.quality_gate import evaluate_quality
 from t21_engine.risk.deterministic_index import compute_research_instability_index
 from t21_engine.streaming.ring_buffer import RingBuffer
+from t21_engine.streaming.shadow_capture import build_shadow_capture
 from t21_engine.types import BaselineState, PipelineMode, QualityResult, SignalBatch
 
 DISCLAIMER = "Research prototype; not for diagnosis, treatment, dosing, or clinical monitoring."
@@ -80,9 +81,12 @@ class ReplayPipeline:
         baseline_seconds: int | None = None,
         speed: float = 1.0,
         real_time: bool = True,
+        shadow_session_id: str | None = None,
     ) -> AsyncIterator[dict[str, object]]:
         if speed <= 0.0:
             raise ValueError("speed must be positive")
+        if shadow_session_id is not None and not batch.source.is_synthetic:
+            raise ValueError("shadow capture is limited to synthetic/local replay")
         baseline_duration = baseline_seconds or self.config.baseline_seconds
         effective_config = replace(self.config, baseline_seconds=baseline_duration)
         fs = batch.sample_rates_hz.get(
@@ -232,7 +236,7 @@ class ReplayPipeline:
                 processing_latency_ms = (time.perf_counter() - processing_started) * 1000.0
                 timestamp_ms = int(round(float(chunk_times[-1]) * 1000.0))
                 values = feature_set.values
-                yield {
+                event: dict[str, object] = {
                     "timestamp_ms": timestamp_ms,
                     "mode": mode.value,
                     "source": {
@@ -319,6 +323,21 @@ class ReplayPipeline:
                     },
                     "disclaimer": DISCLAIMER,
                 }
+                if shadow_session_id is not None:
+                    event["shadow_capture"] = build_shadow_capture(
+                        session_id=shadow_session_id,
+                        event_id=f"{shadow_session_id}-{timestamp_ms}",
+                        subject_id=batch.source.case_id,
+                        is_synthetic=batch.source.is_synthetic,
+                        baseline_calibrated=baseline.calibrated,
+                        quality_config=effective_config.quality,
+                        feature_windows=feature_windows,
+                        signals=snapshot.signals,
+                        sample_rates_hz=sample_rates,
+                        out_of_order_count=snapshot.out_of_order_count,
+                        timestamp_synchronized=timestamps_synchronized,
+                    )
+                yield event
                 if real_time and end < batch.timestamps_s.size:
                     await asyncio.sleep(effective_config.feature_update_seconds / speed)
         finally:
