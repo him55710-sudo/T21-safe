@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from typing import Literal
+from typing import Any, Literal, cast
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from t21_engine.types import PipelineMode, RiskLevel
 
 AgeGroup = Literal[
@@ -17,9 +17,26 @@ AgeGroup = Literal[
     "older_adult",
 ]
 
+ANALYZE_SIGNAL_NAMES = frozenset(
+    {
+        "ecg_ii",
+        "ppg",
+        "abp",
+        "hr_bpm",
+        "sbp_mm_hg",
+        "dbp_mm_hg",
+        "map_mm_hg",
+        "spo2_pct",
+        "etco2_mm_hg",
+        "resp",
+        "resp_bpm",
+        "bis",
+    }
+)
+
 
 class StrictModel(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra="forbid", allow_inf_nan=False)
 
 
 class HealthResponse(StrictModel):
@@ -160,12 +177,29 @@ class StreamEvent(StrictModel):
 
 class AnalyzeWindowRequest(StrictModel):
     timestamps_s: list[float] = Field(min_length=2, max_length=120_000)
-    signals: dict[str, list[float | None]]
+    signals: dict[str, list[float | None]] = Field(
+        json_schema_extra=cast(
+            dict[str, Any],
+            {"propertyNames": {"enum": sorted(ANALYZE_SIGNAL_NAMES)}},
+        )
+    )
     sample_rate_hz: float = Field(gt=0.0, le=1000.0)
     baseline_seconds: int = Field(default=180, ge=3, le=600)
     mode: PipelineMode = PipelineMode.GENERIC_VALIDATION_MODE
     ds_status: Literal["unknown_or_non_ds", "research_hypothesis_only"] = "unknown_or_non_ds"
     age_group: AgeGroup = "unknown"
+
+    @field_validator("signals")
+    @classmethod
+    def validate_signal_names(
+        cls, signals: dict[str, list[float | None]]
+    ) -> dict[str, list[float | None]]:
+        if not signals:
+            raise ValueError("at least one canonical signal is required")
+        unknown = sorted(set(signals) - ANALYZE_SIGNAL_NAMES)
+        if unknown:
+            raise ValueError(f"unsupported signal names: {unknown}")
+        return signals
 
     @model_validator(mode="after")
     def validate_alignment(self) -> AnalyzeWindowRequest:

@@ -58,6 +58,22 @@
               },
               "type": "array"
             },
+            "propertyNames": {
+              "enum": [
+                "abp",
+                "bis",
+                "dbp_mm_hg",
+                "ecg_ii",
+                "etco2_mm_hg",
+                "hr_bpm",
+                "map_mm_hg",
+                "ppg",
+                "resp",
+                "resp_bpm",
+                "sbp_mm_hg",
+                "spo2_pct"
+              ]
+            },
             "title": "Signals",
             "type": "object"
           },
