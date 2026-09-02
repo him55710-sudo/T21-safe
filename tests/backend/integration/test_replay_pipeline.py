@@ -4,6 +4,7 @@ import numpy as np
 import pytest
 from t21_engine.adapters.synthetic_adapter import SyntheticAdapter
 from t21_engine.config import PipelineConfig
+from t21_engine.streaming.export_manifest import build_export_manifest
 from t21_engine.streaming.replay import ReplayPipeline
 from t21_engine.types import SourceMetadata
 
@@ -69,6 +70,17 @@ async def test_synthetic_replay_can_emit_local_observe_only_shadow_capture() -> 
         for window in capture["feature_windows"]
     )
     assert not any(name in capture for name in ("signals", "waveforms", "raw_waveforms"))
+
+    manifest = build_export_manifest(
+        export_id="synthetic-export-001",
+        session_id=capture["session"]["session_id"],
+        event_ids=(capture["event_id"],),
+    )
+    assert manifest["storage_scope"] == "LOCAL_ONLY"
+    assert manifest["mode"] == "OBSERVE_ONLY_SHADOW"
+    assert manifest["includes_waveforms"] is False
+    assert manifest["includes_phi"] is False
+    assert manifest["controls"] == capture["controls"]
 
 
 @pytest.mark.asyncio
