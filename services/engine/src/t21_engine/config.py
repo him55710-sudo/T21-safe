@@ -17,6 +17,22 @@ class FilterConfig:
     order: int = 3
     mains_hz: float | None = None
 
+    def __post_init__(self) -> None:
+        bands = (
+            ("ECG", self.ecg_low_hz, self.ecg_high_hz),
+            ("PPG", self.ppg_low_hz, self.ppg_high_hz),
+            ("ABP", self.abp_low_hz, self.abp_high_hz),
+        )
+        for name, low_hz, high_hz in bands:
+            if not all(isfinite(value) for value in (low_hz, high_hz)) or not (
+                0.0 < low_hz < high_hz
+            ):
+                raise ValueError(f"{name} filter cutoffs must be finite and ordered")
+        if self.order < 1:
+            raise ValueError("filter order must be positive")
+        if self.mains_hz is not None and (not isfinite(self.mains_hz) or self.mains_hz <= 0.0):
+            raise ValueError("mains frequency must be positive and finite")
+
 
 @dataclass(frozen=True, slots=True)
 class QualityConfig:
@@ -26,6 +42,22 @@ class QualityConfig:
     minimum_valid_beats: int = 4
     synchronization_tolerance_ms: float = 100.0
     maximum_source_latency_ms: float = 1000.0
+
+    def __post_init__(self) -> None:
+        fractions = (
+            self.minimum_sqi,
+            self.maximum_gap_fraction,
+            self.maximum_flatline_fraction,
+        )
+        if not all(isfinite(value) and 0.0 <= value <= 1.0 for value in fractions):
+            raise ValueError("quality fractions must be finite within 0..1")
+        if self.minimum_valid_beats < 1:
+            raise ValueError("minimum_valid_beats must be positive")
+        if (
+            not isfinite(self.synchronization_tolerance_ms)
+            or self.synchronization_tolerance_ms < 0.0
+        ):
+            raise ValueError("synchronization tolerance must be non-negative and finite")
 
 
 @dataclass(frozen=True, slots=True)
@@ -76,8 +108,28 @@ class RiskConfig:
             raise ValueError("risk weights must sum to 100")
         if not all(isfinite(value) and value > 0.0 for value in scales):
             raise ValueError("risk full-scale values must be positive and finite")
-        if not 0.0 <= self.watch_threshold < self.elevated_threshold < self.high_threshold <= 100.0:
+        if not (
+            0.0 <= self.watch_threshold < self.elevated_threshold < self.high_threshold <= 100.0
+        ):
             raise ValueError("risk thresholds must be ordered within 0..100")
+        if self.horizon_seconds <= 0:
+            raise ValueError("risk horizon must be positive")
+        if not isfinite(self.hypotension_map_mm_hg) or self.hypotension_map_mm_hg <= 0.0:
+            raise ValueError("hypotension MAP threshold must be positive and finite")
+        if (
+            not isfinite(self.hypotension_duration_seconds)
+            or self.hypotension_duration_seconds <= 0.0
+        ):
+            raise ValueError("hypotension duration must be positive and finite")
+        if not all(
+            isfinite(value) and value <= 0.0
+            for value in (self.relative_hr_decline_pct, self.relative_map_decline_pct)
+        ):
+            raise ValueError("relative decline thresholds must be finite and non-positive")
+        if not isfinite(self.spo2_reference_pct) or not 0.0 <= self.spo2_reference_pct <= 100.0:
+            raise ValueError("SpO2 reference must be finite within 0..100")
+        if not self.model_version.strip():
+            raise ValueError("model_version must not be empty")
 
 
 @dataclass(frozen=True, slots=True)
@@ -95,3 +147,25 @@ class PipelineConfig:
     filters: FilterConfig = field(default_factory=FilterConfig)
     quality: QualityConfig = field(default_factory=QualityConfig)
     risk: RiskConfig = field(default_factory=RiskConfig)
+
+    def __post_init__(self) -> None:
+        if not self.config_version.strip():
+            raise ValueError("config_version must not be empty")
+        if not isfinite(self.waveform_sample_rate_hz) or self.waveform_sample_rate_hz <= 0.0:
+            raise ValueError("waveform sample rate must be positive and finite")
+        if not isfinite(self.feature_update_seconds) or self.feature_update_seconds <= 0.0:
+            raise ValueError("feature update interval must be positive and finite")
+        if self.baseline_seconds <= 0:
+            raise ValueError("baseline_seconds must be positive")
+        if not (
+            isfinite(self.baseline_minimum_fraction) and 0.0 < self.baseline_minimum_fraction <= 1.0
+        ):
+            raise ValueError("baseline minimum fraction must be within (0, 1]")
+        if (
+            not self.feature_windows_seconds
+            or any(window <= 0 for window in self.feature_windows_seconds)
+            or len(set(self.feature_windows_seconds)) != len(self.feature_windows_seconds)
+        ):
+            raise ValueError("feature windows must be unique positive durations")
+        if self.buffer_seconds <= 0:
+            raise ValueError("buffer_seconds must be positive")

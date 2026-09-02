@@ -27,6 +27,12 @@
     "elevated": 50.0,
     "high": 75.0
   },
+  "research_label_thresholds": {
+    "adult_generic_hypotension_map_mm_hg": 65.0,
+    "adult_generic_hypotension_duration_seconds": 60.0,
+    "relative_hr_decline_pct": -20.0,
+    "relative_map_decline_pct": -20.0
+  },
   "safety": {
     "withhold_on_invalid_quality": true,
     "withhold_on_incomplete_baseline": true,
