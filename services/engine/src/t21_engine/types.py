@@ -54,9 +54,16 @@ class SignalBatch:
     def __post_init__(self) -> None:
         if self.timestamps_s.ndim != 1:
             raise ValueError("timestamps_s must be one-dimensional")
+        if not np.isfinite(self.timestamps_s).all():
+            raise ValueError("timestamps_s must contain only finite values")
         for name, values in self.signals.items():
             if values.ndim != 1:
                 raise ValueError(f"signal {name} must be one-dimensional")
+            if values.size != self.timestamps_s.size:
+                raise ValueError(f"signal {name} must align with timestamps_s")
+            sample_rate = self.sample_rates_hz.get(name)
+            if sample_rate is None or not np.isfinite(sample_rate) or sample_rate <= 0.0:
+                raise ValueError(f"signal {name} requires a positive finite sample rate")
 
 
 @dataclass(frozen=True, slots=True)

@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 import numpy as np
+import pytest
 from t21_engine.beats.pulse_peak import detect_pulse_peaks
 from t21_engine.beats.rpeak import detect_r_peaks
-from t21_engine.preprocessing.filters import bandpass_filter
+from t21_engine.preprocessing.filters import bandpass_filter, preprocess_abp
 from t21_engine.quality.abp_sqi import compute_abp_sqi
 from t21_engine.quality.ecg_sqi import compute_ecg_sqi
 from t21_engine.quality.ppg_sqi import compute_ppg_sqi
@@ -77,3 +78,18 @@ def test_abp_sqi_penalizes_implausible_flatline() -> None:
     assert compute_abp_sqi(clean_abp.astype(np.float64), fs) > compute_abp_sqi(
         implausible.astype(np.float64), fs
     )
+
+
+def test_abp_preprocessing_preserves_pressure_baseline_and_reduces_noise() -> None:
+    fs = 100.0
+    timestamps = np.arange(0.0, 10.0, 1.0 / fs)
+    pulse = 15.0 * np.sin(2.0 * np.pi * 1.2 * timestamps)
+    high_frequency_noise = 3.0 * np.sin(2.0 * np.pi * 35.0 * timestamps)
+    raw = (82.0 + pulse + high_frequency_noise).astype(np.float64)
+    before = raw.copy()
+
+    filtered = preprocess_abp(raw, fs)
+
+    assert np.array_equal(raw, before)
+    assert np.nanmedian(filtered) == pytest.approx(82.0, abs=1.0)
+    assert np.std(filtered - (82.0 + pulse)) < np.std(high_frequency_noise)

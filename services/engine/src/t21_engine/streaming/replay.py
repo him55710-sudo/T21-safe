@@ -12,7 +12,7 @@ import numpy as np
 from t21_engine.baseline.calibration import calibrate_baseline
 from t21_engine.config import PipelineConfig
 from t21_engine.features import extract_features
-from t21_engine.preprocessing.filters import preprocess_ecg, preprocess_ppg
+from t21_engine.preprocessing.filters import preprocess_abp, preprocess_ecg, preprocess_ppg
 from t21_engine.quality.quality_gate import evaluate_quality
 from t21_engine.risk.deterministic_index import compute_research_instability_index
 from t21_engine.streaming.ring_buffer import RingBuffer
@@ -87,6 +87,15 @@ class ReplayPipeline:
                         fs,
                         low_hz=effective_config.filters.ppg_low_hz,
                         high_hz=ppg_high_hz,
+                        order=effective_config.filters.order,
+                    )
+                if "abp" in processed:
+                    abp_high_hz = min(effective_config.filters.abp_high_hz, fs * 0.45)
+                    processed["abp"] = preprocess_abp(
+                        processed["abp"],
+                        fs,
+                        low_hz=effective_config.filters.abp_low_hz,
+                        high_hz=abp_high_hz,
                         order=effective_config.filters.order,
                     )
                 feature_signals = {name: values.copy() for name, values in processed.items()}
@@ -234,8 +243,9 @@ class ReplayPipeline:
                     "provenance": {
                         "raw": batch.provenance,
                         "processed": {
-                            "ecg_ii": effective_config.config_version,
-                            "ppg": effective_config.config_version,
+                            name: effective_config.config_version
+                            for name in ("ecg_ii", "ppg", "abp")
+                            if name in processed
                         },
                     },
                     "disclaimer": DISCLAIMER,

@@ -6,6 +6,7 @@ from t21_engine.adapters.synthetic_adapter import SCENARIOS, SyntheticAdapter
 from t21_engine.evaluation.labels import hypotension_candidate
 from t21_engine.evaluation.metrics import binary_metrics, bootstrap_confidence_interval
 from t21_engine.streaming.ring_buffer import RingBuffer
+from t21_engine.types import SignalBatch, SourceMetadata
 
 
 def test_ring_buffer_sorts_out_of_order_and_enforces_capacity() -> None:
@@ -65,3 +66,13 @@ def test_evaluation_metrics_and_bootstrap_are_reproducible() -> None:
     assert metrics["specificity"] == pytest.approx(1.0)
     assert interval is not None
     assert 0.0 <= interval[0] <= interval[1] <= 1.0
+
+
+def test_signal_batch_rejects_misaligned_signal_lengths() -> None:
+    with pytest.raises(ValueError, match="align"):
+        SignalBatch(
+            timestamps_s=np.asarray([0.0, 1.0], dtype=np.float64),
+            signals={"ecg_ii": np.asarray([0.0], dtype=np.float64)},
+            sample_rates_hz={"ecg_ii": 1.0},
+            source=SourceMetadata("test", "case", True),
+        )
