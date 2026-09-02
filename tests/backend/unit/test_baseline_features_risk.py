@@ -8,6 +8,7 @@ from t21_engine.beats.rpeak import detect_r_peaks
 from t21_engine.config import PipelineConfig
 from t21_engine.features import extract_feature_windows, extract_features
 from t21_engine.features.hrv import rr_intervals_ms, time_domain_hrv
+from t21_engine.features.respiratory import extract_respiratory_features
 from t21_engine.quality.quality_gate import evaluate_quality
 from t21_engine.risk.deterministic_index import compute_research_instability_index
 from t21_engine.risk.explanations import explain_features
@@ -96,6 +97,31 @@ def test_configured_feature_windows_are_calculated_independently() -> None:
     assert (
         windows[30].values["hr_slope_bpm_min"] < windows[180].values["hr_slope_bpm_min"]
     )
+
+
+def test_resp_waveform_features_detect_rate_and_prolonged_pause_candidate() -> None:
+    sample_rate_hz = 10.0
+    timestamps = np.arange(0.0, 60.0, 1.0 / sample_rate_hz)
+    regular = np.sin(2.0 * np.pi * 0.25 * timestamps).astype(np.float64)
+
+    regular_features = extract_respiratory_features(timestamps, {"resp": regular})
+    paused = regular.copy()
+    paused[(timestamps >= 20.0) & (timestamps < 36.0)] = 0.0
+    paused_features = extract_respiratory_features(timestamps, {"resp": paused})
+    unavailable = regular.copy()
+    unavailable[:200] = np.nan
+    unavailable_features = extract_respiratory_features(
+        timestamps, {"resp": unavailable}
+    )
+
+    assert regular_features["respiratory_rate_bpm"] == pytest.approx(15.0, abs=0.2)
+    assert regular_features["resp_waveform_irregularity"] == pytest.approx(
+        0.0, abs=0.02
+    )
+    assert regular_features["resp_missing_breath_candidate"] == 0.0
+    assert paused_features["resp_missing_breath_candidate"] == 1.0
+    assert unavailable_features["respiratory_rate_bpm"] is None
+    assert unavailable_features["resp_missing_breath_candidate"] is None
 
 
 def test_hrv_time_domain_metrics() -> None:

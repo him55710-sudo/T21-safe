@@ -36,4 +36,6 @@ population reference ranges.
 | `current_spo2_pct`, `spo2_slope_pct_min` | %, %/min | available | Optional saturation trend |
 | `current_etco2_mm_hg`, `etco2_slope_mm_hg_min` | mmHg, mmHg/min | available | Optional capnography trend |
 | `respiratory_rate_bpm` | breaths/min | available | Numeric respiratory trend |
+| `resp_waveform_irregularity` | coefficient of variation | >=2 plausible breaths | Exploratory interval variability; not a respiratory diagnosis |
+| `resp_missing_breath_candidate` | 0/1 candidate | usable respiratory waveform | Prolonged inter-peak interval candidate; not an apnea diagnosis |
 | `available_modalities` | count | current window | Used to reduce uncertainty when sparse |
