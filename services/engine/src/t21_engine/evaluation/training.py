@@ -70,6 +70,7 @@ def train_logistic_demo(
     """Fit and evaluate a small generic demo with strict case-level separation."""
     try:
         import joblib
+        import sklearn
         from sklearn.linear_model import LogisticRegression
         from sklearn.pipeline import Pipeline
         from sklearn.preprocessing import StandardScaler
@@ -145,6 +146,13 @@ def train_logistic_demo(
     test_metrics = binary_metrics(
         truth[indices["test"]], test_probabilities * 100.0, threshold=threshold * 100.0
     )
+    training_environment = {
+        "python": platform.python_version(),
+        "platform": platform.platform(),
+        "numpy": np.__version__,
+        "scikit_learn": sklearn.__version__,
+        "joblib": joblib.__version__,
+    }
     report: dict[str, Any] = {
         "model_version": resolved.model_version,
         "feature_schema_version": resolved.feature_schema_version,
@@ -158,10 +166,7 @@ def train_logistic_demo(
         "threshold_tuned_on": "validation",
         "selected_threshold": threshold,
         "test_metrics": test_metrics,
-        "training_environment": {
-            "python": platform.python_version(),
-            "platform": platform.platform(),
-        },
+        "training_environment": training_environment,
         "population": "generic non-DS research data only",
         "ds_validated": False,
         "pediatric_validated": False,
@@ -190,9 +195,11 @@ def train_logistic_demo(
                     "feature_schema_version": resolved.feature_schema_version,
                     "dataset_version": dataset_version,
                     "dataset_checksum": dataset_checksum,
+                    "training_environment": training_environment,
                     "clinical_validation": False,
                     "ds_validated": False,
                     "pediatric_validated": False,
+                    "calibrated_probability": False,
                     "population_validated_on": "generic non-DS research data only",
                     "status": "research_only",
                 },
