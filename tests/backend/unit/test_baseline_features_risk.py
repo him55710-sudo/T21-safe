@@ -6,7 +6,7 @@ from t21_engine.adapters.synthetic_adapter import SyntheticAdapter
 from t21_engine.baseline.calibration import calibrate_baseline
 from t21_engine.beats.rpeak import detect_r_peaks
 from t21_engine.config import PipelineConfig
-from t21_engine.features import extract_features
+from t21_engine.features import extract_feature_windows, extract_features
 from t21_engine.features.hrv import rr_intervals_ms, time_domain_hrv
 from t21_engine.quality.quality_gate import evaluate_quality
 from t21_engine.risk.deterministic_index import compute_research_instability_index
@@ -67,6 +67,35 @@ async def test_baseline_rejects_sparse_timestamp_coverage() -> None:
 
     assert baseline.calibrated is False
     assert any("coverage" in reason for reason in baseline.reasons)
+
+
+def test_configured_feature_windows_are_calculated_independently() -> None:
+    timestamps = np.arange(0.0, 200.0, 1.0, dtype=np.float64)
+    hr = np.full(timestamps.size, 72.0, dtype=np.float64)
+    hr[-20:] = np.linspace(72.0, 52.0, 20)
+    map_values = np.full(timestamps.size, 82.0, dtype=np.float64)
+    baseline = BaselineState(
+        True,
+        1.0,
+        0.9,
+        median_hr=72.0,
+        median_map=82.0,
+    )
+
+    windows = extract_feature_windows(
+        timestamps,
+        {"hr_bpm": hr, "map_mm_hg": map_values},
+        baseline,
+        1.0,
+    )
+
+    assert tuple(windows) == (30, 60, 180)
+    assert all(result.window_seconds == window for window, result in windows.items())
+    assert windows[30].values["hr_slope_bpm_min"] is not None
+    assert windows[180].values["hr_slope_bpm_min"] is not None
+    assert (
+        windows[30].values["hr_slope_bpm_min"] < windows[180].values["hr_slope_bpm_min"]
+    )
 
 
 def test_hrv_time_domain_metrics() -> None:

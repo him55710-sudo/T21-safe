@@ -151,4 +151,29 @@ def extract_features(
     return FeatureSet(values, window_seconds, int(primary_beats.indices.size), limitations)
 
 
-__all__ = ["extract_features"]
+def extract_feature_windows(
+    timestamps_s: FloatArray,
+    signals: dict[str, FloatArray],
+    baseline: BaselineState,
+    sample_rate_hz: float,
+    *,
+    windows_seconds: tuple[int, ...] = (30, 60, 180),
+) -> dict[int, FeatureSet]:
+    """Calculate each configured research window without changing the flat API view."""
+    if not windows_seconds or any(window <= 0 for window in windows_seconds):
+        raise ValueError("feature windows must contain positive durations")
+    if len(set(windows_seconds)) != len(windows_seconds):
+        raise ValueError("feature windows must be unique")
+    return {
+        window: extract_features(
+            timestamps_s,
+            signals,
+            baseline,
+            sample_rate_hz,
+            window_seconds=window,
+        )
+        for window in windows_seconds
+    }
+
+
+__all__ = ["extract_feature_windows", "extract_features"]

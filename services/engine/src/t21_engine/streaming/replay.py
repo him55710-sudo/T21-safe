@@ -11,7 +11,7 @@ import numpy as np
 
 from t21_engine.baseline.calibration import calibrate_baseline
 from t21_engine.config import PipelineConfig
-from t21_engine.features import extract_features
+from t21_engine.features import extract_feature_windows
 from t21_engine.preprocessing.filters import preprocess_abp, preprocess_ecg, preprocess_ppg
 from t21_engine.quality.quality_gate import evaluate_quality
 from t21_engine.risk.deterministic_index import compute_research_instability_index
@@ -163,16 +163,15 @@ class ReplayPipeline:
                         minimum_fraction=effective_config.baseline_minimum_fraction,
                     )
                     baseline_locked = float(snapshot.timestamps_s[-1]) >= baseline_cutoff
-                feature_set = extract_features(
+                feature_windows = extract_feature_windows(
                     snapshot.timestamps_s,
                     feature_signals,
                     baseline,
                     fs,
-                    window_seconds=min(
-                        60,
-                        max(1, int(snapshot.timestamps_s[-1] - snapshot.timestamps_s[0] + 1)),
-                    ),
+                    windows_seconds=effective_config.feature_windows_seconds,
                 )
+                primary_window = min(feature_windows, key=lambda window: abs(window - 60))
+                feature_set = feature_windows[primary_window]
                 quality_cutoff = snapshot.timestamps_s[-1] - min(60.0, baseline_duration)
                 quality_mask = snapshot.timestamps_s >= quality_cutoff
                 quality = evaluate_quality(

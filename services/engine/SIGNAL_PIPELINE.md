@@ -43,6 +43,11 @@ Calibration records HR/MAP/PPG summaries, HRV, quality, modalities, and confiden
 unstable or low-quality baseline fails explicitly. Change features prioritize the
 individual baseline over a fixed DS normal range.
 
+The engine calculates each configured 30-, 60-, and 180-second feature window on every
+update. The existing flat SSE contract exposes the 60-second window (or the configured
+window nearest 60 seconds) as its primary view; all window results remain available to
+engine evaluation callers through `extract_feature_windows`.
+
 LF/HF is optional, requires at least 180 seconds and 20 valid beats, reports respiratory
 confounding, and is not used by the core index.
 
