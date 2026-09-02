@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import json
 from collections.abc import Sequence
 from pathlib import Path
 from typing import Any
@@ -14,6 +15,52 @@ from t21_engine.adapters.wfdb_adapter import WFDB_CATALOG, WFDBAdapter, WFDBCata
 from t21_engine.types import SignalBatch
 
 DEFAULT_PUBLIC_CASES = ("wfdb:bidmc01",)
+MANIFEST_FILENAME = "sha256-manifest.json"
+
+
+def _repository_root() -> Path:
+    return Path(__file__).resolve().parents[5]
+
+
+def _resolve_default_sample() -> Path | None:
+    """Prefer an operator-provided local sample, then the bounded CI fixture."""
+    repository = _repository_root()
+    candidates = (
+        Path("data/public/bidmc/1.0.0"),
+        repository / "data/public/bidmc/1.0.0",
+        repository / "tests/backend/fixtures/wfdb_bidmc_synthetic",
+    )
+    seen: set[Path] = set()
+    for candidate in candidates:
+        resolved = candidate.resolve()
+        if resolved not in seen and resolved.is_dir():
+            return resolved
+        seen.add(resolved)
+    return None
+
+
+def _manifest_sha256(sample_root: Path) -> dict[str, str]:
+    manifest_path = sample_root / MANIFEST_FILENAME
+    payload = json.loads(manifest_path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise ValueError("invalid checksum manifest")
+    for field in ("dataset_name", "dataset_version", "license_note"):
+        if not isinstance(payload.get(field), str) or not payload[field].strip():
+            raise ValueError("incomplete checksum manifest metadata")
+    files = payload.get("files")
+    if not isinstance(files, dict) or not files:
+        raise ValueError("invalid checksum manifest files")
+    checksums: dict[str, str] = {}
+    for name, digest in files.items():
+        if (
+            not isinstance(name, str)
+            or Path(name).name != name
+            or not isinstance(digest, str)
+            or len(digest.lower().removeprefix("sha256:")) != 64
+        ):
+            raise ValueError("invalid checksum manifest entry")
+        checksums[name] = digest.lower().removeprefix("sha256:")
+    return checksums
 
 
 def _sha256(path: Path) -> str:
@@ -92,16 +139,20 @@ async def run_public_data_bench(
     local_adapter = adapter
     checksums: dict[str, str] = {}
     local_failure: str | None = None
-    if local_sample is None:
+    resolved_sample = Path(local_sample) if local_sample is not None else _resolve_default_sample()
+    if resolved_sample is None:
         local_failure = "MISSING_SAMPLE"
     else:
         try:
-            header, files = _local_record_files(Path(local_sample))
+            header, files = _local_record_files(resolved_sample)
             checksums = {path.name: _sha256(path) for path in files}
-            if expected_sha256 is not None and (
-                set(expected_sha256) != set(checksums)
+            expected = expected_sha256
+            if expected is None:
+                expected = _manifest_sha256(header.parent)
+            if (
+                set(expected) != set(checksums)
                 or any(
-                    expected_sha256[name].lower().removeprefix("sha256:") != digest
+                    expected[name].lower().removeprefix("sha256:") != digest
                     for name, digest in checksums.items()
                 )
             ):

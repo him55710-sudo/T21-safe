@@ -1,0 +1,10 @@
+{
+  "dataset_name": "BIDMC PPG and Respiration Dataset",
+  "dataset_version": "1.0.0",
+  "license_note": "Synthetic fixture-equivalent only; not PhysioNet BIDMC data. The public BIDMC dataset is distributed under the ODC Attribution License v1.0.",
+  "sample_kind": "synthetic_fixture_equivalent",
+  "files": {
+    "bidmc01.dat": "7ea84b78a0a97e88018b90def1d180f622889bfd2930bfffbe54e536ab8fd0d1",
+    "bidmc01.hea": "5267d168d1d7527767feeb609120fc0c072146c01e99f921409f420562e8ac6e"
+  }
+}

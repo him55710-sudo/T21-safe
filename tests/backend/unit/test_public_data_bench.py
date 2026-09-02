@@ -69,6 +69,39 @@ async def test_bidmc_local_fixture_passes_with_checksums_and_wfdb_io(
 
 
 @pytest.mark.asyncio
+async def test_default_fixture_and_manifest_are_resolved(
+    mock_wfdb: dict[str, object], monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    del mock_wfdb
+    monkeypatch.chdir(tmp_path)
+
+    report = await run_public_data_bench(seed=17, duration_seconds=1.0)
+
+    assert report["status"] == "PASS"
+    assert report["cases"][0]["sha256"] == EXPECTED_SHA256
+
+
+@pytest.mark.asyncio
+async def test_default_local_root_is_preferred_and_manifest_verified(
+    mock_wfdb: dict[str, object], monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    del mock_wfdb
+    local_root = tmp_path / "data/public/bidmc/1.0.0"
+    local_root.mkdir(parents=True)
+    for source in FIXTURE.iterdir():
+        (local_root / source.name).write_bytes(source.read_bytes())
+    manifest = json.loads((local_root / "sha256-manifest.json").read_text())
+    manifest["files"]["bidmc01.dat"] = "0" * 64
+    (local_root / "sha256-manifest.json").write_text(json.dumps(manifest))
+    monkeypatch.chdir(tmp_path)
+
+    report = await run_public_data_bench()
+
+    assert report["status"] == "FAIL"
+    assert report["cases"][0]["failure_reason_code"] == "SHA256_MISMATCH"
+
+
+@pytest.mark.asyncio
 @pytest.mark.parametrize(
     ("sample", "checksums", "reason"),
     [
