@@ -8,7 +8,7 @@ import numpy as np
 import pytest
 from fastapi.testclient import TestClient
 from t21_api.main import app, create_app
-from t21_api.schemas import StreamEvent
+from t21_api.schemas import AnalyzeWindowRequest, StreamEvent
 from t21_api.settings import Settings
 from t21_api.streaming.sessions import SessionManager
 from t21_engine.adapters.local_fixture_adapter import LocalFixtureAdapter
@@ -209,6 +209,33 @@ def test_analyze_window_rejects_non_coarse_age_text() -> None:
         )
 
     assert response.status_code == 422
+
+
+def test_analyze_window_rejects_non_finite_or_noncanonical_input() -> None:
+    with pytest.raises(ValueError, match="finite number"):
+        AnalyzeWindowRequest.model_validate(
+            {
+                "timestamps_s": [0.0, float("nan")],
+                "signals": {"hr_bpm": [72.0, 72.0]},
+                "sample_rate_hz": 1.0,
+            }
+        )
+    with pytest.raises(ValueError, match="unsupported signal names"):
+        AnalyzeWindowRequest.model_validate(
+            {
+                "timestamps_s": [0.0, 1.0],
+                "signals": {"free_text_history": [1.0, 1.0]},
+                "sample_rate_hz": 1.0,
+            }
+        )
+    with pytest.raises(ValueError, match="at least one canonical signal"):
+        AnalyzeWindowRequest.model_validate(
+            {
+                "timestamps_s": [0.0, 1.0],
+                "signals": {},
+                "sample_rate_hz": 1.0,
+            }
+        )
 
 
 def test_docker_image_points_to_the_copied_offline_fixture() -> None:

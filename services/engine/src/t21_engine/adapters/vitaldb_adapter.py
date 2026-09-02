@@ -27,6 +27,7 @@ TRACK_MAP = {
     "Solar8000/PLETH_SPO2": "spo2_pct",
     "Solar8000/ETCO2": "etco2_mm_hg",
     "Solar8000/RR": "resp_bpm",
+    "BIS/BIS": "bis",
 }
 
 
