@@ -1,0 +1,33 @@
+{
+  "session": {
+    "session_id": "shadow-synthetic-validation-001",
+    "subject_id": "synthetic-subject-001",
+    "pseudonymous_ids": true,
+    "is_synthetic": true,
+    "synthetic_label": "SYNTHETIC_DATA",
+    "storage_scope": "LOCAL_ONLY",
+    "contains_phi": false
+  },
+  "event_id": "shadow-synthetic-validation-001-event-001",
+  "mode": "OBSERVE_ONLY_SHADOW",
+  "controls": {
+    "actuation": false,
+    "dosing": false,
+    "closed_loop": false,
+    "drug_advice": false,
+    "emr_write": false
+  },
+  "quality_gate": {
+    "implementation": "t21_engine.quality.quality_gate.evaluate_quality",
+    "usable": false,
+    "reasons": [
+      "Synthetic schema-validation fixture; no patient-care interpretation."
+    ],
+    "baseline_calibrated": false,
+    "baseline_bypass": false,
+    "threshold_status": "ENGINEERING_HYPOTHESIS_OR_PI_TO_DEFINE",
+    "artifacts": {}
+  },
+  "feature_windows": [],
+  "waveform_persistence": "NONE"
+}
