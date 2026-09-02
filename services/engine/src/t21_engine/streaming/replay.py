@@ -56,6 +56,18 @@ def _apply_timestamp_gap_gate(
     )
 
 
+def _timestamps_synchronized(
+    batch: SignalBatch,
+    out_of_order_count: int,
+    tolerance_ms: float,
+) -> bool:
+    return (
+        batch.timestamp_synchronized
+        and batch.synchronization_error_ms <= tolerance_ms
+        and out_of_order_count == 0
+    )
+
+
 class ReplayPipeline:
     def __init__(self, config: PipelineConfig | None = None) -> None:
         self.config = config or PipelineConfig()
@@ -130,6 +142,11 @@ class ReplayPipeline:
                     )
                 feature_signals = {name: values.copy() for name, values in processed.items()}
                 sample_rates = {name: fs for name in processed}
+                timestamps_synchronized = _timestamps_synchronized(
+                    batch,
+                    snapshot.out_of_order_count,
+                    effective_config.quality.synchronization_tolerance_ms,
+                )
                 if baseline is None or not baseline_locked:
                     if baseline_start_s is None:
                         baseline_start_s = float(snapshot.timestamps_s[0])
@@ -142,9 +159,7 @@ class ReplayPipeline:
                         sample_rates,
                         effective_config.quality,
                         out_of_order_count=snapshot.out_of_order_count,
-                        timestamp_synchronized=(
-                            batch.timestamp_synchronized and snapshot.out_of_order_count == 0
-                        ),
+                        timestamp_synchronized=timestamps_synchronized,
                     )
                     baseline_quality = _apply_timestamp_gap_gate(
                         baseline_quality,
@@ -178,9 +193,7 @@ class ReplayPipeline:
                     sample_rates,
                     effective_config.quality,
                     out_of_order_count=snapshot.out_of_order_count,
-                    timestamp_synchronized=(
-                        batch.timestamp_synchronized and snapshot.out_of_order_count == 0
-                    ),
+                    timestamp_synchronized=timestamps_synchronized,
                     valid_beat_count=feature_set.valid_beat_count,
                 )
                 quality = _apply_timestamp_gap_gate(

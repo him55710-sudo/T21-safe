@@ -64,6 +64,12 @@ class SignalBatch:
             sample_rate = self.sample_rates_hz.get(name)
             if sample_rate is None or not np.isfinite(sample_rate) or sample_rate <= 0.0:
                 raise ValueError(f"signal {name} requires a positive finite sample rate")
+        if not np.isfinite(self.latency_ms) or self.latency_ms < 0.0:
+            raise ValueError("latency_ms must be non-negative and finite")
+        if self.out_of_order_count < 0:
+            raise ValueError("out_of_order_count must be non-negative")
+        if not np.isfinite(self.synchronization_error_ms) or self.synchronization_error_ms < 0.0:
+            raise ValueError("synchronization_error_ms must be non-negative and finite")
 
 
 @dataclass(frozen=True, slots=True)

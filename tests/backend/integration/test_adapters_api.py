@@ -64,6 +64,7 @@ async def test_vitaldb_network_failure_uses_explicit_local_fallback() -> None:
     assert batch.source.dataset == "Local synthetic fixture"
     assert batch.source.is_synthetic is True
     assert "fallback_reason" in batch.provenance
+    assert batch.latency_ms > 0.0
 
 
 @pytest.mark.asyncio

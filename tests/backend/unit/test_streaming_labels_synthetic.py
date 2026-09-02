@@ -76,3 +76,22 @@ def test_signal_batch_rejects_misaligned_signal_lengths() -> None:
             sample_rates_hz={"ecg_ii": 1.0},
             source=SourceMetadata("test", "case", True),
         )
+
+
+def test_signal_batch_rejects_invalid_transport_measurements() -> None:
+    with pytest.raises(ValueError, match="latency_ms"):
+        SignalBatch(
+            timestamps_s=np.asarray([0.0], dtype=np.float64),
+            signals={"ecg_ii": np.asarray([0.0], dtype=np.float64)},
+            sample_rates_hz={"ecg_ii": 1.0},
+            source=SourceMetadata("test", "case", True),
+            latency_ms=-1.0,
+        )
+    with pytest.raises(ValueError, match="synchronization_error_ms"):
+        SignalBatch(
+            timestamps_s=np.asarray([0.0], dtype=np.float64),
+            signals={"ecg_ii": np.asarray([0.0], dtype=np.float64)},
+            sample_rates_hz={"ecg_ii": 1.0},
+            source=SourceMetadata("test", "case", True),
+            synchronization_error_ms=float("nan"),
+        )

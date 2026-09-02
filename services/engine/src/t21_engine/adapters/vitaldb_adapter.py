@@ -115,6 +115,7 @@ class VitalDBAdapter(DataAdapter):
                 "vitaldb:fallback", duration_seconds=duration_seconds
             )
             fallback.provenance["fallback_reason"] = "; ".join(errors) or "no usable tracks"
+            fallback.latency_ms = (time.perf_counter() - started) * 1000.0
             return fallback
 
         target_fs = self.target_sample_rate_hz
