@@ -16,7 +16,7 @@ from t21_engine.preprocessing.filters import preprocess_abp, preprocess_ecg, pre
 from t21_engine.quality.quality_gate import evaluate_quality
 from t21_engine.risk.deterministic_index import compute_research_instability_index
 from t21_engine.streaming.ring_buffer import RingBuffer
-from t21_engine.types import PipelineMode, SignalBatch
+from t21_engine.types import BaselineState, PipelineMode, QualityResult, SignalBatch
 
 DISCLAIMER = "Research prototype; not for diagnosis, treatment, dosing, or clinical monitoring."
 
@@ -32,6 +32,28 @@ def _waveform_values(values: np.ndarray | None) -> list[float | None]:
     if values is None:
         return []
     return [float(value) if np.isfinite(value) else None for value in values]
+
+
+def _apply_timestamp_gap_gate(
+    quality: QualityResult,
+    gap_fraction: float,
+    maximum_gap_fraction: float,
+) -> QualityResult:
+    if gap_fraction <= maximum_gap_fraction:
+        return quality
+    return replace(
+        quality,
+        usable=False,
+        gap_fraction=max(quality.gap_fraction, gap_fraction),
+        reasons=tuple(
+            dict.fromkeys(
+                [
+                    *quality.reasons,
+                    "Network or source timestamps contain excessive gaps.",
+                ]
+            )
+        ),
+    )
 
 
 class ReplayPipeline:
@@ -56,7 +78,15 @@ class ReplayPipeline:
             next(iter(batch.sample_rates_hz.values()), effective_config.waveform_sample_rate_hz),
         )
         chunk_size = max(1, int(round(fs * effective_config.feature_update_seconds)))
-        buffer = RingBuffer(effective_config.buffer_seconds, fs)
+        buffer_seconds = max(
+            effective_config.buffer_seconds,
+            baseline_duration,
+            max(effective_config.feature_windows_seconds, default=0),
+        )
+        buffer = RingBuffer(buffer_seconds, fs)
+        baseline: BaselineState | None = None
+        baseline_locked = False
+        baseline_start_s: float | None = None
         try:
             for start in range(0, batch.timestamps_s.size, chunk_size):
                 processing_started = time.perf_counter()
@@ -103,25 +133,36 @@ class ReplayPipeline:
                     # Preserve absolute PPG amplitude for within-patient change features.
                     feature_signals["ppg"] = snapshot.signals["ppg"].copy()
                 sample_rates = {name: fs for name in processed}
-                baseline_cutoff = snapshot.timestamps_s[0] + baseline_duration
-                baseline_mask = snapshot.timestamps_s < baseline_cutoff
-                baseline_quality = evaluate_quality(
-                    {name: values[baseline_mask] for name, values in processed.items()},
-                    sample_rates,
-                    effective_config.quality,
-                    out_of_order_count=snapshot.out_of_order_count,
-                    timestamp_synchronized=(
-                        batch.timestamp_synchronized and snapshot.out_of_order_count == 0
-                    ),
-                )
-                baseline = calibrate_baseline(
-                    snapshot.timestamps_s,
-                    feature_signals,
-                    fs,
-                    baseline_quality,
-                    baseline_seconds=baseline_duration,
-                    minimum_fraction=effective_config.baseline_minimum_fraction,
-                )
+                if baseline is None or not baseline_locked:
+                    if baseline_start_s is None:
+                        baseline_start_s = float(snapshot.timestamps_s[0])
+                    baseline_cutoff = baseline_start_s + baseline_duration
+                    baseline_mask = (snapshot.timestamps_s >= baseline_start_s) & (
+                        snapshot.timestamps_s < baseline_cutoff
+                    )
+                    baseline_quality = evaluate_quality(
+                        {name: values[baseline_mask] for name, values in processed.items()},
+                        sample_rates,
+                        effective_config.quality,
+                        out_of_order_count=snapshot.out_of_order_count,
+                        timestamp_synchronized=(
+                            batch.timestamp_synchronized and snapshot.out_of_order_count == 0
+                        ),
+                    )
+                    baseline_quality = _apply_timestamp_gap_gate(
+                        baseline_quality,
+                        snapshot.gap_fraction,
+                        effective_config.quality.maximum_gap_fraction,
+                    )
+                    baseline = calibrate_baseline(
+                        snapshot.timestamps_s,
+                        feature_signals,
+                        fs,
+                        baseline_quality,
+                        baseline_seconds=baseline_duration,
+                        minimum_fraction=effective_config.baseline_minimum_fraction,
+                    )
+                    baseline_locked = float(snapshot.timestamps_s[-1]) >= baseline_cutoff
                 feature_set = extract_features(
                     snapshot.timestamps_s,
                     feature_signals,
@@ -144,20 +185,11 @@ class ReplayPipeline:
                     ),
                     valid_beat_count=feature_set.valid_beat_count,
                 )
-                if snapshot.gap_fraction > effective_config.quality.maximum_gap_fraction:
-                    quality = replace(
-                        quality,
-                        usable=False,
-                        gap_fraction=max(quality.gap_fraction, snapshot.gap_fraction),
-                        reasons=tuple(
-                            dict.fromkeys(
-                                [
-                                    *quality.reasons,
-                                    "Network or source timestamps contain excessive gaps.",
-                                ]
-                            )
-                        ),
-                    )
+                quality = _apply_timestamp_gap_gate(
+                    quality,
+                    snapshot.gap_fraction,
+                    effective_config.quality.maximum_gap_fraction,
+                )
                 risk = compute_research_instability_index(
                     feature_set,
                     quality,

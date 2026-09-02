@@ -46,6 +46,29 @@ async def test_baseline_calibration_and_features_use_patient_baseline() -> None:
     assert features.valid_beat_count >= 4
 
 
+@pytest.mark.asyncio
+async def test_baseline_rejects_sparse_timestamp_coverage() -> None:
+    config = PipelineConfig(baseline_seconds=5)
+    batch = await SyntheticAdapter().load_case(
+        "synthetic:stable-baseline", duration_seconds=5
+    )
+    keep = (batch.timestamps_s < 1.0) | (batch.timestamps_s >= 4.0)
+    timestamps = batch.timestamps_s[keep]
+    signals = {name: values[keep] for name, values in batch.signals.items()}
+    quality = evaluate_quality(signals, batch.sample_rates_hz, config.quality)
+
+    baseline = calibrate_baseline(
+        timestamps,
+        signals,
+        100.0,
+        quality,
+        baseline_seconds=5,
+    )
+
+    assert baseline.calibrated is False
+    assert any("coverage" in reason for reason in baseline.reasons)
+
+
 def test_hrv_time_domain_metrics() -> None:
     fs = 100.0
     timestamps = np.arange(0.0, 10.0, 1.0 / fs)

@@ -42,11 +42,18 @@ def calibrate_baseline(
     finite_times = timestamps[np.isfinite(timestamps)]
     if finite_times.size < 2:
         return BaselineState(False, 0.0, 0.0, reasons=("Baseline timestamps are insufficient.",))
-    median_interval = float(np.median(np.diff(finite_times)))
-    observed_seconds = max(0.0, float(finite_times[-1] - finite_times[0] + median_interval))
-    progress = float(np.clip(observed_seconds / baseline_seconds, 0.0, 1.0))
     baseline_end = finite_times[0] + baseline_seconds
     mask = timestamps < baseline_end
+    baseline_times = timestamps[mask & np.isfinite(timestamps)]
+    median_interval = float(np.median(np.diff(baseline_times))) if baseline_times.size >= 2 else 0.0
+    observed_seconds = (
+        max(0.0, float(baseline_times[-1] - baseline_times[0] + median_interval))
+        if baseline_times.size
+        else 0.0
+    )
+    progress = float(np.clip(observed_seconds / baseline_seconds, 0.0, 1.0))
+    expected_samples = max(1, int(round(baseline_seconds * sample_rate_hz)))
+    coverage_fraction = float(np.clip(baseline_times.size / expected_samples, 0.0, 1.0))
     baseline_signals = {name: np.asarray(values)[mask] for name, values in signals.items()}
 
     ecg_beats = (
@@ -107,7 +114,7 @@ def calibrate_baseline(
     reasons: list[str] = []
     if progress < 1.0:
         reasons.append("Baseline calibration is incomplete.")
-    if observed_seconds < baseline_seconds * minimum_fraction:
+    if coverage_fraction < minimum_fraction:
         reasons.append("Too little baseline coverage is available.")
     if not quality.usable:
         reasons.append("Baseline signal quality is insufficient.")
