@@ -2,7 +2,11 @@
 
 **Status:** DRAFT scaffold · Founder placeholder · Path B / RUO / Shadow  
 **Lang:** EN + KR · **Do not email** until Founder approves  
-**Related:** `docs/business/research-node-one-pager.md` (analyst draft)
+**Related PI pack (DRAFT · email not sent):**
+- `docs/business/research-node-one-pager.md`
+- `docs/business/research-overview-2p.md`
+- `docs/business/hospital-aggregate-query-1p.md`
+- `docs/business/safety-local-first-1p.md`
 
 ---
 
