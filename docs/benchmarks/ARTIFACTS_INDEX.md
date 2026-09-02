@@ -1,8 +1,14 @@
 # Research engineering artifacts index
 
+> **PUBLIC_DATA_REPORT_V1 freeze: `v1.0-pre-VitalDB` · `2026-09-02 UTC`**
+>
 > **PROXY / engineering only**  
 > **clinical_validation=false**  
 > **No DS clinical claims.**  
+> **Fantasia Master Notion: `PENDING` (`operational_proxy_ok` only).**
+>
+> **VitalDB, CapnoBase, and PulseDB are NOT included in this freeze.**
+>
 > **Path B: observe-only / Research Use Only (RUO) / no dosing alerts as claims.**
 
 This index points to reproducible engineering artifacts and their landing commits. It
@@ -44,7 +50,7 @@ non-claims in the public-data report.
 
 ## Fantasia HRV / age-stability PROXY
 
-- Commit: uncommitted CODEX-016 working tree
+- Commit: `f290223`
 - Module: `t21_engine.evaluation.fantasia_hrv_age_bench`
 - Report context: [`PUBLIC_DATA_REPORT_V1.md`](PUBLIC_DATA_REPORT_V1.md), section
   “Fantasia HRV / age-stability PROXY (CODEX-016)”
@@ -74,7 +80,8 @@ select a clinical baseline window.
 
 ## PUBLIC_DATA_REPORT_V1
 
-- Report: [`docs/benchmarks/PUBLIC_DATA_REPORT_V1.md`](PUBLIC_DATA_REPORT_V1.md)
+- Frozen report: [`docs/benchmarks/PUBLIC_DATA_REPORT_V1.md`](PUBLIC_DATA_REPORT_V1.md)
+  (`v1.0-pre-VitalDB`, `2026-09-02 UTC`)
 - Verification command: `python -m pytest tests/backend/unit/test_public_data_bench.py`
 - Engineering trail documented in the report: `f4b36f5` → `44ed44c` → `b816efa` →
   `ba514e5`, with related follow-on documentation and benchmark commits in repository

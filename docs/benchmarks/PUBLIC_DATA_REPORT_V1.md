@@ -1,9 +1,40 @@
 # Public Data Report v1 — PROXY engine smoke
 
+**Freeze version:** `v1.0-pre-VitalDB`
+
+**Freeze date:** `2026-09-02 UTC`
+
 **Status:** Scaffold filled from CODEX-006 family · **PROXY only**  
 **clinical_validation:** `false`  
 **DS clinical claims:** none (public non-DS / synthetic-fixture data ≠ DS validation)  
+**Fantasia Master Notion:** `PENDING` (`operational_proxy_ok` only)
+
+**Not included in this freeze:** VitalDB, CapnoBase, PulseDB
+
 **Path B:** observe-only · no PHI cloud · no clinical cutoffs/alerts
+
+---
+
+## Freeze changelog
+
+This version freezes the public-data report before any VitalDB work. It records the
+following shipped **PROXY** engineering benchmarks and synthetic support artifacts:
+
+| Delivery | Shipped artifact | Commit |
+| --- | --- | --- |
+| CODEX-011 | BIDMC synchronization / respiration benchmark | `869b996` |
+| CODEX-009 | MIT-BIH beat benchmark | `0606d62` |
+| CODEX-016 | Fantasia HRV / age-stability benchmark; `operational_proxy_ok`, with Master Notion still `PENDING` | `f290223` |
+| CODEX-008 | Synthetic hospital case factory with time-alignment QC | `2648af7` |
+| CODEX-010 | Deterministic synthetic Research Node demo | `020dd79` |
+| CODEX-012 | Synthetic baseline-window comparison (180 / 300 seconds) | `a7d8ebd` |
+| CODEX-013 | Synthetic SQI / missingness impact table | `aec1d37` |
+| CODEX-014 | `ARTIFACTS_INDEX.md` reproducibility pointers | `cce9194` |
+| CODEX-015 | Clean-environment install smoke | `631e74c` |
+
+No VitalDB download or implementation, and no CapnoBase or PulseDB benchmark, is part
+of `v1.0-pre-VitalDB`. All entries remain research engineering artifacts with
+`clinical_validation=false`; none supports a DS-specific or other clinical claim.
 
 ---
 
