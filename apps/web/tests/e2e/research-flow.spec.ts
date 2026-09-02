@@ -19,7 +19,7 @@ test("research demo completes the safe review flow", async ({ page }) => {
     page.getByRole("heading", { name: "What changed the research index?" }),
   ).toBeVisible();
   await page.getByRole("button", { name: "Evidence" }).click();
-  await expect(page.getByText("EVD-T21S-UI-0003")).toBeVisible();
+  await expect(page.getByText("rii-config-v0.1")).toBeVisible();
   await page.getByRole("button", { name: "Case review" }).click();
   await expect(page.getByText("Research summary — not a patient-care report")).toBeVisible();
   const downloadPromise = page.waitForEvent("download");

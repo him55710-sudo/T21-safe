@@ -96,13 +96,28 @@
             },
             "title": "Reasons",
             "type": "array"
+          },
+          "values": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "title": "Values",
+            "type": "object"
           }
         },
         "required": [
           "calibrated",
           "progress",
           "confidence",
-          "reasons"
+          "reasons",
+          "values"
         ],
         "title": "BaselineEvent",
         "type": "object"
@@ -357,7 +372,7 @@
             "type": "string"
           },
           "version": {
-            "default": "0.1.0",
+            "default": "0.2.0",
             "title": "Version",
             "type": "string"
           }
@@ -560,11 +575,6 @@
             "title": "Confidence",
             "type": "number"
           },
-          "horizon_seconds": {
-            "exclusiveMinimum": 0.0,
-            "title": "Horizon Seconds",
-            "type": "integer"
-          },
           "level": {
             "$ref": "#/components/schemas/RiskLevel"
           },
@@ -583,6 +593,11 @@
             "const": "Research Instability Index",
             "title": "Name",
             "type": "string"
+          },
+          "observation_context_seconds": {
+            "exclusiveMinimum": 0.0,
+            "title": "Observation Context Seconds",
+            "type": "integer"
           },
           "population_validated_on": {
             "title": "Population Validated On",
@@ -617,7 +632,7 @@
           "name",
           "level",
           "valid",
-          "horizon_seconds",
+          "observation_context_seconds",
           "confidence",
           "reasons",
           "model_version",
@@ -943,7 +958,7 @@
   "info": {
     "description": "Research Use Only / Shadow Mode. Not for diagnosis, treatment, dosing, or clinical monitoring.",
     "title": "T21 Safe Research Signal API",
-    "version": "0.1.0"
+    "version": "0.2.0"
   },
   "openapi": "3.1.0",
   "paths": {

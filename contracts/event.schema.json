@@ -25,13 +25,28 @@
           },
           "title": "Reasons",
           "type": "array"
+        },
+        "values": {
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "title": "Values",
+          "type": "object"
         }
       },
       "required": [
         "calibrated",
         "progress",
         "confidence",
-        "reasons"
+        "reasons",
+        "values"
       ],
       "title": "BaselineEvent",
       "type": "object"
@@ -274,11 +289,6 @@
           "title": "Confidence",
           "type": "number"
         },
-        "horizon_seconds": {
-          "exclusiveMinimum": 0,
-          "title": "Horizon Seconds",
-          "type": "integer"
-        },
         "level": {
           "$ref": "#/$defs/RiskLevel"
         },
@@ -297,6 +307,11 @@
           "const": "Research Instability Index",
           "title": "Name",
           "type": "string"
+        },
+        "observation_context_seconds": {
+          "exclusiveMinimum": 0,
+          "title": "Observation Context Seconds",
+          "type": "integer"
         },
         "population_validated_on": {
           "title": "Population Validated On",
@@ -332,7 +347,7 @@
         "name",
         "level",
         "valid",
-        "horizon_seconds",
+        "observation_context_seconds",
         "confidence",
         "reasons",
         "model_version",

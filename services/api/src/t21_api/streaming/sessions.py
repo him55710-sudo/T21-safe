@@ -36,19 +36,23 @@ class SessionManager:
         fixture_path: Path,
         vitaldb_base_url: str,
         vitaldb_timeout_seconds: float,
+        offline_mode: bool = True,
         session_ttl_seconds: float = 900.0,
     ) -> None:
         local = LocalFixtureAdapter(fixture_path)
-        self.adapters: tuple[DataAdapter, ...] = (
-            SyntheticAdapter(),
-            VitalDBAdapter(
-                base_url=vitaldb_base_url,
-                timeout_seconds=vitaldb_timeout_seconds,
-                fallback=local,
-            ),
-            local,
-            WFDBAdapter(),
+        self._synthetic = SyntheticAdapter()
+        self._local = local
+        self._vitaldb = VitalDBAdapter(
+            base_url=vitaldb_base_url,
+            timeout_seconds=vitaldb_timeout_seconds,
+            fallback=local,
         )
+        self._wfdb = WFDBAdapter()
+        self._offline_mode = offline_mode
+        online_adapters: tuple[DataAdapter, ...] = (
+            () if offline_mode else (self._vitaldb, self._wfdb)
+        )
+        self.adapters: tuple[DataAdapter, ...] = (self._synthetic, self._local, *online_adapters)
         self._sessions: dict[str, ReplaySession] = {}
         self._lock = asyncio.Lock()
         self._session_ttl_seconds = session_ttl_seconds
@@ -103,13 +107,15 @@ class SessionManager:
 
     def _adapter_for(self, case_id: str) -> DataAdapter:
         if case_id.startswith("synthetic:"):
-            return self.adapters[0]
-        if case_id == "vitaldb:public-live":
-            return self.adapters[1]
+            return self._synthetic
         if case_id == "local:fixture":
-            return self.adapters[2]
+            return self._local
+        if self._offline_mode and (case_id == "vitaldb:public-live" or case_id.startswith("wfdb:")):
+            raise RuntimeError("network-backed replay is disabled while OFFLINE_MODE=true")
+        if case_id == "vitaldb:public-live":
+            return self._vitaldb
         if case_id.startswith("wfdb:"):
-            return self.adapters[3]
+            return self._wfdb
         raise KeyError(case_id)
 
     def _prune_expired_locked(self) -> None:

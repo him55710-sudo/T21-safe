@@ -7,7 +7,7 @@
       "model_version": "rii-v0.1",
       "type": "transparent_weighted_research_index",
       "feature_schema_version": "features-v0.1",
-      "pipeline_config_version": "pipeline-v0.1",
+      "pipeline_config_version": "pipeline-v0.2",
       "artifact": null,
       "config": "research-index-v0/config.yaml",
       "model_card": "research-index-v0/MODEL_CARD.md",

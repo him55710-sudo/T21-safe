@@ -10,6 +10,7 @@ export function SignalQualityBadge({
   return (
     <span
       className={`quality-badge quality-badge--${state.toLowerCase()}`}
+      role="img"
       aria-label={`${label}: ${state}, ${Math.round(value * 100)} percent`}
     >
       <span aria-hidden="true">{icon}</span>

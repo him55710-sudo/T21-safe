@@ -51,6 +51,7 @@ export function useMonitoringSession() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [replaySpeed, setReplaySpeed] = useState(40);
   const [connected, setConnected] = useState(demoMode);
+  const [replayComplete, setReplayComplete] = useState(false);
   const [streamError, setStreamError] = useState<string | null>(null);
   const streamCleanup = useRef<(() => void) | null>(null);
 
@@ -73,7 +74,10 @@ export function useMonitoringSession() {
 
   const cases = casesQuery.data ?? MOCK_CASES;
   const evidence = evidenceQuery.data ?? MOCK_EVIDENCE;
-  const selectedCase = cases.find((item) => item.id === selectedCaseId) ?? MOCK_CASES[0]!;
+  const effectiveSelectedCaseId = cases.some((item) => item.id === selectedCaseId)
+    ? selectedCaseId
+    : (cases[0]?.id ?? selectedCaseId);
+  const selectedCase = cases.find((item) => item.id === effectiveSelectedCaseId) ?? MOCK_CASES[0]!;
 
   const acceptFrame = useCallback((nextFrame: StreamFrame) => {
     frameRef.current = nextFrame;
@@ -116,6 +120,7 @@ export function useMonitoringSession() {
       setHistory([]);
       setAnnotations([]);
       setStreamError(null);
+      setReplayComplete(false);
       setScreen("calibration");
       setIsPlaying(true);
 
@@ -129,16 +134,24 @@ export function useMonitoringSession() {
       }
 
       try {
-        const sessionId = await startApiReplay(selectedCaseId, context);
+        const sessionId = await startApiReplay(effectiveSelectedCaseId, nextMode, replaySpeed);
         streamCleanup.current?.();
-        streamCleanup.current = openValidatedEventStream(sessionId, acceptFrame, setConnected);
+        streamCleanup.current = openValidatedEventStream(
+          sessionId,
+          acceptFrame,
+          setConnected,
+          () => {
+            setIsPlaying(false);
+            setReplayComplete(true);
+          },
+        );
       } catch (error) {
         setConnected(false);
         setIsPlaying(false);
         setStreamError(error instanceof Error ? error.message : "Unable to start replay.");
       }
     },
-    [acceptFrame, selectedCaseId],
+    [acceptFrame, effectiveSelectedCaseId, replaySpeed, selectedCaseId],
   );
 
   const seek = useCallback(
@@ -168,6 +181,7 @@ export function useMonitoringSession() {
     streamCleanup.current = null;
     setScreen("start");
     setIsPlaying(false);
+    setReplayComplete(false);
     setHistory([]);
     setAnnotations([]);
     const scenario = isScenarioId(selectedCaseId) ? selectedCaseId : "progressive_instability";
@@ -206,11 +220,12 @@ export function useMonitoringSession() {
     mode,
     patientContext,
     replaySpeed,
+    replayComplete,
     reset,
     screen,
     seek,
     selectedCase,
-    selectedCaseId,
+    selectedCaseId: effectiveSelectedCaseId,
     setIsPlaying,
     setPatientContext,
     setReplaySpeed,

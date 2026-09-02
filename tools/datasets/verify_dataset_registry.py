@@ -90,9 +90,13 @@ def validate_registry(payload: dict[str, Any], csv_rows: list[dict[str, str]], l
             errors.append(f"{context}: official_source must be an HTTPS URL")
         if str(raw.get("last_verified_date")) != str(payload.get("last_verified_date")):
             errors.append(f"{context}: last_verified_date differs from registry header")
-        if raw.get("down_syndrome_identifiable") != "YES" and str(raw.get("DS_case_count_verified")).strip().isdigit():
-            if int(str(raw["DS_case_count_verified"]).strip()) > 0:
-                errors.append(f"{context}: positive DS count requires down_syndrome_identifiable=YES")
+        verified_ds_count = str(raw.get("DS_case_count_verified")).strip()
+        if (
+            raw.get("down_syndrome_identifiable") != "YES"
+            and verified_ds_count.isdigit()
+            and int(verified_ds_count) > 0
+        ):
+            errors.append(f"{context}: positive DS count requires down_syndrome_identifiable=YES")
 
     for index, (yaml_row, csv_row) in enumerate(zip(datasets, csv_rows), start=1):
         if normalize(yaml_row, fields) != normalize(csv_row, fields):

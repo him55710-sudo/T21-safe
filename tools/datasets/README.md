@@ -8,6 +8,7 @@
 python tools/datasets/verify_dataset_registry.py --limit 20
 python tools/datasets/inspect_vitaldb.py --limit 3
 python tools/datasets/inspect_wfdb_record.py --sample /outside/repo/100.hea --limit 8
+python tools/datasets/replay_wfdb_sample.py --sample /outside/repo/bidmc01.hea --limit 8
 python tools/datasets/download_open_sample.py \
   --dataset-id bidmc-ppg-resp \
   --sample https://physionet.org/files/bidmc/1.0.0/bidmc01.hea \

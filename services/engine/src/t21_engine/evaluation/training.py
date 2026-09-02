@@ -14,7 +14,7 @@ from typing import Any
 import numpy as np
 
 from t21_engine.evaluation.metrics import binary_metrics
-from t21_engine.evaluation.splits import case_level_split
+from t21_engine.evaluation.splits import patient_level_split
 from t21_engine.model_registry import register_research_model
 
 
@@ -26,8 +26,8 @@ class TrainingConfig:
     threshold_candidates: tuple[float, ...] = tuple(np.linspace(0.1, 0.9, 17))
 
 
-def _indices_for_cases(case_ids: np.ndarray, selected: list[str]) -> np.ndarray:
-    return np.flatnonzero(np.isin(case_ids, np.asarray(selected, dtype=object)))
+def _indices_for_patients(patient_ids: np.ndarray, selected: list[str]) -> np.ndarray:
+    return np.flatnonzero(np.isin(patient_ids, np.asarray(selected, dtype=object)))
 
 
 def _class_balance(labels: np.ndarray) -> dict[str, int]:
@@ -58,7 +58,7 @@ def _validation_threshold(
 def train_logistic_demo(
     features: np.ndarray,
     labels: np.ndarray,
-    case_ids: list[str],
+    patient_ids: list[str],
     *,
     feature_names: list[str],
     dataset_version: str,
@@ -67,7 +67,7 @@ def train_logistic_demo(
     registry_path: Path | None = None,
     config: TrainingConfig | None = None,
 ) -> dict[str, Any]:
-    """Fit and evaluate a small generic demo with strict case-level separation."""
+    """Fit and evaluate a small generic demo with strict patient-level separation."""
     try:
         import joblib
         from sklearn.linear_model import LogisticRegression
@@ -79,18 +79,25 @@ def train_logistic_demo(
     resolved = config or TrainingConfig()
     matrix = np.asarray(features, dtype=np.float64)
     truth = np.asarray(labels, dtype=np.int64)
-    cases = np.asarray(case_ids, dtype=object)
-    if matrix.ndim != 2 or matrix.shape[0] != truth.size or truth.size != cases.size:
-        raise ValueError("features, labels, and case_ids must align")
+    patients = np.asarray(patient_ids, dtype=object)
+    if matrix.ndim != 2 or matrix.shape[0] != truth.size or truth.size != patients.size:
+        raise ValueError("features, labels, and patient_ids must align")
     if matrix.shape[1] != len(feature_names):
         raise ValueError("feature_names must match the feature matrix columns")
     if not dataset_version or not dataset_checksum:
         raise ValueError("dataset version and checksum are required")
+    if not np.isfinite(matrix).all():
+        raise ValueError(
+            "features contain missing/non-finite values; use a predeclared, train-fitted "
+            "imputation pipeline"
+        )
 
-    splits = case_level_split(case_ids, seed=resolved.seed)
-    indices = {name: _indices_for_cases(cases, selected) for name, selected in splits.items()}
+    splits = patient_level_split(patient_ids, seed=resolved.seed)
+    indices = {
+        name: _indices_for_patients(patients, selected) for name, selected in splits.items()
+    }
     if any(index.size == 0 for index in indices.values()):
-        raise ValueError("at least one case is required in train, validation, and test")
+        raise ValueError("at least one patient is required in train, validation, and test")
     train_labels = truth[indices["train"]]
     if np.unique(train_labels).size < 2:
         raise ValueError("training split must contain both classes")
@@ -152,7 +159,7 @@ def train_logistic_demo(
         "dataset_version": dataset_version,
         "dataset_checksum": dataset_checksum,
         "deterministic_seed": resolved.seed,
-        "split_unit": "case",
+        "split_unit": "patient",
         "splits": splits,
         "class_balance": {name: _class_balance(truth[index]) for name, index in indices.items()},
         "threshold_tuned_on": "validation",

@@ -5,7 +5,7 @@ import "@/app/globals.css";
 
 export const metadata: Metadata = {
   title: "T21 Safe | Research Prototype",
-  description: "Patient-specific perioperative safety intelligence research prototype.",
+  description: "Local-first perioperative physiological signal research prototype.",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {

@@ -84,6 +84,7 @@ async def stream_replay(session_id: str, request: Request) -> StreamingResponse:
                     )
                     + "\n\n"
                 )
+            yield "event: end\ndata: {}\n\n"
         finally:
             await manager.remove(session_id)
 

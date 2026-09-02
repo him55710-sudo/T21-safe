@@ -1,6 +1,6 @@
 # T21 Safe web
 
-T21 Safe is a Research Use Only / Shadow Mode perioperative monitoring prototype. It displays deterministic waveform replay, patient-specific baseline calibration, signal-quality gating, an inspectable Research Instability Index, structured feature explanations, and anonymized research-session review.
+T21 Safe is a Research Use Only / Shadow Mode perioperative signal-replay prototype. It displays deterministic waveform replay, patient-specific baseline calibration, signal-quality gating, an inspectable Research Instability Index, structured feature explanations, and pseudonymous research-session review.
 
 Research prototype. Not for diagnosis, treatment, dosing, or clinical monitoring.
 
@@ -40,17 +40,18 @@ Start the FastAPI service separately, then run `pnpm dev`. The browser uses:
 - `POST /v1/analyze-window`
 - `GET /v1/evidence`
 
-The runtime validator is `lib/contracts.ts`; client integration is `lib/api.ts`.
+The backend boundary validators and response normalizers are in `lib/api.ts`; the
+normalized UI event contract is in `lib/contracts.ts`.
 
 ## Docker
 
-API mode with the product-branch contract shim:
+API mode with the deterministic signal-engine service:
 
 ```powershell
 docker compose up --build
 ```
 
-Open `http://localhost:3000`. The `api` service is the disposable `infra/api-shim`, used only until the signal-engine FastAPI service is merged.
+Open `http://localhost:3000`. The `api` service is the repository's deterministic signal-engine FastAPI service and defaults to offline operation.
 
 Frontend-only demo mode:
 
@@ -84,7 +85,7 @@ Fixture descriptors live in `fixtures/`; the exact-contract deterministic stream
 - `missing_signal_case`
 - `recovery_case`
 
-All five are labeled `SYNTHETIC`. The public-data option carries an explicit statement that it is not a verified Down syndrome case.
+All five physiological scenarios are labeled `SYNTHETIC`; the additional local contract fixture is labeled `LOCAL FIXTURE`. Browser-only demo mode contains no public waveform. In explicitly online API mode, public cases retain source-specific terms and an explicit statement that they are not verified Down syndrome cases.
 
 ## Architecture
 

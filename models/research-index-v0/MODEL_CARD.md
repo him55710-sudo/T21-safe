@@ -35,7 +35,7 @@ evaluated. Public non-DS adult data cannot establish DS performance.
 
 AUROC, AUPRC, sensitivity, specificity, PPV, NPV, false alarms/hour, median lead time,
 calibration curve, Brier score, and bootstrap confidence intervals are `NOT_EVALUATED`.
-Runtime tests cover invalid prediction and SQI failure behavior but are not performance
+Runtime tests cover withheld-output and SQI failure behavior but are not performance
 estimates.
 
 ## Signal requirements

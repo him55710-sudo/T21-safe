@@ -13,7 +13,7 @@ export function RiskTrend({ history }: { history: StreamFrame[] }) {
     )
     .join(" ");
   return (
-    <div className="risk-trend" aria-label={`Risk trend ${direction.toLowerCase()}`}>
+    <div className="risk-trend" role="group" aria-label={`Risk trend ${direction.toLowerCase()}`}>
       <div>
         <span>Trend</span>
         <strong>{direction}</strong>

@@ -18,15 +18,15 @@ Do not edit another branch's owned paths. Hand changes to that branch and review
 - `apps/web/lib/mock-stream.ts`: deterministic, synthetic UI stream
 - `apps/web/fixtures`: required fixture descriptors
 - `apps/web/tests`: component, integration, and Playwright tests
-- `apps/web/docs`: temporary product/research-facing drafts pending owner review
-- `infra/api-shim`: disposable FastAPI contract shim, not a clinical engine
+- `apps/web/docs`: product-facing research and human-factors documentation
 
 ## Install and run
 
 ```powershell
 cd apps/web
 pnpm install
-Copy-Item .env.example .env.local
+$env:NEXT_PUBLIC_API_URL = "http://127.0.0.1:8000"
+$env:NEXT_PUBLIC_DEMO_MODE = "false"
 pnpm dev
 ```
 

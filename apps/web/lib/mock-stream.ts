@@ -13,8 +13,7 @@ export type ScenarioId =
   | "artifact_case"
   | "missing_signal_case"
   | "recovery_case"
-  | "local_fixture_demo"
-  | "vitaldb_public_demo";
+  | "local_fixture_demo";
 
 export const MOCK_CASES: ResearchCase[] = [
   {
@@ -71,22 +70,13 @@ export const MOCK_CASES: ResearchCase[] = [
     license: "Project test fixture — no patient data",
     verified_ds: false,
   },
-  {
-    id: "vitaldb_public_demo",
-    name: "VitalDB public case demonstration",
-    kind: "VITALDB_PUBLIC",
-    description: "Public waveform replay placeholder used only to demonstrate signal processing.",
-    attribution: "VitalDB public data — integration placeholder; see dataset information",
-    license: "VitalDB data use terms apply",
-    verified_ds: false,
-  },
 ];
 
 export const MOCK_EVIDENCE: Evidence = {
-  model_version: "rii-demo-deterministic-v0.3.0",
-  feature_schema: "t21-safe-feature-schema-v0.2",
-  data_source: "Synthetic fixtures and non-DS public waveform integration placeholder",
-  source_population: "Non-DS research data only; synthetic scenarios are not a population",
+  model_version: "rii-v0.1",
+  feature_schema: "features-v0.1",
+  data_source: "Deterministic synthetic fixtures only",
+  source_population: "Synthetic scenarios are not a patient population",
   ds_data_availability:
     "No DS-specific calibration or validation cohort is included in this build.",
   known_limitations: [
@@ -95,8 +85,8 @@ export const MOCK_EVIDENCE: Evidence = {
     "Missing or low-quality signals can invalidate the index.",
     "Medication metadata is displayed only as a time-aligned research annotation.",
   ],
-  evidence_id: "EVD-T21S-UI-0003",
-  dataset_license: "Per-source terms; synthetic fixtures contain no patient data",
+  evidence_id: "rii-config-v0.1",
+  dataset_license: "Project test fixtures; no patient dataset license",
   model_card_url: "/docs/model-card.html",
   protocol_url: "/docs/research-protocol.html",
 };
@@ -254,7 +244,7 @@ export function createMockFrame(
     mode,
     source: {
       scenario_id: scenario,
-      synthetic: scenario !== "vitaldb_public_demo",
+      synthetic: true,
       replay_speed: 20,
     },
     patient_context: { ...DEFAULT_PATIENT_CONTEXT },

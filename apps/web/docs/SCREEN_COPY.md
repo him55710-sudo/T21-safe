@@ -4,7 +4,7 @@
 
 - `Research prototype. Not for diagnosis, treatment, dosing, or clinical monitoring.`
 - Product: `T21 Safe`
-- Tagline: `Patient-specific perioperative safety intelligence for physiologically vulnerable patients, starting with Down syndrome.`
+- Tagline: `Local-first perioperative physiological signal research.`
 
 ## Start
 

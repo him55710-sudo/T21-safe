@@ -15,7 +15,7 @@ class StrictModel(BaseModel):
 class HealthResponse(StrictModel):
     status: Literal["ok"] = "ok"
     mode: Literal["research"] = "research"
-    version: str = "0.1.0"
+    version: str = "0.2.0"
 
 
 class CaseResponse(StrictModel):
@@ -83,6 +83,7 @@ class BaselineEvent(StrictModel):
     progress: float = Field(ge=0.0, le=1.0)
     confidence: float = Field(ge=0.0, le=1.0)
     reasons: list[str]
+    values: dict[str, float | None]
 
 
 class FeaturesEvent(StrictModel):
@@ -100,7 +101,7 @@ class RiskEvent(StrictModel):
     score: float | None = Field(default=None, ge=0.0, le=100.0)
     level: RiskLevel
     valid: bool
-    horizon_seconds: int = Field(gt=0)
+    observation_context_seconds: int = Field(gt=0)
     confidence: float = Field(ge=0.0, le=1.0)
     reasons: list[str]
     model_version: str

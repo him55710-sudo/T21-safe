@@ -109,7 +109,7 @@ class RiskResult:
     level: RiskLevel
     valid: bool
     confidence: float
-    horizon_seconds: int
+    observation_context_seconds: int
     reasons: tuple[str, ...]
     model_version: str
     data_source: str

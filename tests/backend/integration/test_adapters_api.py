@@ -45,11 +45,15 @@ async def test_vitaldb_network_failure_uses_explicit_local_fallback() -> None:
 
 
 def test_api_health_cases_synthetic_sse_and_schema() -> None:
-    settings = Settings(fixture_path=FIXTURE, vitaldb_timeout_seconds=0.1)
+    settings = Settings(
+        fixture_path=FIXTURE,
+        vitaldb_timeout_seconds=0.1,
+        offline_mode=False,
+    )
     with TestClient(create_app(settings)) as client:
         health = client.get("/health")
         assert health.status_code == 200
-        assert health.json() == {"status": "ok", "mode": "research", "version": "0.1.0"}
+        assert health.json() == {"status": "ok", "mode": "research", "version": "0.2.0"}
 
         cases = client.get("/v1/cases")
         assert cases.status_code == 200
@@ -76,7 +80,7 @@ def test_api_health_cases_synthetic_sse_and_schema() -> None:
             if line.startswith("data: ")
         ]
         assert data_lines
-        final = StreamEvent.model_validate(json.loads(data_lines[-1]))
+        final = StreamEvent.model_validate(json.loads(data_lines[-2]))
         assert final.risk.valid
         assert final.disclaimer.startswith("Research prototype")
 
@@ -93,7 +97,25 @@ def test_local_fixture_sse_and_replay_session_is_single_use() -> None:
 
     assert first.status_code == 200
     assert "event: signal" in first.text
+    assert "event: end" in first.text
     assert second.status_code == 404
+
+
+def test_offline_mode_hides_and_rejects_network_backed_cases() -> None:
+    with TestClient(create_app(Settings(fixture_path=FIXTURE, offline_mode=True))) as client:
+        cases = client.get("/v1/cases")
+        assert cases.status_code == 200
+        assert all(
+            not case["case_id"].startswith(("vitaldb:", "wfdb:"))
+            for case in cases.json()
+        )
+
+        blocked = client.post(
+            "/v1/replays",
+            json={"case_id": "vitaldb:public-live", "speed": 1000.0, "baseline_seconds": 3},
+        )
+        assert blocked.status_code == 503
+        assert "OFFLINE_MODE=true" in blocked.json()["detail"]
 
 
 def test_committed_openapi_and_event_schema_match_runtime_models() -> None:

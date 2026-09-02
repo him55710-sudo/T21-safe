@@ -22,7 +22,7 @@ It does not direct patient care, infer diagnoses from waveforms, recommend medic
 
 ## Product states
 
-1. Research start: choose VitalDB public demonstration, synthetic scenario, or local fixture; inspect attribution and limitations.
+1. Research start: choose a synthetic scenario or local fixture and inspect attribution and limitations. Public adapters appear only in explicitly online API mode and are never simulated by the browser mock.
 2. Patient context: enter pseudonymous and record-derived context; unknown remains unknown.
 3. Baseline: collect 180 source seconds; show progress, available signals, SQI, stability, values, and confidence; no bypass.
 4. Live monitor: display Canvas waveforms and numeric vitals beside a quality-gated index, trend, reasons, confidence, baseline deltas, and limitations.

@@ -6,7 +6,7 @@ Last updated: 2026-09-02. These assumptions allow the product-ui branch to progr
 
 - The canonical browser contract is the Zod schema in `lib/contracts.ts`. Optional fields (`events`, per-signal quality, baseline values) extend the required core event without changing its required names or semantics.
 - `NEXT_PUBLIC_DEMO_MODE=true` means the browser uses a deterministic local generator and never requires a backend. `false` means cases, replay creation, evidence, and SSE frames come from `NEXT_PUBLIC_API_URL`.
-- The product branch does not yet contain Session 2 `services/api`. `infra/api-shim` is therefore a disposable contract integration shim, not a model implementation. At merge time, Docker should point `api` to the signal-engine service and contract tests should be rerun.
+- The integrated repository uses `services/api` as the only Docker API target. `apps/web/lib/api.ts` validates and normalizes that versioned backend contract into the UI contract; no alternate shim is part of the runtime.
 - Browser replay speed accelerates source time. A 180-second baseline remains a 180-second source interval even when displayed faster.
 - EventSource reconnect uses bounded exponential backoff. A connection interruption changes the connection label but does not itself fabricate a risk state.
 
@@ -14,7 +14,7 @@ Last updated: 2026-09-02. These assumptions allow the product-ui branch to progr
 
 - A research index is visible only when `baseline.calibrated`, `quality.usable`, `risk.valid`, and a numeric `risk.score` are all true.
 - `BASELINE` is a workflow state with no numeric score. `INVALID` is an explicit suppression state, not a high or low risk level.
-- Demo thresholds and reason ordering are deterministic fixture behavior only. They are not clinical thresholds and must be replaced by versioned output from `services/engine`.
+- Demo thresholds and reason ordering are deterministic fixture behavior only. API mode uses versioned output from `services/engine`; neither path defines clinical thresholds.
 - Confidence describes model/input support for the current research output, not certainty about a patient outcome.
 - Sustained movement is emphasized using recent-window trend direction; no UI alert is generated from one short spike.
 - Default audio state is off and no audible alarm implementation is included.

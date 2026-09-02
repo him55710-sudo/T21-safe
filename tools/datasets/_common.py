@@ -2,10 +2,10 @@ from __future__ import annotations
 
 import hashlib
 import json
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any
 from urllib.parse import urlparse
-
 
 OPEN_HOSTS = {"physionet.org", "www.physionet.org", "vitaldb.net", "www.vitaldb.net", "api.vitaldb.net"}
 

@@ -50,6 +50,7 @@ function ScreenHeader({
   mode,
   elapsed,
   connected,
+  replayComplete,
   sessionReady,
   onNavigate,
   onExit,
@@ -60,6 +61,7 @@ function ScreenHeader({
   mode: string;
   elapsed: string;
   connected: boolean;
+  replayComplete: boolean;
   sessionReady: boolean;
   onNavigate: (screen: AppScreen) => void;
   onExit: () => void;
@@ -88,12 +90,14 @@ function ScreenHeader({
           </div>
           <div className={`connection-state ${connected ? "is-connected" : "is-offline"}`}>
             <span className="status-dot" />
-            <strong>{connected ? "DATA CONNECTED" : "RECONNECTING"}</strong>
+            <strong>
+              {connected ? "DATA CONNECTED" : replayComplete ? "REPLAY COMPLETE" : "RECONNECTING"}
+            </strong>
           </div>
         </div>
       ) : (
         <p className="tagline">
-          Patient-specific perioperative safety intelligence
+          Local-first perioperative physiological signal research
           <br />
           for physiologically vulnerable patients, starting with Down syndrome.
         </p>
@@ -314,6 +318,8 @@ function CalibrationScreen({ session }: { session: ReturnType<typeof useMonitori
         onPlayChange={session.setIsPlaying}
         onSpeedChange={session.setReplaySpeed}
         onSeek={session.seek}
+        interactive={session.demoMode}
+        complete={session.replayComplete}
       />
     </main>
   );
@@ -333,7 +339,11 @@ function LiveScreen({ session }: { session: ReturnType<typeof useMonitoringSessi
           <div>
             <span className="eyebrow">
               LIVE REPLAY ·{" "}
-              {session.selectedCase.kind === "SYNTHETIC" ? "SYNTHETIC" : "PUBLIC DATA"}
+              {session.selectedCase.kind === "SYNTHETIC"
+                ? "SYNTHETIC"
+                : session.selectedCase.kind === "LOCAL_FIXTURE"
+                  ? "LOCAL FIXTURE"
+                  : "PUBLIC DATA"}
             </span>
             <strong>{session.selectedCase.name}</strong>
           </div>
@@ -446,6 +456,8 @@ function LiveScreen({ session }: { session: ReturnType<typeof useMonitoringSessi
           onPlayChange={session.setIsPlaying}
           onSpeedChange={session.setReplaySpeed}
           onSeek={session.seek}
+          interactive={session.demoMode}
+          complete={session.replayComplete}
         />
       </section>
       <ManualAnnotationDialog
@@ -651,6 +663,7 @@ export function T21SafeApp() {
         mode={session.mode}
         elapsed={formatElapsed(session.frame.timestamp_ms)}
         connected={session.connected}
+        replayComplete={session.replayComplete}
         sessionReady={session.frame.baseline.calibrated}
         onNavigate={session.setScreen}
         onExit={session.reset}

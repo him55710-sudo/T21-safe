@@ -55,6 +55,22 @@ def abrupt_change_fraction(values: FloatArray, *, z_threshold: float = 8.0) -> f
     return float(np.mean(robust_z > z_threshold))
 
 
+def relative_roughness(values: FloatArray) -> float:
+    """Return median adjacent change relative to the robust waveform span."""
+    samples = np.asarray(values, dtype=np.float64)
+    finite = samples[np.isfinite(samples)]
+    if finite.size < 3:
+        return 1.0
+    span = float(np.percentile(finite, 99) - np.percentile(finite, 1))
+    if span <= 1e-12:
+        return 1.0
+    adjacent = np.diff(samples)
+    adjacent = adjacent[np.isfinite(adjacent)]
+    if not adjacent.size:
+        return 1.0
+    return float(np.median(np.abs(adjacent)) / span)
+
+
 def summarize_artifacts(
     values: FloatArray,
     *,

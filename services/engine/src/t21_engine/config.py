@@ -24,12 +24,13 @@ class QualityConfig:
     maximum_flatline_fraction: float = 0.2
     minimum_valid_beats: int = 4
     synchronization_tolerance_ms: float = 100.0
+    maximum_source_latency_ms: float = 1000.0
 
 
 @dataclass(frozen=True, slots=True)
 class RiskConfig:
     model_version: str = "rii-v0.1"
-    horizon_seconds: int = 120
+    observation_context_seconds: int = 120
     watch_threshold: float = 25.0
     elevated_threshold: float = 50.0
     high_threshold: float = 75.0
@@ -43,7 +44,7 @@ class RiskConfig:
 class PipelineConfig:
     """Configuration pinned by version for repeatable research runs."""
 
-    config_version: str = "pipeline-v0.1"
+    config_version: str = "pipeline-v0.2"
     waveform_sample_rate_hz: float = 100.0
     feature_update_seconds: float = 1.0
     baseline_seconds: int = 180

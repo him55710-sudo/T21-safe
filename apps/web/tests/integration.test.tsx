@@ -5,7 +5,7 @@ import { CaseSelector } from "@/components/CaseSelector";
 import { EventTimeline } from "@/components/EventTimeline";
 import { ExportResearchSession } from "@/components/ExportResearchSession";
 import { T21SafeApp } from "@/components/T21SafeApp";
-import { getBackendHealth, openValidatedEventStream, startReplay } from "@/lib/api";
+import { getBackendHealth, getCases, openValidatedEventStream, startReplay } from "@/lib/api";
 import { streamFrameSchema } from "@/lib/contracts";
 import { createMockFrame, MOCK_CASES } from "@/lib/mock-stream";
 
@@ -52,13 +52,39 @@ describe("monitoring integration", () => {
       .fn()
       .mockResolvedValue({ ok: true, json: async () => ({ session_id: "session-123" }) });
     vi.stubGlobal("fetch", fetchMock);
-    await expect(startReplay("stable_case", { studySubjectId: "R-1" } as never)).resolves.toBe(
-      "session-123",
-    );
+    await expect(
+      startReplay("synthetic:stable-baseline", "GENERIC_VALIDATION_MODE", 40),
+    ).resolves.toBe("session-123");
     expect(fetchMock).toHaveBeenCalledWith(
       expect.stringContaining("/v1/replays"),
       expect.objectContaining({ method: "POST" }),
     );
+  });
+
+  it("labels PhysioNet/WFDB cases as public data rather than local fixtures", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => [
+          {
+            case_id: "wfdb:bidmc01",
+            title: "WFDB record bidmc01",
+            source: "PhysioNet/WFDB",
+            data_type: "public waveform record",
+            available_signals: ["record-dependent"],
+            is_synthetic: false,
+            ds_status: "unknown_or_non_ds",
+            clinical_use_allowed: false,
+            attribution: "Source-specific PhysioNet terms apply.",
+          },
+        ],
+      }),
+    );
+
+    const cases = await getCases();
+    expect(cases[0]?.kind).toBe("VITALDB_PUBLIC");
+    expect(cases[0]?.verified_ds).toBe(false);
   });
 
   it("reconnects after an SSE interruption", () => {
@@ -81,6 +107,30 @@ describe("monitoring integration", () => {
     vi.advanceTimersByTime(1_000);
     expect(instances).toHaveLength(2);
     close();
+  });
+
+  it("completes a server replay without scheduling a reconnect", () => {
+    vi.useFakeTimers();
+    const listeners = new Map<string, EventListener>();
+    class MockEventSource {
+      onopen: (() => void) | null = null;
+      onmessage: ((event: MessageEvent) => void) | null = null;
+      onerror: (() => void) | null = null;
+      close = vi.fn();
+      addEventListener = vi.fn((type: string, listener: EventListener) => {
+        listeners.set(type, listener);
+      });
+    }
+    vi.stubGlobal("EventSource", MockEventSource);
+    const connection = vi.fn();
+    const complete = vi.fn();
+
+    openValidatedEventStream("session-1", vi.fn(), connection, complete);
+    listeners.get("end")?.(new Event("end"));
+    vi.advanceTimersByTime(10_000);
+
+    expect(connection).toHaveBeenLastCalledWith(false);
+    expect(complete).toHaveBeenCalledOnce();
   });
 
   it("updates the event timeline", () => {

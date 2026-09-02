@@ -1,7 +1,11 @@
 services:
   api:
     build:
-      context: ./infra/api-shim
+      context: .
+      dockerfile: services/api/Dockerfile
+    environment:
+      OFFLINE_MODE: "${OFFLINE_MODE:-true}"
+      T21_ALLOWED_ORIGINS: "http://localhost:3000,http://127.0.0.1:3000"
     ports:
       - "8000:8000"
     healthcheck:
@@ -16,6 +20,9 @@ services:
       timeout: 3s
       retries: 5
     restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp
 
   web:
     build:

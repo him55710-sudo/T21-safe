@@ -38,6 +38,28 @@ def assess_uncertainty(
     if features.valid_beat_count < quality_config.minimum_valid_beats:
         invalid_reasons.append("The feature window contains too few valid beats.")
 
+    low_quality_modalities = [
+        name
+        for name, value in (
+            ("ECG", quality.ecg_sqi),
+            ("PPG", quality.ppg_sqi),
+            ("ABP", quality.abp_sqi),
+        )
+        if value is not None and value < quality_config.minimum_sqi
+    ]
+    if low_quality_modalities and not invalid_reasons:
+        multiplier *= 0.5
+        caution_reasons.append(
+            f"Low-quality {', '.join(low_quality_modalities)} input reduces confidence."
+        )
+    if quality.unavailable_signals and not invalid_reasons:
+        multiplier *= 0.6
+        caution_reasons.append(
+            "Missing core signal modalities reduce confidence: "
+            + ", ".join(quality.unavailable_signals)
+            + "."
+        )
+
     ranges = {
         "current_hr_bpm": (20.0, 220.0),
         "current_map_mm_hg": (20.0, 200.0),

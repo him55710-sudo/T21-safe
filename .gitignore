@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+.venv/
+
+# Raw/public/patient data must remain outside the Git checkout.
+/data/
+/datasets/
+*.vital
+*.dat

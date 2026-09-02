@@ -4,10 +4,11 @@ import { BaselineCalibrationPanel } from "@/components/BaselineCalibrationPanel"
 import { DatasetAttribution } from "@/components/DatasetAttribution";
 import { EvidenceDrawer } from "@/components/EvidenceDrawer";
 import { ModelLimitationPanel } from "@/components/ModelLimitationPanel";
+import { ReplayControls } from "@/components/ReplayControls";
 import { ResearchRiskGauge } from "@/components/ResearchRiskGauge";
 import { SignalQualityBadge } from "@/components/SignalQualityBadge";
 import { WaveformPanel } from "@/components/WaveformPanel";
-import { createMockFrame, MOCK_CASES, MOCK_EVIDENCE } from "@/lib/mock-stream";
+import { createMockFrame, MOCK_EVIDENCE } from "@/lib/mock-stream";
 
 describe("safety-critical component states", () => {
   it("keeps primary monitor color pairs above WCAG AA contrast", () => {
@@ -81,7 +82,15 @@ describe("safety-critical component states", () => {
   });
 
   it("does not present a public case as verified DS data", () => {
-    const publicCase = MOCK_CASES.find((item) => item.kind === "VITALDB_PUBLIC")!;
+    const publicCase = {
+      id: "wfdb:example",
+      name: "Public WFDB example",
+      kind: "VITALDB_PUBLIC" as const,
+      description: "Public waveform metadata",
+      attribution: "Source-specific terms apply",
+      license: "Source-specific license",
+      verified_ds: false,
+    };
     render(<DatasetAttribution researchCase={publicCase} />);
     expect(screen.getByTestId("public-case-disclaimer")).toHaveTextContent(
       "not a verified Down syndrome case",
@@ -101,5 +110,24 @@ describe("safety-critical component states", () => {
     expect(text).not.toMatch(
       /reduce\s+propofol|administer\s+atropine|safe\s+to\s+proceed|dosing\s+recommendation/,
     );
+  });
+
+  it("marks a completed server replay and disables nonfunctional controls", () => {
+    render(
+      <ReplayControls
+        isPlaying={false}
+        speed={40}
+        timestampMs={240_000}
+        onPlayChange={() => undefined}
+        onSpeedChange={() => undefined}
+        onSeek={() => undefined}
+        interactive={false}
+        complete
+      />,
+    );
+
+    expect(screen.getByRole("button", { name: "Replay complete" })).toBeDisabled();
+    expect(screen.getByRole("slider", { name: "Replay position" })).toBeDisabled();
+    expect(screen.getByRole("combobox", { name: "Speed" })).toBeDisabled();
   });
 });

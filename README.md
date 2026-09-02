@@ -1,10 +1,10 @@
 # T21 Safe
 
-Patient-specific perioperative safety intelligence for physiologically vulnerable patients, starting with Down syndrome.
+Local-first physiological signal research for perioperative instability hypotheses.
 
 **Research prototype. Not for diagnosis, treatment, dosing, or clinical monitoring.**
 
-This branch contains the product UI and a disposable FastAPI contract shim. The prototype supports deterministic synthetic replay, signal-quality-gated index display, 180-second patient-specific baseline calibration, Canvas waveforms, structured feature explanations, evidence traceability, and anonymized research-session export.
+This repository contains a deterministic signal engine, local FastAPI service, and local dashboard. The prototype supports synthetic and explicitly enabled public-data replay, signal-quality-gated index display, 180-second patient-specific baseline calibration, Canvas waveforms, structured feature explanations, evidence traceability, and pseudonymous research-session export.
 
 ## Quick start
 
@@ -14,7 +14,7 @@ With Docker:
 docker compose up --build
 ```
 
-Open `http://localhost:3000`. This starts `web` and the product-branch `infra/api-shim`.
+Open `http://localhost:3000`. This starts the real deterministic engine API and web dashboard with `OFFLINE_MODE=true`.
 
 Frontend-only demo:
 
@@ -33,8 +33,17 @@ Copy-Item .env.example .env.local
 pnpm dev
 ```
 
-See [apps/web/README.md](apps/web/README.md) for environment variables, API contract, test commands, architecture, and fixture details. See [apps/web/docs/HANDOFF_SESSION3.md](apps/web/docs/HANDOFF_SESSION3.md) before merging the Session 2 backend.
+See [QUICKSTART.md](QUICKSTART.md) for the verified local workflow and [apps/web/README.md](apps/web/README.md) for frontend details.
+
+## Audit and readiness
+
+- [Final research readiness report](FINAL_RESEARCH_READINESS_REPORT.md)
+- [System overview](docs/architecture/SYSTEM_OVERVIEW.md) and [offline operation](docs/architecture/OFFLINE_OPERATION.md)
+- [Claim audit](docs/safety/CLAIM_AUDIT.md) and [prohibited claims](docs/safety/PROHIBITED_CLAIMS.md)
+- [Data lineage](docs/data/DATA_LINEAGE.md) and [dataset use boundaries](docs/data/DATA_USAGE_BOUNDARIES.md)
+- [Model audit](docs/model/MODEL_AUDIT.md) and [feature traceability](docs/model/FEATURE_TRACEABILITY_MATRIX.md)
+- [Reproducibility checklist](docs/REPRODUCIBILITY_CHECKLIST.md)
 
 ## Safety boundary
 
-No LLM participates in risk calculation. Real inference must come only from a version-pinned deterministic signal pipeline and verified statistical/ML model. The current fixtures and contract shim demonstrate UI states; they do not establish clinical thresholds, DS-specific calibration, or population validation.
+No LLM participates in risk calculation. The current deterministic index is an engineering hypothesis, not a fitted or clinically validated model. Synthetic and public non-DS data can verify software and generic signal processing only; they do not establish clinical thresholds, DS-specific calibration, or population performance.

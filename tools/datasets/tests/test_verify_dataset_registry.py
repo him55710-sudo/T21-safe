@@ -5,7 +5,6 @@ from pathlib import Path
 from tools.datasets._common import load_registry
 from tools.datasets.verify_dataset_registry import validate_registry
 
-
 REPO_ROOT = Path(__file__).resolve().parents[3]
 
 

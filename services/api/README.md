@@ -13,8 +13,8 @@ python -m uvicorn t21_api.main:app --host 127.0.0.1 --port 8000
 Or build from the repository root:
 
 ```powershell
-docker build -f services/api/Dockerfile -t t21-safe-api:0.1.0 .
-docker run --rm -p 8000:8000 t21-safe-api:0.1.0
+docker build -f services/api/Dockerfile -t t21-safe-api:0.2.0 .
+docker run --rm -e OFFLINE_MODE=true -p 8000:8000 t21-safe-api:0.2.0
 ```
 
 ## Contract

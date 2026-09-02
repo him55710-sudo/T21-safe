@@ -96,14 +96,21 @@ class ReplayPipeline:
                 sample_rates = {name: fs for name in processed}
                 baseline_cutoff = snapshot.timestamps_s[0] + baseline_duration
                 baseline_mask = snapshot.timestamps_s < baseline_cutoff
+                timestamp_synchronized = (
+                    batch.timestamp_synchronized
+                    and batch.synchronization_error_ms
+                    <= effective_config.quality.synchronization_tolerance_ms
+                    and snapshot.out_of_order_count == 0
+                )
                 baseline_quality = evaluate_quality(
-                    {name: values[baseline_mask] for name, values in processed.items()},
+                    {
+                        name: values[baseline_mask]
+                        for name, values in snapshot.signals.items()
+                    },
                     sample_rates,
                     effective_config.quality,
                     out_of_order_count=snapshot.out_of_order_count,
-                    timestamp_synchronized=(
-                        batch.timestamp_synchronized and snapshot.out_of_order_count == 0
-                    ),
+                    timestamp_synchronized=timestamp_synchronized,
                 )
                 baseline = calibrate_baseline(
                     snapshot.timestamps_s,
@@ -126,13 +133,14 @@ class ReplayPipeline:
                 quality_cutoff = snapshot.timestamps_s[-1] - min(60.0, baseline_duration)
                 quality_mask = snapshot.timestamps_s >= quality_cutoff
                 quality = evaluate_quality(
-                    {name: values[quality_mask] for name, values in processed.items()},
+                    {
+                        name: values[quality_mask]
+                        for name, values in snapshot.signals.items()
+                    },
                     sample_rates,
                     effective_config.quality,
                     out_of_order_count=snapshot.out_of_order_count,
-                    timestamp_synchronized=(
-                        batch.timestamp_synchronized and snapshot.out_of_order_count == 0
-                    ),
+                    timestamp_synchronized=timestamp_synchronized,
                     valid_beat_count=feature_set.valid_beat_count,
                 )
                 if snapshot.gap_fraction > effective_config.quality.maximum_gap_fraction:
@@ -146,6 +154,24 @@ class ReplayPipeline:
                                     *quality.reasons,
                                     "Network or source timestamps contain excessive gaps.",
                                 ]
+                            )
+                        ),
+                    )
+                if batch.gap_detected:
+                    quality = replace(
+                        quality,
+                        usable=False,
+                        reasons=tuple(
+                            dict.fromkeys([*quality.reasons, "The source reported a data dropout."])
+                        ),
+                    )
+                if batch.latency_ms > effective_config.quality.maximum_source_latency_ms:
+                    quality = replace(
+                        quality,
+                        usable=False,
+                        reasons=tuple(
+                            dict.fromkeys(
+                                [*quality.reasons, "The source packet is too delayed for scoring."]
                             )
                         ),
                     )
@@ -201,6 +227,13 @@ class ReplayPipeline:
                         "progress": baseline.progress,
                         "confidence": baseline.confidence,
                         "reasons": list(baseline.reasons),
+                        "values": {
+                            "hr": baseline.median_hr,
+                            "map": baseline.median_map,
+                            "ppg_amplitude": baseline.median_ppg_amplitude,
+                            "rmssd_ms": baseline.rmssd_ms,
+                            "sdnn_ms": baseline.sdnn_ms,
+                        },
                     },
                     "features": {
                         "delta_hr_pct": values.get("delta_hr_pct"),
@@ -216,7 +249,7 @@ class ReplayPipeline:
                         "score": risk.score,
                         "level": risk.level.value,
                         "valid": risk.valid,
-                        "horizon_seconds": risk.horizon_seconds,
+                        "observation_context_seconds": risk.observation_context_seconds,
                         "confidence": risk.confidence,
                         "reasons": list(risk.reasons),
                         "model_version": risk.model_version,

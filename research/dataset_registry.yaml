@@ -234,7 +234,7 @@
       "publication_doi": "10.13026/2rbc-1r03",
       "access_type": "OPEN",
       "required_training": "None",
-      "license": "Open Data Commons Attribution License 1.0",
+      "license": "PhysioNet Contributor Review Health Data License 1.5.0",
       "population": "Healthy volunteers undergoing controlled propofol sedation experiment",
       "setting": "HEALTHY_VOLUNTEER",
       "age_range": "Adult volunteers; verify participant metadata",
@@ -254,7 +254,7 @@
       "recommended_project_role": "FEATURE_VALIDATION",
       "known_biases": "Nine healthy volunteers; controlled protocol; no surgery or DS",
       "leakage_risks": "Repeated windows per participant; exposure time reveals state",
-      "license_constraints": "Attribution required",
+      "license_constraints": "Contributor Review Health Data Use Agreement 1.5.0 applies; no re-identification; review derivative-sharing terms",
       "evidence_status": "VERIFIED_OFFICIAL_INFORMATION",
       "last_verified_date": "2026-09-02"
     },
