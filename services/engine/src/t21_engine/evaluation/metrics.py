@@ -13,8 +13,15 @@ def _rank_auc(labels: np.ndarray, scores: np.ndarray) -> float | None:
     if not positives.any() or not negatives.any():
         return None
     order = np.argsort(scores, kind="stable")
-    ranks = np.empty_like(order, dtype=np.float64)
-    ranks[order] = np.arange(1, scores.size + 1)
+    sorted_scores = scores[order]
+    sorted_ranks = np.arange(1, scores.size + 1, dtype=np.float64)
+    boundaries = np.flatnonzero(np.diff(sorted_scores) != 0.0) + 1
+    starts = np.concatenate((np.asarray([0]), boundaries))
+    stops = np.concatenate((boundaries, np.asarray([scores.size])))
+    for start, stop in zip(starts, stops, strict=True):
+        sorted_ranks[start:stop] = float(np.mean(sorted_ranks[start:stop]))
+    ranks = np.empty_like(sorted_ranks)
+    ranks[order] = sorted_ranks
     positive_rank_sum = float(ranks[positives].sum())
     return float(
         (positive_rank_sum - positives.sum() * (positives.sum() + 1) / 2.0)
@@ -27,10 +34,19 @@ def _average_precision(labels: np.ndarray, scores: np.ndarray) -> float | None:
     if positives == 0:
         return None
     order = np.argsort(-scores, kind="stable")
-    ordered = labels[order]
-    cumulative = np.cumsum(ordered == 1)
-    precision = cumulative / np.arange(1, ordered.size + 1)
-    return float(np.sum(precision[ordered == 1]) / positives)
+    ordered_labels = labels[order]
+    ordered_scores = scores[order]
+    cumulative_true = np.cumsum(ordered_labels == 1)
+    cumulative_false = np.cumsum(ordered_labels == 0)
+    threshold_ends = np.concatenate(
+        (np.flatnonzero(np.diff(ordered_scores) != 0.0), np.asarray([scores.size - 1]))
+    )
+    true_at_threshold = cumulative_true[threshold_ends]
+    false_at_threshold = cumulative_false[threshold_ends]
+    precision = true_at_threshold / (true_at_threshold + false_at_threshold)
+    recall = true_at_threshold / positives
+    recall_increase = np.diff(np.concatenate((np.asarray([0.0]), recall)))
+    return float(np.sum(recall_increase * precision))
 
 
 def binary_metrics(
@@ -43,12 +59,22 @@ def binary_metrics(
     sqi_failure_mask: np.ndarray | None = None,
     lead_times_seconds: np.ndarray | None = None,
 ) -> dict[str, Any]:
-    truth = np.asarray(labels, dtype=np.int64)
+    raw_truth = np.asarray(labels)
     estimates = np.asarray(scores, dtype=np.float64)
-    if truth.shape != estimates.shape or truth.size == 0:
+    if raw_truth.ndim != 1 or estimates.ndim != 1:
+        return {"status": "NOT_EVALUATED", "reason": "labels and scores must be vectors"}
+    if raw_truth.shape != estimates.shape or raw_truth.size == 0:
         return {"status": "NOT_EVALUATED", "reason": "insufficient or misaligned data"}
-    valid = np.isfinite(estimates) if valid_mask is None else np.asarray(valid_mask, dtype=bool)
-    if valid.shape != truth.shape or not valid.any():
+    if not np.isin(raw_truth, (0, 1)).all():
+        return {"status": "NOT_EVALUATED", "reason": "labels must be binary 0/1"}
+    truth = raw_truth.astype(np.int64)
+    valid = np.ones(truth.shape, dtype=bool)
+    if valid_mask is not None:
+        valid = np.asarray(valid_mask, dtype=bool)
+        if valid.shape != truth.shape:
+            return {"status": "NOT_EVALUATED", "reason": "no valid predictions"}
+    valid = valid & np.isfinite(estimates)
+    if not valid.any():
         return {"status": "NOT_EVALUATED", "reason": "no valid predictions"}
     invalid_rate = 1.0 - float(np.mean(valid))
     truth_valid = truth[valid]

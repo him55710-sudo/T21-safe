@@ -68,6 +68,30 @@ def test_evaluation_metrics_and_bootstrap_are_reproducible() -> None:
     assert 0.0 <= interval[0] <= interval[1] <= 1.0
 
 
+def test_evaluation_metrics_are_tie_aware_and_never_validate_nan_scores() -> None:
+    tied = binary_metrics(
+        np.asarray([0, 1], dtype=np.int64),
+        np.asarray([50.0, 50.0], dtype=np.float64),
+    )
+    partly_missing = binary_metrics(
+        np.asarray([0, 1, 0], dtype=np.int64),
+        np.asarray([10.0, np.nan, 90.0], dtype=np.float64),
+        valid_mask=np.asarray([True, True, True]),
+    )
+    invalid_labels = binary_metrics(
+        np.asarray([0, 2], dtype=np.int64),
+        np.asarray([10.0, 90.0], dtype=np.float64),
+    )
+
+    assert tied["auroc"] == pytest.approx(0.5)
+    assert tied["auprc"] == pytest.approx(0.5)
+    assert partly_missing["invalid_prediction_rate"] == pytest.approx(1.0 / 3.0)
+    assert invalid_labels == {
+        "status": "NOT_EVALUATED",
+        "reason": "labels must be binary 0/1",
+    }
+
+
 def test_signal_batch_rejects_misaligned_signal_lengths() -> None:
     with pytest.raises(ValueError, match="align"):
         SignalBatch(
