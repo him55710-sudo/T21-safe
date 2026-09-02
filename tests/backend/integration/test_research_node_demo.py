@@ -1,10 +1,32 @@
 from __future__ import annotations
 
+import importlib
 import json
+import subprocess
+import sys
 from pathlib import Path
 
 import pytest
 from t21_engine.demo import main, run_demo
+
+
+def test_demo_module_is_importable() -> None:
+    module = importlib.import_module("t21_engine.demo")
+
+    assert callable(module.main)
+
+
+def test_demo_module_entrypoint_help() -> None:
+    result = subprocess.run(
+        [sys.executable, "-m", "t21_engine.demo", "--help"],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 0, result.stderr
+    assert "--output-dir" in result.stdout
+    assert "synthetic Path B / RUO research node demo" in result.stdout
 
 
 @pytest.mark.asyncio

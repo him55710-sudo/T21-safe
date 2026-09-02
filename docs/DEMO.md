@@ -13,6 +13,23 @@ python -m pip install -e "services/engine[dev]"
 python -m t21_engine.demo
 ```
 
+For a clean-environment install and entrypoint smoke test on Linux or macOS:
+
+```bash
+python3 -m venv /tmp/t21-research-node-venv
+source /tmp/t21-research-node-venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -e "services/engine[dev]"
+python -c "import t21_engine.demo"
+python -m t21_engine.demo --help
+t21-research-node-demo --help
+python -m pytest tests/backend/integration/test_research_node_demo.py -q
+```
+
+Remove an existing `/tmp/t21-research-node-venv` first, or choose a new path, when
+you need to prove the install does not depend on previously installed packages. The
+two help commands validate both supported entrypoints without running a replay.
+
 The second command is the one-command demo runner. It creates the deterministic
 synthetic hospital case, checks channel time alignment, runs the existing replay/QC
 pipeline without real-time delays, and prints one JSON report. The default run does
