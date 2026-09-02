@@ -11,3 +11,5 @@ __pycache__/
 /datasets/
 *.vital
 *.dat
+!tests/backend/fixtures/wfdb_bidmc_synthetic/
+!tests/backend/fixtures/wfdb_bidmc_synthetic/**

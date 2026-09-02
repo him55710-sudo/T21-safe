@@ -1,0 +1,3 @@
+bidmc01 1 10 20
+bidmc01.dat 80 1(0)/a.u. 8 0 120 2400 0 PLETH
+# Synthetic stand-in only; contains no BIDMC record bytes or patient data.
