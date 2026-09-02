@@ -190,10 +190,7 @@ class ReplayPipeline:
                 quality_cutoff = snapshot.timestamps_s[-1] - min(60.0, baseline_duration)
                 quality_mask = snapshot.timestamps_s >= quality_cutoff
                 quality = evaluate_quality(
-                    {
-                        name: values[quality_mask]
-                        for name, values in snapshot.signals.items()
-                    },
+                    {name: values[quality_mask] for name, values in snapshot.signals.items()},
                     sample_rates,
                     effective_config.quality,
                     out_of_order_count=snapshot.out_of_order_count,

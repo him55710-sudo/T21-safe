@@ -58,6 +58,8 @@ class QualityConfig:
             or self.synchronization_tolerance_ms < 0.0
         ):
             raise ValueError("synchronization tolerance must be non-negative and finite")
+        if not isfinite(self.maximum_source_latency_ms) or self.maximum_source_latency_ms < 0.0:
+            raise ValueError("maximum source latency must be non-negative and finite")
 
 
 @dataclass(frozen=True, slots=True)
@@ -112,8 +114,8 @@ class RiskConfig:
             0.0 <= self.watch_threshold < self.elevated_threshold < self.high_threshold <= 100.0
         ):
             raise ValueError("risk thresholds must be ordered within 0..100")
-        if self.horizon_seconds <= 0:
-            raise ValueError("risk horizon must be positive")
+        if self.observation_context_seconds <= 0:
+            raise ValueError("risk observation context must be positive")
         if not isfinite(self.hypotension_map_mm_hg) or self.hypotension_map_mm_hg <= 0.0:
             raise ValueError("hypotension MAP threshold must be positive and finite")
         if (

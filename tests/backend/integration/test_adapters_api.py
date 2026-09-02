@@ -166,7 +166,9 @@ def test_local_fixture_sse_and_replay_session_is_single_use() -> None:
 
 
 def test_offline_mode_hides_and_rejects_network_backed_cases() -> None:
-    with TestClient(create_app(Settings(fixture_path=FIXTURE, offline_mode=True))) as client:
+    with TestClient(
+        create_app(Settings(fixture_path=FIXTURE, offline_mode=True))
+    ) as client:
         cases = client.get("/v1/cases")
         assert cases.status_code == 200
         assert all(
@@ -176,7 +178,11 @@ def test_offline_mode_hides_and_rejects_network_backed_cases() -> None:
 
         blocked = client.post(
             "/v1/replays",
-            json={"case_id": "vitaldb:public-live", "speed": 1000.0, "baseline_seconds": 3},
+            json={
+                "case_id": "vitaldb:public-live",
+                "speed": 1000.0,
+                "baseline_seconds": 3,
+            },
         )
         assert blocked.status_code == 503
         assert "OFFLINE_MODE=true" in blocked.json()["detail"]

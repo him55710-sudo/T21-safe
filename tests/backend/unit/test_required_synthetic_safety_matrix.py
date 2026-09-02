@@ -8,7 +8,9 @@ from t21_engine.streaming.replay import ReplayPipeline
 
 
 async def _batch(scenario: str = "stable-baseline"):
-    return await SyntheticAdapter().load_case(f"synthetic:{scenario}", duration_seconds=20)
+    return await SyntheticAdapter().load_case(
+        f"synthetic:{scenario}", duration_seconds=20
+    )
 
 
 async def _final(batch):  # type: ignore[no-untyped-def]
@@ -24,7 +26,9 @@ async def _final(batch):  # type: ignore[no-untyped-def]
     return final
 
 
-def _assert_withheld_or_reduced(event: dict[str, object], reference: dict[str, object]) -> None:
+def _assert_withheld_or_reduced(
+    event: dict[str, object], reference: dict[str, object]
+) -> None:
     risk = event["risk"]
     reference_risk = reference["risk"]
     assert isinstance(risk, dict)

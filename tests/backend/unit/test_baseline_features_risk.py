@@ -465,6 +465,10 @@ def test_pipeline_configuration_rejects_unsafe_ranges() -> None:
         FilterConfig(ecg_low_hz=40.0, ecg_high_hz=20.0)
     with pytest.raises(ValueError, match="quality fractions"):
         QualityConfig(maximum_gap_fraction=1.1)
+    with pytest.raises(ValueError, match="maximum source latency"):
+        QualityConfig(maximum_source_latency_ms=-1.0)
+    with pytest.raises(ValueError, match="observation context"):
+        RiskConfig(observation_context_seconds=0)
     with pytest.raises(ValueError, match="feature update interval"):
         PipelineConfig(feature_update_seconds=0.0)
     with pytest.raises(ValueError, match="feature windows"):

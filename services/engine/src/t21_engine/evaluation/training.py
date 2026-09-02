@@ -94,9 +94,7 @@ def train_logistic_demo(
         )
 
     splits = patient_level_split(patient_ids, seed=resolved.seed)
-    indices = {
-        name: _indices_for_patients(patients, selected) for name, selected in splits.items()
-    }
+    indices = {name: _indices_for_patients(patients, selected) for name, selected in splits.items()}
     if any(index.size == 0 for index in indices.values()):
         raise ValueError("at least one patient is required in train, validation, and test")
     train_labels = truth[indices["train"]]
