@@ -1,7 +1,8 @@
 FROM python:3.11-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1
+    PYTHONUNBUFFERED=1 \
+    T21_FIXTURE_PATH=/app/tests/backend/fixtures/local_waveform.csv
 
 WORKDIR /app
 

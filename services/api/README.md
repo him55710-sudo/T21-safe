@@ -17,6 +17,9 @@ docker build -f services/api/Dockerfile -t t21-safe-api:0.1.0 .
 docker run --rm -p 8000:8000 t21-safe-api:0.1.0
 ```
 
+The image pins `T21_FIXTURE_PATH` to the copied, visibly synthetic fixture so the local
+demo remains available when the container has no network access.
+
 ## Contract
 
 - `GET /health` — exact service/mode/version status.

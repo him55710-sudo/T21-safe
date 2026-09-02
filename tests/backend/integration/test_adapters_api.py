@@ -144,3 +144,15 @@ def test_analyze_window_rejects_non_coarse_age_text() -> None:
         )
 
     assert response.status_code == 422
+
+
+def test_docker_image_points_to_the_copied_offline_fixture() -> None:
+    repository_root = Path(__file__).resolve().parents[3]
+    dockerfile = (repository_root / "services/api/Dockerfile").read_text(
+        encoding="utf-8"
+    )
+
+    assert "COPY tests/backend/fixtures /app/tests/backend/fixtures" in dockerfile
+    assert (
+        "T21_FIXTURE_PATH=/app/tests/backend/fixtures/local_waveform.csv" in dockerfile
+    )
