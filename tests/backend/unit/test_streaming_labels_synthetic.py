@@ -38,6 +38,20 @@ def test_generic_hypotension_candidate_requires_sustained_duration() -> None:
     assert not labels[80:].any()
 
 
+def test_generic_hypotension_candidate_does_not_count_timestamp_gaps() -> None:
+    timestamps = np.concatenate(
+        (
+            np.arange(0.0, 30.0, 1.0),
+            np.arange(90.0, 120.0, 1.0),
+        )
+    ).astype(np.float64)
+    map_values = np.full(timestamps.size, 60.0, dtype=np.float64)
+
+    labels = hypotension_candidate(timestamps, map_values)
+
+    assert not labels.any()
+
+
 @pytest.mark.asyncio
 @pytest.mark.parametrize("scenario", SCENARIOS)
 async def test_all_synthetic_scenarios_are_labeled_and_deterministic(

@@ -13,19 +13,40 @@ def _sustained_mask(
     duration_seconds: float,
 ) -> np.ndarray:
     timestamps = np.asarray(timestamps_s, dtype=np.float64)
+    active_condition = np.asarray(condition, dtype=bool)
+    if timestamps.ndim != 1 or active_condition.ndim != 1:
+        raise ValueError("condition and timestamps must be one-dimensional")
+    if timestamps.shape != active_condition.shape:
+        raise ValueError("condition and timestamps must align")
+    if duration_seconds <= 0.0 or not np.isfinite(duration_seconds):
+        raise ValueError("duration_seconds must be positive and finite")
+    if not np.isfinite(timestamps).all():
+        raise ValueError("timestamps must be finite")
+    timestamp_intervals = np.diff(timestamps)
+    if timestamp_intervals.size and np.any(timestamp_intervals <= 0.0):
+        raise ValueError("timestamps must be strictly increasing")
+    sample_interval = float(np.median(timestamp_intervals)) if timestamp_intervals.size else 0.0
+    maximum_contiguous_interval = 2.5 * sample_interval
     output = np.zeros(condition.size, dtype=bool)
     start: int | None = None
-    for index, active in enumerate(condition):
+    for index, active in enumerate(active_condition):
+        if (
+            index > 0
+            and start is not None
+            and timestamps[index] - timestamps[index - 1] > maximum_contiguous_interval
+        ):
+            start = None
         if active and start is None:
             start = index
         if not active and start is not None:
             if timestamps[index] - timestamps[start] >= duration_seconds:
                 output[start:index] = True
             start = None
-    if start is not None:
-        sample_interval = float(np.median(np.diff(timestamps))) if timestamps.size >= 2 else 0.0
-        if timestamps[-1] - timestamps[start] + sample_interval >= duration_seconds:
-            output[start:] = True
+    if (
+        start is not None
+        and timestamps[-1] - timestamps[start] + sample_interval >= duration_seconds
+    ):
+        output[start:] = True
     return output
 
 
