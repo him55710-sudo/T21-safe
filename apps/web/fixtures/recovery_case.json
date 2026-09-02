@@ -1,0 +1,8 @@
+{
+  "id": "recovery_case",
+  "label": "SYNTHETIC",
+  "expected": {
+    "trend": ["STABLE", "WATCH", "ELEVATED", "WATCH", "STABLE"],
+    "outcome": "return toward baseline"
+  }
+}

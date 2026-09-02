@@ -1,0 +1,5 @@
+{
+  "id": "artifact_case",
+  "label": "SYNTHETIC",
+  "expected": { "artifact": "ECG motion", "quality": "insufficient", "risk": "INVALID" }
+}

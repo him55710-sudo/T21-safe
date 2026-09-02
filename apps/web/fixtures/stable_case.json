@@ -1,0 +1,5 @@
+{
+  "id": "stable_case",
+  "label": "SYNTHETIC",
+  "expected": { "baseline": "stable", "quality": "good", "risk": "STABLE" }
+}
