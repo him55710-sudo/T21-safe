@@ -24,6 +24,8 @@ class WFDBCatalogMetadata:
     dataset_name: str = ""
     dataset_version: str = ""
     license_notes: str = ""
+    # CODEX-006a: only Master-promoted public bench datasets load by default.
+    public_bench_enabled: bool = False
 
 
 WFDB_CATALOG = {
@@ -37,6 +39,7 @@ WFDB_CATALOG = {
         dataset_name="BIDMC PPG and Respiration Dataset",
         dataset_version="1.0.0",
         license_notes="Open Data Commons Attribution License v1.0; cite DOI 10.13026/C2208R.",
+        public_bench_enabled=True,
     ),
     "wfdb:mitdb-100": WFDBCatalogMetadata(
         title="MIT-BIH Arrhythmia Database record 100",
@@ -48,6 +51,7 @@ WFDB_CATALOG = {
         dataset_name="MIT-BIH Arrhythmia Database",
         dataset_version="1.0.0",
         license_notes="Open Data Commons Attribution License v1.0; cite DOI 10.13026/C2F305.",
+        public_bench_enabled=False,  # CODEX-006b after Auditor Master promote
     ),
     "wfdb:ptt-s10-sit": WFDBCatalogMetadata(
         title="Pulse Transit Time PPG record s10_sit",
@@ -72,7 +76,7 @@ class WFDBAdapter(DataAdapter):
     def __init__(self, records: dict[str, tuple[str, str | None]] | None = None) -> None:
         self.records = records or {
             "wfdb:bidmc01": ("bidmc01", "bidmc/1.0.0"),
-            "wfdb:mitdb-100": ("100", "mitdb/1.0.0"),
+            # wfdb:mitdb-100 gated until CODEX-006b / Auditor Master promote
             "wfdb:ptt-s10-sit": ("s10_sit", "pulse-transit-time-ppg/1.1.0"),
             "wfdb:mimic4-preview": (
                 "83411188",

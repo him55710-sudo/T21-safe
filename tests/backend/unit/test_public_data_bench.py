@@ -171,3 +171,12 @@ async def test_path_b_safety_is_local_observe_only() -> None:
         "cloud_sinks": False,
         "login_or_rbac": False,
     }
+
+
+@pytest.mark.asyncio
+async def test_mitbih_is_gated_until_auditor_promote() -> None:
+    report = await run_public_data_bench(case_ids=("wfdb:mitdb-100",))
+
+    assert report["status"] == "FAIL"
+    assert report["cases"][0]["failure_reason_code"] == "DATASET_NOT_PROMOTED"
+    assert DEFAULT_PUBLIC_CASES == ("wfdb:bidmc01",)

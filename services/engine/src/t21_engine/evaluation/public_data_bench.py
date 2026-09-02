@@ -167,7 +167,18 @@ async def run_public_data_bench(
             local_failure = "WFDB_LOAD_FAILURE"
 
     for case_id in ordered_ids:
-        metadata = _public_metadata(WFDB_CATALOG.get(case_id))
+        catalog_entry = WFDB_CATALOG.get(case_id)
+        if catalog_entry is not None and not catalog_entry.public_bench_enabled:
+            cases.append(
+                {
+                    "case_id": case_id,
+                    "status": "FAIL",
+                    "failure_reason_code": "DATASET_NOT_PROMOTED",
+                    "sha256": checksums,
+                }
+            )
+            continue
+        metadata = _public_metadata(catalog_entry)
         if metadata is None:
             cases.append(
                 {
