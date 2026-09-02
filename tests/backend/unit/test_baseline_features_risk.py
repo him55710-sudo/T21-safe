@@ -8,7 +8,7 @@ import pytest
 from t21_engine.adapters.synthetic_adapter import SyntheticAdapter
 from t21_engine.baseline.calibration import calibrate_baseline
 from t21_engine.beats.rpeak import detect_r_peaks
-from t21_engine.config import PipelineConfig, RiskConfig
+from t21_engine.config import FilterConfig, PipelineConfig, QualityConfig, RiskConfig
 from t21_engine.features import extract_feature_windows, extract_features
 from t21_engine.features.blood_pressure import extract_blood_pressure_features
 from t21_engine.features.hrv import rr_intervals_ms, time_domain_hrv
@@ -458,3 +458,16 @@ def test_feature_extraction_uses_configured_generic_map_threshold() -> None:
     )
 
     assert features.values["map_duration_below_threshold_s"] == pytest.approx(10.0)
+
+
+def test_pipeline_configuration_rejects_unsafe_ranges() -> None:
+    with pytest.raises(ValueError, match="ECG filter cutoffs"):
+        FilterConfig(ecg_low_hz=40.0, ecg_high_hz=20.0)
+    with pytest.raises(ValueError, match="quality fractions"):
+        QualityConfig(maximum_gap_fraction=1.1)
+    with pytest.raises(ValueError, match="feature update interval"):
+        PipelineConfig(feature_update_seconds=0.0)
+    with pytest.raises(ValueError, match="feature windows"):
+        PipelineConfig(feature_windows_seconds=())
+    with pytest.raises(ValueError, match="feature windows"):
+        PipelineConfig(feature_windows_seconds=(30, 30))
