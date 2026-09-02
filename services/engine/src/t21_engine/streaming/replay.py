@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import os
 import time
 from collections.abc import AsyncIterator
 from dataclasses import replace
@@ -15,6 +16,8 @@ from t21_engine.features import extract_feature_windows
 from t21_engine.preprocessing.filters import preprocess_abp, preprocess_ecg, preprocess_ppg
 from t21_engine.quality.quality_gate import evaluate_quality
 from t21_engine.risk.deterministic_index import compute_research_instability_index
+from t21_engine.streaming.export_manifest import build_export_manifest
+from t21_engine.streaming.local_capture_writer import LocalCaptureJsonlWriter
 from t21_engine.streaming.ring_buffer import RingBuffer
 from t21_engine.streaming.shadow_capture import build_shadow_capture
 from t21_engine.types import BaselineState, PipelineMode, QualityResult, SignalBatch
@@ -82,11 +85,21 @@ class ReplayPipeline:
         speed: float = 1.0,
         real_time: bool = True,
         shadow_session_id: str | None = None,
+        local_capture_dir: str | os.PathLike[str] | None = None,
+        write_export_manifest: bool = False,
     ) -> AsyncIterator[dict[str, object]]:
         if speed <= 0.0:
             raise ValueError("speed must be positive")
+        if local_capture_dir is not None and shadow_session_id is None:
+            raise ValueError("local capture requires shadow_session_id")
+        if write_export_manifest and local_capture_dir is None:
+            raise ValueError("export manifest requires local_capture_dir")
         if shadow_session_id is not None and not batch.source.is_synthetic:
             raise ValueError("shadow capture is limited to synthetic/local replay")
+        local_capture_writer = (
+            LocalCaptureJsonlWriter(local_capture_dir) if local_capture_dir is not None else None
+        )
+        captured_event_ids: list[str] = []
         baseline_duration = baseline_seconds or self.config.baseline_seconds
         effective_config = replace(self.config, baseline_seconds=baseline_duration)
         fs = batch.sample_rates_hz.get(
@@ -324,9 +337,10 @@ class ReplayPipeline:
                     "disclaimer": DISCLAIMER,
                 }
                 if shadow_session_id is not None:
-                    event["shadow_capture"] = build_shadow_capture(
+                    event_id = f"{shadow_session_id}-{timestamp_ms}"
+                    shadow_capture = build_shadow_capture(
                         session_id=shadow_session_id,
-                        event_id=f"{shadow_session_id}-{timestamp_ms}",
+                        event_id=event_id,
                         subject_id=batch.source.case_id,
                         is_synthetic=batch.source.is_synthetic,
                         baseline_calibrated=baseline.calibrated,
@@ -337,8 +351,22 @@ class ReplayPipeline:
                         out_of_order_count=snapshot.out_of_order_count,
                         timestamp_synchronized=timestamps_synchronized,
                     )
+                    event["shadow_capture"] = shadow_capture
+                    if local_capture_writer is not None:
+                        local_capture_writer.append_capture(shadow_capture)
+                        captured_event_ids.append(event_id)
                 yield event
                 if real_time and end < batch.timestamps_s.size:
                     await asyncio.sleep(effective_config.feature_update_seconds / speed)
+            if write_export_manifest:
+                assert local_capture_writer is not None
+                assert shadow_session_id is not None
+                local_capture_writer.append_manifest(
+                    build_export_manifest(
+                        export_id=f"{shadow_session_id}-export",
+                        session_id=shadow_session_id,
+                        event_ids=tuple(captured_event_ids),
+                    )
+                )
         finally:
             buffer.clear()

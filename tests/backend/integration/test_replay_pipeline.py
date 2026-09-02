@@ -73,7 +73,9 @@ async def test_synthetic_replay_can_emit_local_observe_only_shadow_capture() -> 
         and window["clinical_decision_thresholds"] == "PI_TO_DEFINE"
         for window in capture["feature_windows"]
     )
-    assert not any(name in capture for name in ("signals", "waveforms", "raw_waveforms"))
+    assert not any(
+        name in capture for name in ("signals", "waveforms", "raw_waveforms")
+    )
 
     manifest = build_export_manifest(
         export_id="synthetic-export-001",
@@ -101,25 +103,56 @@ async def test_synthetic_shadow_capture_writes_and_reads_back_from_local_jsonl(
         speed=1000.0,
         real_time=False,
         shadow_session_id="shadow-synthetic-jsonl-001",
+        local_capture_dir=tmp_path,
+        write_export_manifest=True,
     ):
         final = event
 
     assert final is not None
     capture = final["shadow_capture"]
-    manifest = build_export_manifest(
-        export_id="synthetic-export-jsonl-001",
-        session_id=capture["session"]["session_id"],
-        event_ids=(capture["event_id"],),
-    )
     writer = LocalCaptureJsonlWriter(tmp_path)
-    writer.append_capture(capture)
-    writer.append_manifest(manifest)
 
-    lines = [json.loads(line) for line in writer.path.read_text(encoding="utf-8").splitlines()]
-    assert lines == [capture, manifest]
-    assert lines[0]["waveform_persistence"] == "NONE"
-    assert lines[1]["includes_waveforms"] is False
-    assert lines[1]["includes_phi"] is False
+    lines = [
+        json.loads(line)
+        for line in writer.path.read_text(encoding="utf-8").splitlines()
+    ]
+    captures = lines[:-1]
+    manifest = lines[-1]
+    assert captures
+    assert captures[-1] == capture
+    assert all(item["mode"] == "OBSERVE_ONLY_SHADOW" for item in captures)
+    assert all(item["session"]["contains_phi"] is False for item in captures)
+    assert all(item["waveform_persistence"] == "NONE" for item in captures)
+    assert all(
+        not any(key in item for key in ("signals", "waveforms")) for item in captures
+    )
+    assert all(
+        all(value is False for value in item["controls"].values()) for item in captures
+    )
+    assert manifest["event_ids"] == [item["event_id"] for item in captures]
+    assert manifest["storage_scope"] == "LOCAL_ONLY"
+    assert manifest["includes_waveforms"] is False
+    assert manifest["includes_phi"] is False
+    assert all(value is False for value in manifest["controls"].values())
+
+
+@pytest.mark.asyncio
+async def test_replay_local_capture_rejects_cloud_uri() -> None:
+    batch = await SyntheticAdapter().load_case(
+        "synthetic:stable-baseline", duration_seconds=8
+    )
+
+    with pytest.raises(ValueError, match="must not use a URI scheme"):
+        await anext(
+            ReplayPipeline().events(
+                batch,
+                baseline_seconds=3,
+                speed=1000.0,
+                real_time=False,
+                shadow_session_id="shadow-synthetic-cloud-001",
+                local_capture_dir="s3://research-captures",
+            )
+        )
 
 
 @pytest.mark.asyncio
