@@ -13,6 +13,9 @@ dependencies = [
   "scipy>=1.12,<2",
 ]
 
+[project.scripts]
+t21-research-node-demo = "t21_engine.demo:main"
+
 [project.optional-dependencies]
 wfdb = ["wfdb>=4.1,<5"]
 training = ["joblib>=1.4,<2", "scikit-learn>=1.5,<2"]
