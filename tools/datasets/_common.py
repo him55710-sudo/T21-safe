@@ -97,4 +97,3 @@ def require_fields(row: dict[str, Any], fields: Iterable[str], context: str) -> 
         if field not in row or row[field] is None or str(row[field]).strip() == "":
             errors.append(f"{context}: missing required field '{field}'")
     return errors
-

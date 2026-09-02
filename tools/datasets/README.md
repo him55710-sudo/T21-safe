@@ -30,4 +30,3 @@ python -m unittest discover -s tools/datasets/tests -v
 ```
 
 fixture는 synthetic text/bytes만 사용하며 실제 환자 자료를 포함하지 않는다.
-
