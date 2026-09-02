@@ -16,6 +16,23 @@
 
 Harness: `t21_engine.evaluation.public_data_bench` — seeded, fail-closed, machine-readable PASS/FAIL.
 
+### MIT-BIH-style beat detection table (CODEX-009)
+
+`t21_engine.evaluation.mitbih_beat_bench` compares `detect_r_peaks` output with a
+local `*.atr` annotation when present. Offline CI instead uses the explicitly labeled
+`100.synthetic-annotations.json`; it contains no real MIT-BIH annotation bytes. Missing
+annotations fail closed with `MISSING_ANNOTATIONS`.
+
+| Record/source | Annotated | Detected | Matched | Missed (FN) | False (FP) | Mean / median / max absolute timing error (ms) |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| `100` synthetic fixture-equivalent | 3 | 4 | 3 | 0 | 1 | 33.33 / 0 / 100 |
+
+These are deterministic engineering counts from the synthetic fixture test at a 150 ms
+match window. They are not sensitivity, specificity, clinical performance, or results on
+the public MIT-BIH waveform bytes. The JSON report schema is
+`mitbih-beat-bench/1.0`, with per-record and aggregate count/timing fields,
+`clinical_validation=false`, `proxy_ecg_only=true`, and `network_required=false`.
+
 ---
 
 ## Commits / engineering trail (facts only)
@@ -49,6 +66,8 @@ Reports include: `schema_version`, `status`, `seed`, dataset name/version/licens
 | `WFDB_LOAD_FAILURE` | Local wfdb I/O failed |
 | `MISSING_PUBLIC_METADATA` | Catalog metadata incomplete |
 | `DATASET_NOT_PROMOTED` | Catalog exists but has not been Master-promoted |
+| `MISSING_ANNOTATIONS` | Beat benchmark found neither a local `.atr` nor the labeled synthetic annotation equivalent |
+| `ANNOTATION_LOAD_FAILURE` | Beat annotations exist but cannot be parsed or do not meet the fixture provenance schema |
 | Smoke integrity | `NO_SUPPORTED_SIGNALS`, `INVALID_TIMESTAMPS`, `MISALIGNED_SIGNAL`, `NONFINITE_SIGNAL`, `MISSING_SOURCE_ATTRIBUTION` |
 
 ---

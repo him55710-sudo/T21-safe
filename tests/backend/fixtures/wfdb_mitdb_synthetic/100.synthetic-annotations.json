@@ -1,0 +1,9 @@
+{
+  "format": "synthetic_mitbih_style_beat_annotations_v1",
+  "synthetic": true,
+  "contains_real_mitbih_bytes": false,
+  "record": "100",
+  "sample_rate_hz": 10,
+  "beat_samples": [3, 9, 18],
+  "note": "Synthetic offline CI annotation equivalent; NOT real MIT-BIH .atr bytes or patient data."
+}
