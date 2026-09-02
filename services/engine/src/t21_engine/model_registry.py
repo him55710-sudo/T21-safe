@@ -18,12 +18,47 @@ def load_registry(path: Path) -> dict[str, Any]:
 def register_research_model(path: Path, entry: dict[str, Any]) -> None:
     """Atomically add a non-clinical model entry after an explicit training run."""
     registry = load_registry(path)
-    required = {"model_id", "model_version", "artifact", "feature_schema_version"}
+    required = {
+        "model_id",
+        "model_version",
+        "artifact",
+        "feature_schema_version",
+        "dataset_version",
+        "dataset_checksum",
+        "training_environment",
+        "clinical_validation",
+        "ds_validated",
+        "pediatric_validated",
+        "calibrated_probability",
+        "population_validated_on",
+        "status",
+    }
     missing = required - entry.keys()
     if missing:
         raise ValueError(f"model entry is missing required fields: {sorted(missing)}")
-    if entry.get("ds_validated") is not False or entry.get("clinical_validation") is not False:
-        raise ValueError("research registry entries must explicitly deny DS/clinical validation")
+    if any(
+        entry.get(name) is not False
+        for name in (
+            "clinical_validation",
+            "ds_validated",
+            "pediatric_validated",
+            "calibrated_probability",
+        )
+    ):
+        raise ValueError(
+            "research registry entries must explicitly deny clinical, DS, pediatric, "
+            "and calibrated-probability claims"
+        )
+    if entry.get("status") != "research_only":
+        raise ValueError("research registry entries must use research_only status")
+    if entry.get("population_validated_on") != "generic non-DS research data only":
+        raise ValueError("research registry population must remain generic non-DS")
+    for name in ("model_id", "model_version", "artifact", "dataset_version", "dataset_checksum"):
+        value = entry.get(name)
+        if not isinstance(value, str) or not value.strip():
+            raise ValueError(f"model entry field {name} must be a non-empty string")
+    if not isinstance(entry.get("training_environment"), dict):
+        raise ValueError("training_environment must be a mapping")
     models = cast(list[dict[str, Any]], registry.setdefault("models", []))
     if any(model.get("model_id") == entry["model_id"] for model in models):
         raise ValueError(f"model_id is already registered: {entry['model_id']}")
