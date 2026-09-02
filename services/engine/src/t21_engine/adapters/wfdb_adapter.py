@@ -53,6 +53,21 @@ WFDB_CATALOG = {
         license_notes="Open Data Commons Attribution License v1.0; cite DOI 10.13026/C2F305.",
         public_bench_enabled=True,
     ),
+    "wfdb:fantasia-f1o01": WFDBCatalogMetadata(
+        title="Fantasia Database record f1o01",
+        available_signals=("ECG",),
+        attribution=(
+            "Fantasia Database v1.0.0, PhysioNet; Open Data Commons Attribution "
+            "License v1.0."
+        ),
+        dataset_name="Fantasia Database",
+        dataset_version="1.0.0",
+        license_notes=(
+            "Open Data Commons Attribution License v1.0; operational PROXY bench "
+            "authorization only."
+        ),
+        public_bench_enabled=True,
+    ),
     "wfdb:ptt-s10-sit": WFDBCatalogMetadata(
         title="Pulse Transit Time PPG record s10_sit",
         available_signals=("ECG_II", "PPG"),
@@ -77,6 +92,7 @@ class WFDBAdapter(DataAdapter):
         self.records = records or {
             "wfdb:bidmc01": ("bidmc01", "bidmc/1.0.0"),
             "wfdb:mitdb-100": ("100", "mitdb/1.0.0"),
+            "wfdb:fantasia-f1o01": ("f1o01", "fantasia/1.0.0"),
             "wfdb:ptt-s10-sit": ("s10_sit", "pulse-transit-time-ppg/1.1.0"),
             "wfdb:mimic4-preview": (
                 "83411188",

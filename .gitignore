@@ -15,3 +15,5 @@ __pycache__/
 !tests/backend/fixtures/wfdb_bidmc_synthetic/**
 !tests/backend/fixtures/wfdb_mitdb_synthetic/
 !tests/backend/fixtures/wfdb_mitdb_synthetic/**
+!tests/backend/fixtures/wfdb_fantasia_synthetic/
+!tests/backend/fixtures/wfdb_fantasia_synthetic/**

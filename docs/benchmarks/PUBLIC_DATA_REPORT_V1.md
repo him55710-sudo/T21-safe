@@ -13,6 +13,7 @@
 | --- | --- | --- |
 | BIDMC PPG and Respiration v1.0.0 | Master VERIFIED public path | Local-first sample root `data/public/bidmc/1.0.0/` or CI fixture-equivalent + `sha256-manifest.json` |
 | MIT-BIH Arrhythmia v1.0.0 (catalog `wfdb:mitdb-100`) | Master VERIFIED **PROXY** public path, unlocked in CODEX-006b | Local-first root `data/public/mitdb/1.0.0/` or clearly labeled synthetic CI fixture-equivalent; `clinical_validation=false`; **no DS validation claim** |
+| Fantasia v1.0.0 (catalog `wfdb:fantasia-f1o01`) | `operational_proxy_ok`; Founder APPROVE + ODC-By VERIFIED; Notion Master PENDING | Local-first root `data/public/fantasia/1.0.0/` or synthetic fixture-equivalent + SHA-256 manifest; `clinical_validation=false`; not permanent Auditor Master verification |
 
 Harness: `t21_engine.evaluation.public_data_bench` — seeded, fail-closed, machine-readable PASS/FAIL.
 
@@ -49,6 +50,25 @@ These deterministic values exercise the offline fixture only; the fixture contai
 real BIDMC bytes or patient data. They are engineering **PROXY** results, with
 `clinical_validation=false`, and make no DS or clinical-performance claim. The report
 schema is `bidmc-align-resp-bench/1.0`.
+
+### Fantasia HRV / age-stability PROXY (CODEX-016)
+
+`t21_engine.evaluation.fantasia_hrv_age_bench` applies `time_domain_hrv` to a
+local Fantasia record, compares non-overlapping split-window summaries, and repeats the
+full calculation to expose deterministic reproducibility. It verifies the synthetic
+fixture manifest before loading the waveform and fails closed on missing data,
+provenance, checksums, WFDB loading, or insufficient RR intervals.
+
+| Record/source | RR intervals | Deterministic recompute | Age metadata | Age-stability result |
+| --- | ---: | --- | --- | --- |
+| `f1o01` synthetic fixture-equivalent | fixture/test dependent | exact | unavailable | `PI_TO_DEFINE` / unavailable |
+
+No age is assigned to the CI fixture, so no age comparison, association, or clinical age
+claim is calculated. Split-window absolute deltas are engineering diagnostics, not
+acceptance thresholds or clinical performance. Authorization is explicitly
+`operational_proxy_ok`; Notion Master remains pending due to broken auto-review, and
+`clinical_validation=false`. This is not DS/anesthesia validation and makes no PTT/PPG
+claim. Schema: `fantasia-hrv-age-bench/1.0`.
 
 ### Baseline window sensitivity (CODEX-012, synthetic)
 
@@ -105,6 +125,9 @@ Reports include: `schema_version`, `status`, `seed`, dataset name/version/licens
 | `RESP_REFERENCE_LOAD_FAILURE` | Respiration reference exists but cannot be parsed or lacks required provenance |
 | `RESP_REFERENCE_OUT_OF_RANGE` | A breath reference sample falls outside the waveform |
 | `INSUFFICIENT_DETECTIONS` | Beat/pulse/breath detections cannot produce the required engineering metrics |
+| `MISSING_MANIFEST` | Fantasia fixture has no SHA-256 manifest |
+| `INVALID_FIXTURE_PROVENANCE` | Fantasia fixture provenance or manifest is invalid |
+| `INSUFFICIENT_RR_INTERVALS` | Fantasia record has too few accepted RR intervals for split-window HRV |
 | Smoke integrity | `NO_SUPPORTED_SIGNALS`, `INVALID_TIMESTAMPS`, `MISALIGNED_SIGNAL`, `NONFINITE_SIGNAL`, `MISSING_SOURCE_ATTRIBUTION` |
 
 ---

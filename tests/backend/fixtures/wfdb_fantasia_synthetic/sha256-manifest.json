@@ -1,0 +1,13 @@
+{
+  "dataset_name": "Fantasia Database",
+  "dataset_version": "1.0.0",
+  "license_note": "Synthetic fixture-equivalent only; NOT real Fantasia or PhysioNet bytes. The public Fantasia dataset is distributed under the Open Data Commons Attribution License v1.0.",
+  "authorization": "operational_proxy_ok",
+  "clinical_validation": false,
+  "sample_kind": "synthetic_fixture_equivalent",
+  "files": {
+    "f1o01.dat": "42cd8cc14c34758cfee3e2269c3bd5a7a4783cdf4b42305b30010b6deae4af13",
+    "f1o01.hea": "16ee1876fd1f0e578b2e1566489b0b14949e37e2582b0cb3cc8cf7f0fa7c0741",
+    "f1o01.synthetic-metadata.json": "25bdca8d69e72a2affc71f828939dc58ff2a5a047953f83d086b461ed6dead90"
+  }
+}

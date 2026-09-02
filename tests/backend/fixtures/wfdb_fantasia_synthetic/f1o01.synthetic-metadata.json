@@ -1,0 +1,8 @@
+{
+  "format": "synthetic_fantasia_metadata_v1",
+  "synthetic": true,
+  "contains_real_fantasia_metadata": false,
+  "age_metadata_available": false,
+  "age_group": null,
+  "note": "No age was assigned to this synthetic fixture; age-stability interpretation is PI_TO_DEFINE."
+}

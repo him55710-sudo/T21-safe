@@ -42,6 +42,18 @@ non-claims in the public-data report.
   “BIDMC alignment / respiration-rate table (CODEX-011)”
 - Verification command: `python -m pytest tests/backend/unit/test_bidmc_align_resp_bench.py`
 
+## Fantasia HRV / age-stability PROXY
+
+- Commit: uncommitted CODEX-016 working tree
+- Module: `t21_engine.evaluation.fantasia_hrv_age_bench`
+- Report context: [`PUBLIC_DATA_REPORT_V1.md`](PUBLIC_DATA_REPORT_V1.md), section
+  “Fantasia HRV / age-stability PROXY (CODEX-016)”
+- Verification command: `python -m pytest tests/backend/unit/test_fantasia_hrv_age_bench.py`
+
+Authorization is `operational_proxy_ok`; Notion Master remains pending. The fixture has
+no age metadata, so age-stability is unavailable / `PI_TO_DEFINE`.
+`clinical_validation=false`; no DS, anesthesia, clinical age-effect, or PTT/PPG claim.
+
 ## Baseline 180 / 300
 
 - Commit: `a7d8ebd`
