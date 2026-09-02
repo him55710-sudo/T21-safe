@@ -4,7 +4,8 @@
   "license_note": "Synthetic fixture-equivalent only; not PhysioNet BIDMC data. The public BIDMC dataset is distributed under the ODC Attribution License v1.0.",
   "sample_kind": "synthetic_fixture_equivalent",
   "files": {
-    "bidmc01.dat": "7ea84b78a0a97e88018b90def1d180f622889bfd2930bfffbe54e536ab8fd0d1",
-    "bidmc01.hea": "5267d168d1d7527767feeb609120fc0c072146c01e99f921409f420562e8ac6e"
+    "bidmc01.dat": "250305bf3d496a05b21a5c6da610cc63814a5b377a6736651f6e43d82b29f6e6",
+    "bidmc01.hea": "a2850a3c3e46b6bcec64875ccf6e5cc03dbced278ba761ab12ca52c85ee4acea",
+    "bidmc01.synthetic-resp-reference.json": "f0675a5e921096d9df7494af31a19d3e4df6c1415e0b931345b5a4fddfcc9ec1"
   }
 }

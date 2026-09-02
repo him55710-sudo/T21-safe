@@ -193,7 +193,7 @@ async def run_public_data_bench(
                 expected = expected_sha256
                 if expected is None:
                     expected = _manifest_sha256(header.parent)
-                if set(expected) != set(checksums) or any(
+                if any(name not in expected for name in checksums) or any(
                     expected[name].lower().removeprefix("sha256:") != digest
                     for name, digest in checksums.items()
                 ):

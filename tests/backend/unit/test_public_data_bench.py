@@ -7,6 +7,7 @@ from types import SimpleNamespace
 
 import numpy as np
 import pytest
+
 from t21_engine.adapters.wfdb_adapter import WFDB_CATALOG
 from t21_engine.evaluation.public_data_bench import (
     DEFAULT_PUBLIC_CASES,
@@ -16,8 +17,8 @@ from t21_engine.evaluation.public_data_bench import (
 FIXTURE = Path(__file__).parents[1] / "fixtures" / "wfdb_bidmc_synthetic"
 MITDB_FIXTURE = Path(__file__).parents[1] / "fixtures" / "wfdb_mitdb_synthetic"
 EXPECTED_SHA256 = {
-    "bidmc01.hea": "5267d168d1d7527767feeb609120fc0c072146c01e99f921409f420562e8ac6e",
-    "bidmc01.dat": "7ea84b78a0a97e88018b90def1d180f622889bfd2930bfffbe54e536ab8fd0d1",
+    "bidmc01.hea": "a2850a3c3e46b6bcec64875ccf6e5cc03dbced278ba761ab12ca52c85ee4acea",
+    "bidmc01.dat": "250305bf3d496a05b21a5c6da610cc63814a5b377a6736651f6e43d82b29f6e6",
 }
 MITDB_EXPECTED_SHA256 = {
     "100.hea": "2f15c8cbb32d8dc5b50c39867ae73299e9d2a30fc2a23222c00c14700f596d86",

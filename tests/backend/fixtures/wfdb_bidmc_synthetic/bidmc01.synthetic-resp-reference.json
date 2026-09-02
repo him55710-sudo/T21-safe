@@ -1,0 +1,6 @@
+{
+  "format": "synthetic_bidmc_resp_reference_v1",
+  "synthetic": true,
+  "contains_real_bidmc_bytes": false,
+  "breath_samples": [31, 156, 281, 406, 531, 656, 781, 906, 1031, 1156, 1281, 1406]
+}

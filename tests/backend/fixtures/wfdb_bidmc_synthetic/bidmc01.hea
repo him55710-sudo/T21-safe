@@ -1,3 +1,5 @@
-bidmc01 1 10 20
-bidmc01.dat 80 1(0)/a.u. 8 0 120 2400 0 PLETH
+bidmc01 3 25 1500
+bidmc01.dat 16 1000(0)/mV 16 0 0 -5536 0 II
+bidmc01.dat 16 1000(0)/a.u. 16 0 0 18928 0 PLETH
+bidmc01.dat 16 1000(0)/a.u. 16 0 0 0 0 RESP
 # Synthetic stand-in only; contains no BIDMC record bytes or patient data.

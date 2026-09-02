@@ -33,6 +33,23 @@ the public MIT-BIH waveform bytes. The JSON report schema is
 `mitbih-beat-bench/1.0`, with per-record and aggregate count/timing fields,
 `clinical_validation=false`, `proxy_ecg_only=true`, and `network_required=false`.
 
+### BIDMC alignment / respiration-rate table (CODEX-011)
+
+`t21_engine.evaluation.bidmc_align_resp_bench` requires ECG, PPG, RESP, and a
+breath reference. It fails closed when any is unavailable. WFDB multiplexed channels
+share one sample clock, so clock-skew fields summarize their common timebase; the
+physiological ECG-to-PPG pulse-arrival value is reported separately and is not treated
+as clock error.
+
+| Record/source | Start / end sync error (ms) | ECG–PPG median pulse arrival (ms) | Reference / detected RR (breaths/min) | Absolute RR error (breaths/min) |
+| --- | ---: | ---: | ---: | ---: |
+| `bidmc01` synthetic fixture-equivalent | 0 / 0 | 200 | 12 / 12 | 0 |
+
+These deterministic values exercise the offline fixture only; the fixture contains no
+real BIDMC bytes or patient data. They are engineering **PROXY** results, with
+`clinical_validation=false`, and make no DS or clinical-performance claim. The report
+schema is `bidmc-align-resp-bench/1.0`.
+
 ---
 
 ## Commits / engineering trail (facts only)
@@ -68,6 +85,11 @@ Reports include: `schema_version`, `status`, `seed`, dataset name/version/licens
 | `DATASET_NOT_PROMOTED` | Catalog exists but has not been Master-promoted |
 | `MISSING_ANNOTATIONS` | Beat benchmark found neither a local `.atr` nor the labeled synthetic annotation equivalent |
 | `ANNOTATION_LOAD_FAILURE` | Beat annotations exist but cannot be parsed or do not meet the fixture provenance schema |
+| `MISSING_REQUIRED_CHANNEL` | BIDMC alignment bench lacks ECG, PPG, or RESP |
+| `MISSING_RESP_REFERENCE` | Neither `.breath` annotations nor the labeled synthetic respiration reference is present |
+| `RESP_REFERENCE_LOAD_FAILURE` | Respiration reference exists but cannot be parsed or lacks required provenance |
+| `RESP_REFERENCE_OUT_OF_RANGE` | A breath reference sample falls outside the waveform |
+| `INSUFFICIENT_DETECTIONS` | Beat/pulse/breath detections cannot produce the required engineering metrics |
 | Smoke integrity | `NO_SUPPORTED_SIGNALS`, `INVALID_TIMESTAMPS`, `MISALIGNED_SIGNAL`, `NONFINITE_SIGNAL`, `MISSING_SOURCE_ATTRIBUTION` |
 
 ---
