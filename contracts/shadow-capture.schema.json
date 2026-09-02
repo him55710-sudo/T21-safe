@@ -47,23 +47,35 @@
     "quality_gate": {
       "additionalProperties": false,
       "properties": {
+        "abp_sqi": { "$ref": "#/$defs/NullableSqi" },
         "artifacts": {
           "additionalProperties": { "$ref": "#/$defs/ArtifactSummary" },
           "type": "object"
         },
         "baseline_bypass": { "const": false },
         "baseline_calibrated": { "type": "boolean" },
+        "ecg_sqi": { "$ref": "#/$defs/NullableSqi" },
+        "gap_fraction": { "maximum": 1, "minimum": 0, "type": "number" },
         "implementation": {
           "const": "t21_engine.quality.quality_gate.evaluate_quality"
         },
+        "ppg_sqi": { "$ref": "#/$defs/NullableSqi" },
         "reasons": { "items": { "type": "string" }, "type": "array" },
         "threshold_status": { "const": "ENGINEERING_HYPOTHESIS_OR_PI_TO_DEFINE" },
+        "timestamp_synchronized": { "type": "boolean" },
+        "unavailable_signals": { "items": { "type": "string" }, "type": "array" },
         "usable": { "type": "boolean" }
       },
       "required": [
         "implementation",
+        "ecg_sqi",
+        "ppg_sqi",
+        "abp_sqi",
         "usable",
+        "unavailable_signals",
         "reasons",
+        "gap_fraction",
+        "timestamp_synchronized",
         "baseline_calibrated",
         "baseline_bypass",
         "threshold_status",
@@ -132,6 +144,12 @@
         "anyOf": [{ "type": "number" }, { "type": "null" }]
       },
       "type": "object"
+    },
+    "NullableSqi": {
+      "anyOf": [
+        { "maximum": 1, "minimum": 0, "type": "number" },
+        { "type": "null" }
+      ]
     }
   }
 }

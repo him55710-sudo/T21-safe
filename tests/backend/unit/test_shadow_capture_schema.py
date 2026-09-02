@@ -38,6 +38,11 @@ def test_synthetic_shadow_capture_fixture_matches_draft_2020_12_schema() -> None
         (("controls", "actuation"), True),
         (("session", "contains_phi"), True),
         (("waveform_persistence",), "LOCAL"),
+        (("quality_gate", "baseline_bypass"), True),
+        (("quality_gate", "threshold_status"), "VALIDATED"),
+        (("quality_gate", "ecg_sqi"), 1.1),
+        (("quality_gate", "gap_fraction"), -0.1),
+        (("quality_gate", "artifacts", "ecg_ii", "missing_fraction"), 1.1),
     ],
 )
 def test_schema_rejects_non_shadow_safety_values(
@@ -48,6 +53,38 @@ def test_schema_rejects_non_shadow_safety_values(
     for key in path[:-1]:
         target = target[key]
     target[path[-1]] = invalid_value
+
+    with pytest.raises(ValidationError):
+        _validator().validate(capture)
+
+
+@pytest.mark.parametrize(
+    "missing_field",
+    [
+        "ecg_sqi",
+        "ppg_sqi",
+        "abp_sqi",
+        "usable",
+        "unavailable_signals",
+        "reasons",
+        "gap_fraction",
+        "timestamp_synchronized",
+        "artifacts",
+        "baseline_bypass",
+        "threshold_status",
+    ],
+)
+def test_schema_rejects_missing_quality_gate_telemetry(missing_field: str) -> None:
+    capture = copy.deepcopy(_load_json(FIXTURE_PATH))
+    del capture["quality_gate"][missing_field]
+
+    with pytest.raises(ValidationError):
+        _validator().validate(capture)
+
+
+def test_schema_rejects_incomplete_artifact_summary() -> None:
+    capture = copy.deepcopy(_load_json(FIXTURE_PATH))
+    del capture["quality_gate"]["artifacts"]["ecg_ii"]["clipping_fraction"]
 
     with pytest.raises(ValidationError):
         _validator().validate(capture)

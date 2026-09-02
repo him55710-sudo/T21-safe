@@ -150,8 +150,24 @@ def test_shadow_capture_reuses_quality_artifacts_and_dual_reports_changes() -> N
         "emr_write": False,
     }
     assert capture["session"]["synthetic_label"] == "SYNTHETIC_DATA"
+    assert capture["quality_gate"]["ecg_sqi"] is not None
+    assert capture["quality_gate"]["ppg_sqi"] is None
+    assert capture["quality_gate"]["abp_sqi"] is None
+    assert capture["quality_gate"]["unavailable_signals"] == ["ppg", "abp"]
+    assert capture["quality_gate"]["gap_fraction"] == 0.0
+    assert capture["quality_gate"]["timestamp_synchronized"] is True
     assert capture["quality_gate"]["baseline_bypass"] is False
-    assert "ecg_ii" in capture["quality_gate"]["artifacts"]
+    assert (
+        capture["quality_gate"]["threshold_status"]
+        == "ENGINEERING_HYPOTHESIS_OR_PI_TO_DEFINE"
+    )
+    assert set(capture["quality_gate"]["artifacts"]["ecg_ii"]) == {
+        "missing_fraction",
+        "flatline_fraction",
+        "clipping_fraction",
+        "abrupt_change_fraction",
+        "implausible_fraction",
+    }
     window = capture["feature_windows"][0]
     assert window["absolute_change"]["hr_bpm"] == -6.0
     assert window["relative_change_pct"]["hr"] == -8.0

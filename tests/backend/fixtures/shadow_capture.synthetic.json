@@ -19,14 +19,28 @@
   },
   "quality_gate": {
     "implementation": "t21_engine.quality.quality_gate.evaluate_quality",
+    "ecg_sqi": 0.8,
+    "ppg_sqi": null,
+    "abp_sqi": null,
     "usable": false,
+    "unavailable_signals": ["ppg", "abp"],
     "reasons": [
       "Synthetic schema-validation fixture; no patient-care interpretation."
     ],
+    "gap_fraction": 0.0,
+    "timestamp_synchronized": true,
     "baseline_calibrated": false,
     "baseline_bypass": false,
     "threshold_status": "ENGINEERING_HYPOTHESIS_OR_PI_TO_DEFINE",
-    "artifacts": {}
+    "artifacts": {
+      "ecg_ii": {
+        "missing_fraction": 0.0,
+        "flatline_fraction": 0.0,
+        "clipping_fraction": 0.0,
+        "abrupt_change_fraction": 0.0,
+        "implausible_fraction": 0.0
+      }
+    }
   },
   "feature_windows": [],
   "waveform_persistence": "NONE"
