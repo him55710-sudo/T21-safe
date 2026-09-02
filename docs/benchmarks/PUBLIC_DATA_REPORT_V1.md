@@ -25,7 +25,7 @@ Harness: `t21_engine.evaluation.public_data_bench` — seeded, fail-closed, mach
 | CODEX-006 initial harness (MIT-BIH + BIDMC catalog + offline bench) | `f4b36f5` |
 | BIDMC-first local sha256 / wfdb I/O refine | `44ed44c` |
 | BIDMC `data/public/...` resolution + tracked manifest (006a) | `b816efa` |
-| MIT-BIH promoted for local-first PROXY bench (CODEX-006b) | see commit for this slice |
+| MIT-BIH promoted for local-first PROXY bench (CODEX-006b) | `ba514e5` |
 | Related replay JSONL sink (pre-req path) | `25586c8` (CODEX-005 #3) |
 
 Unit coverage at CODEX-006b landing: **12** `test_public_data_bench` cases passed (local CI; FastAPI adapter suite may be env-gated).
