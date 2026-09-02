@@ -1,0 +1,112 @@
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+import httpx
+import pytest
+from fastapi.testclient import TestClient
+from t21_api.main import app, create_app
+from t21_api.schemas import StreamEvent
+from t21_api.settings import Settings
+from t21_engine.adapters.local_fixture_adapter import LocalFixtureAdapter
+from t21_engine.adapters.vitaldb_adapter import VitalDBAdapter
+
+FIXTURE = Path(__file__).resolve().parents[1] / "fixtures/local_waveform.csv"
+
+
+@pytest.mark.asyncio
+async def test_local_fixture_replay_adapter() -> None:
+    batch = await LocalFixtureAdapter(FIXTURE).load_case("local:fixture")
+
+    assert batch.timestamps_s.size == 40
+    assert {"ecg_ii", "ppg", "abp", "map_mm_hg"} <= batch.signals.keys()
+    assert batch.source.clinical_use_allowed is False
+
+
+@pytest.mark.asyncio
+async def test_vitaldb_network_failure_uses_explicit_local_fallback() -> None:
+    async def fail(_request: httpx.Request) -> httpx.Response:
+        return httpx.Response(503, text="offline")
+
+    client = httpx.AsyncClient(transport=httpx.MockTransport(fail))
+    try:
+        adapter = VitalDBAdapter(
+            client=client,
+            fallback=LocalFixtureAdapter(FIXTURE),
+            timeout_seconds=0.1,
+        )
+        batch = await adapter.load_case("vitaldb:public-live", duration_seconds=3)
+    finally:
+        await client.aclose()
+
+    assert batch.source.dataset == "Local fixture"
+    assert "fallback_reason" in batch.provenance
+
+
+def test_api_health_cases_synthetic_sse_and_schema() -> None:
+    settings = Settings(fixture_path=FIXTURE, vitaldb_timeout_seconds=0.1)
+    with TestClient(create_app(settings)) as client:
+        health = client.get("/health")
+        assert health.status_code == 200
+        assert health.json() == {"status": "ok", "mode": "research", "version": "0.1.0"}
+
+        cases = client.get("/v1/cases")
+        assert cases.status_code == 200
+        public_case = next(
+            case for case in cases.json() if case["case_id"] == "vitaldb:public-live"
+        )
+        assert public_case["ds_status"] == "unknown_or_non_ds"
+        assert public_case["clinical_use_allowed"] is False
+
+        created = client.post(
+            "/v1/replays",
+            json={
+                "case_id": "synthetic:stable-baseline",
+                "speed": 1000.0,
+                "baseline_seconds": 3,
+            },
+        )
+        assert created.status_code == 201
+        stream = client.get(created.json()["stream_url"])
+        assert stream.status_code == 200
+        data_lines = [
+            line.removeprefix("data: ")
+            for line in stream.text.splitlines()
+            if line.startswith("data: ")
+        ]
+        assert data_lines
+        final = StreamEvent.model_validate(json.loads(data_lines[-1]))
+        assert final.risk.valid
+        assert final.disclaimer.startswith("Research prototype")
+
+
+def test_local_fixture_sse_and_replay_session_is_single_use() -> None:
+    with TestClient(create_app(Settings(fixture_path=FIXTURE))) as client:
+        created = client.post(
+            "/v1/replays",
+            json={"case_id": "local:fixture", "speed": 1000.0, "baseline_seconds": 3},
+        )
+        url = created.json()["stream_url"]
+        first = client.get(url)
+        second = client.get(url)
+
+    assert first.status_code == 200
+    assert "event: signal" in first.text
+    assert second.status_code == 404
+
+
+def test_committed_openapi_and_event_schema_match_runtime_models() -> None:
+    contracts = Path(__file__).resolve().parents[3] / "contracts"
+    committed_openapi = json.loads(
+        (contracts / "openapi.json").read_text(encoding="utf-8")
+    )
+    committed_event = json.loads(
+        (contracts / "event.schema.json").read_text(encoding="utf-8")
+    )
+    runtime_event = StreamEvent.model_json_schema()
+    runtime_event["$id"] = "https://t21-safe.local/contracts/event.schema.json"
+    runtime_event["$schema"] = "https://json-schema.org/draft/2020-12/schema"
+
+    assert committed_openapi == app.openapi()
+    assert committed_event == runtime_event

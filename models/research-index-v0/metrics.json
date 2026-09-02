@@ -1,0 +1,27 @@
+{
+  "status": "NOT_EVALUATED",
+  "model_version": "rii-v0.1",
+  "dataset_version": "NOT_EVALUATED",
+  "dataset_checksum": "NOT_EVALUATED",
+  "population": "non-DS research data only",
+  "metrics": {
+    "auroc": "NOT_EVALUATED",
+    "auprc": "NOT_EVALUATED",
+    "sensitivity": "NOT_EVALUATED",
+    "specificity": "NOT_EVALUATED",
+    "ppv": "NOT_EVALUATED",
+    "npv": "NOT_EVALUATED",
+    "false_alarms_per_hour": "NOT_EVALUATED",
+    "median_lead_time_seconds": "NOT_EVALUATED",
+    "calibration_curve": "NOT_EVALUATED",
+    "brier_score": "NOT_EVALUATED",
+    "invalid_prediction_rate": "NOT_EVALUATED",
+    "sqi_failure_rate": "NOT_EVALUATED",
+    "bootstrap_confidence_intervals": "NOT_EVALUATED"
+  },
+  "limitations": [
+    "No fitted statistical model is registered.",
+    "No DS or pediatric clinical validation has been performed.",
+    "Values must not be invented to replace NOT_EVALUATED."
+  ]
+}
