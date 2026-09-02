@@ -57,6 +57,14 @@ See `docs/benchmarks/BASELINE_WINDOW_SENSITIVITY.md`. Module
 pre-induction windows on synthetic hospital cases only (`clinical_validation=false`,
 `clinical_window_choice=PI_TO_DEFINE`). Not a public-data claim.
 
+### SQI / missingness impact (CODEX-013, synthetic)
+
+See `docs/benchmarks/SQI_MISSINGNESS_IMPACT.md`. Module
+`t21_engine.evaluation.sqi_missingness_impact` applies deterministic gaps/noise to
+synthetic hospital channels and reports QC pass rate plus usable analysis-window
+counts. `clinical_validation=false`; clinical threshold interpretation is
+`PI_TO_DEFINE`. Not a public-data or clinical-performance claim.
+
 ---
 
 ## Commits / engineering trail (facts only)

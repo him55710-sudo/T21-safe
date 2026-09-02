@@ -187,7 +187,13 @@ def build_synthetic_hospital_case(
     if duration_s < 10.0:
         raise ValueError("duration_s must be at least 10 seconds")
     rates = {"ecg_ii": 250.0, "ppg": 100.0, "abp": 125.0, "spo2_pct": 1.0, "resp": 25.0}
-    units = {"ecg_ii": "a.u.", "ppg": "a.u.", "abp": "a.u.", "spo2_pct": "a.u.", "resp": "a.u."}
+    units = {
+        "ecg_ii": "a.u.",
+        "ppg": "a.u.",
+        "abp": "mmHg",
+        "spo2_pct": "a.u.",
+        "resp": "a.u.",
+    }
     channels: dict[str, SyntheticChannel] = {}
     for offset, (name, rate) in enumerate(rates.items()):
         timestamps = _clock(duration_s, rate)
@@ -205,7 +211,9 @@ def build_synthetic_hospital_case(
         elif name == "abp":
             phase = np.mod(cardiac_phase - 0.16, 1.0)
             pulse = np.exp(-5.0 * phase) * (1.0 - np.exp(-35.0 * phase))
-            values = 0.55 + 0.35 * pulse + rng.normal(0.0, 0.002, timestamps.size)
+            # Keep the synthetic waveform in the units expected by the ABP SQI.
+            # These values are fixture mechanics, not clinical reference ranges.
+            values = 55.0 + 35.0 * pulse + rng.normal(0.0, 0.2, timestamps.size)
         elif name == "spo2_pct":
             values = 0.97 + 0.002 * respiratory + rng.normal(0.0, 0.0005, timestamps.size)
         else:
