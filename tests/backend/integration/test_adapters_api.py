@@ -128,3 +128,19 @@ def test_committed_openapi_and_event_schema_match_runtime_models() -> None:
 
     assert committed_openapi == app.openapi()
     assert committed_event == runtime_event
+
+
+def test_analyze_window_rejects_non_coarse_age_text() -> None:
+    with TestClient(create_app(Settings(fixture_path=FIXTURE))) as client:
+        response = client.post(
+            "/v1/analyze-window",
+            json={
+                "timestamps_s": [0.0, 1.0],
+                "signals": {"hr_bpm": [72.0, 72.0]},
+                "sample_rate_hz": 1.0,
+                "baseline_seconds": 3,
+                "age_group": "11 years 3 months",
+            },
+        )
+
+    assert response.status_code == 422

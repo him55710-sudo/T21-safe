@@ -124,6 +124,51 @@ def test_baseline_out_of_distribution_withholds_risk() -> None:
     assert any("Baseline heart rate" in reason for reason in result.reasons)
 
 
+def test_ds_hypothesis_mode_uses_same_index_but_reduces_confidence() -> None:
+    config = PipelineConfig()
+    features = FeatureSet(
+        values={
+            "current_hr_bpm": 60.0,
+            "current_map_mm_hg": 70.0,
+            "delta_hr_pct": -15.0,
+            "delta_map_pct": -12.0,
+            "beat_detection_confidence": 0.9,
+            "available_modalities": 3.0,
+        },
+        window_seconds=60,
+        valid_beat_count=10,
+    )
+    quality = QualityResult(0.9, 0.9, 0.9, True)
+    baseline = BaselineState(
+        True,
+        1.0,
+        0.9,
+        median_hr=72.0,
+        median_map=82.0,
+    )
+
+    generic = compute_research_instability_index(
+        features,
+        quality,
+        baseline,
+        PipelineMode.GENERIC_VALIDATION_MODE,
+        config,
+        data_source="test",
+    )
+    ds_hypothesis = compute_research_instability_index(
+        features,
+        quality,
+        baseline,
+        PipelineMode.DS_HYPOTHESIS_MODE,
+        config,
+        data_source="test",
+    )
+
+    assert ds_hypothesis.score == generic.score
+    assert ds_hypothesis.confidence == pytest.approx(generic.confidence * 0.5)
+    assert any("Down syndrome" in reason for reason in ds_hypothesis.reasons)
+
+
 def test_explanations_are_non_prescriptive() -> None:
     reasons = explain_features(
         {

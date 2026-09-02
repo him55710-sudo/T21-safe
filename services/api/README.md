@@ -23,7 +23,8 @@ docker run --rm -p 8000:8000 t21-safe-api:0.1.0
 - `GET /v1/cases` — public and visibly labeled synthetic case metadata and attribution.
 - `POST /v1/replays` — creates one in-memory, single-consumer replay session.
 - `GET /v1/stream/{session_id}` — SSE `signal` events; session is removed on end/cancel.
-- `POST /v1/analyze-window` — ephemeral de-identified batch analysis.
+- `POST /v1/analyze-window` — ephemeral de-identified batch analysis; age context is
+  limited to coarse enumerated groups.
 - `GET /v1/evidence` — evidence/version metadata and limitations.
 
 Example:
