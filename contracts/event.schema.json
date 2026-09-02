@@ -1,0 +1,617 @@
+{
+  "$defs": {
+    "BaselineEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "calibrated": {
+          "title": "Calibrated",
+          "type": "boolean"
+        },
+        "confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "progress": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Progress",
+          "type": "number"
+        },
+        "reasons": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Reasons",
+          "type": "array"
+        }
+      },
+      "required": [
+        "calibrated",
+        "progress",
+        "confidence",
+        "reasons"
+      ],
+      "title": "BaselineEvent",
+      "type": "object"
+    },
+    "FeaturesEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "delta_hr_pct": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Delta Hr Pct"
+        },
+        "hr_slope_bpm_min": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Hr Slope Bpm Min"
+        },
+        "map_slope_mm_hg_min": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Map Slope Mm Hg Min"
+        },
+        "ppg_amp_delta_pct": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Ppg Amp Delta Pct"
+        },
+        "ptt_ms": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Ptt Ms"
+        },
+        "rmssd_ms": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Rmssd Ms"
+        },
+        "sdnn_ms": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Sdnn Ms"
+        }
+      },
+      "required": [
+        "delta_hr_pct",
+        "hr_slope_bpm_min",
+        "rmssd_ms",
+        "sdnn_ms",
+        "ppg_amp_delta_pct",
+        "map_slope_mm_hg_min",
+        "ptt_ms"
+      ],
+      "title": "FeaturesEvent",
+      "type": "object"
+    },
+    "PatientContextEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "age_group": {
+          "title": "Age Group",
+          "type": "string"
+        },
+        "ds_status": {
+          "title": "Ds Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ds_status",
+        "age_group"
+      ],
+      "title": "PatientContextEvent",
+      "type": "object"
+    },
+    "PipelineMode": {
+      "enum": [
+        "GENERIC_VALIDATION_MODE",
+        "DS_HYPOTHESIS_MODE"
+      ],
+      "title": "PipelineMode",
+      "type": "string"
+    },
+    "ProvenanceEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "processed": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Processed",
+          "type": "object"
+        },
+        "raw": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Raw",
+          "type": "object"
+        }
+      },
+      "required": [
+        "raw",
+        "processed"
+      ],
+      "title": "ProvenanceEvent",
+      "type": "object"
+    },
+    "QualityEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "abp_sqi": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Abp Sqi"
+        },
+        "ecg_sqi": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ecg Sqi"
+        },
+        "gap_fraction": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Gap Fraction",
+          "type": "number"
+        },
+        "ppg_sqi": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ppg Sqi"
+        },
+        "reasons": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Reasons",
+          "type": "array"
+        },
+        "timestamp_synchronized": {
+          "title": "Timestamp Synchronized",
+          "type": "boolean"
+        },
+        "unavailable_signals": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Unavailable Signals",
+          "type": "array"
+        },
+        "usable": {
+          "title": "Usable",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "usable",
+        "unavailable_signals",
+        "reasons",
+        "gap_fraction",
+        "timestamp_synchronized"
+      ],
+      "title": "QualityEvent",
+      "type": "object"
+    },
+    "RiskEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "horizon_seconds": {
+          "exclusiveMinimum": 0,
+          "title": "Horizon Seconds",
+          "type": "integer"
+        },
+        "level": {
+          "$ref": "#/$defs/RiskLevel"
+        },
+        "limitations": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Limitations",
+          "type": "array"
+        },
+        "model_version": {
+          "title": "Model Version",
+          "type": "string"
+        },
+        "name": {
+          "const": "Research Instability Index",
+          "title": "Name",
+          "type": "string"
+        },
+        "population_validated_on": {
+          "title": "Population Validated On",
+          "type": "string"
+        },
+        "reasons": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Reasons",
+          "type": "array"
+        },
+        "score": {
+          "anyOf": [
+            {
+              "maximum": 100.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Score"
+        },
+        "valid": {
+          "title": "Valid",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name",
+        "level",
+        "valid",
+        "horizon_seconds",
+        "confidence",
+        "reasons",
+        "model_version",
+        "population_validated_on",
+        "limitations"
+      ],
+      "title": "RiskEvent",
+      "type": "object"
+    },
+    "RiskLevel": {
+      "enum": [
+        "BASELINE",
+        "STABLE",
+        "WATCH",
+        "ELEVATED",
+        "HIGH",
+        "INVALID"
+      ],
+      "title": "RiskLevel",
+      "type": "string"
+    },
+    "SignalsEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "abp": {
+          "items": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "title": "Abp",
+          "type": "array"
+        },
+        "dbp_mm_hg": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Dbp Mm Hg"
+        },
+        "ecg_ii": {
+          "items": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "title": "Ecg Ii",
+          "type": "array"
+        },
+        "etco2_mm_hg": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Etco2 Mm Hg"
+        },
+        "hr_bpm": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Hr Bpm"
+        },
+        "map_mm_hg": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Map Mm Hg"
+        },
+        "ppg": {
+          "items": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "title": "Ppg",
+          "type": "array"
+        },
+        "sbp_mm_hg": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Sbp Mm Hg"
+        },
+        "spo2_pct": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Spo2 Pct"
+        }
+      },
+      "required": [
+        "ecg_ii",
+        "ppg",
+        "abp",
+        "hr_bpm",
+        "sbp_mm_hg",
+        "dbp_mm_hg",
+        "map_mm_hg",
+        "spo2_pct",
+        "etco2_mm_hg"
+      ],
+      "title": "SignalsEvent",
+      "type": "object"
+    },
+    "SourceEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "attribution": {
+          "title": "Attribution",
+          "type": "string"
+        },
+        "case_id": {
+          "title": "Case Id",
+          "type": "string"
+        },
+        "data_type": {
+          "title": "Data Type",
+          "type": "string"
+        },
+        "dataset": {
+          "title": "Dataset",
+          "type": "string"
+        },
+        "is_synthetic": {
+          "title": "Is Synthetic",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "dataset",
+        "case_id",
+        "is_synthetic",
+        "attribution",
+        "data_type"
+      ],
+      "title": "SourceEvent",
+      "type": "object"
+    },
+    "TransportEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "data_gap": {
+          "title": "Data Gap",
+          "type": "boolean"
+        },
+        "out_of_order_count": {
+          "minimum": 0,
+          "title": "Out Of Order Count",
+          "type": "integer"
+        },
+        "processing_latency_ms": {
+          "minimum": 0.0,
+          "title": "Processing Latency Ms",
+          "type": "number"
+        },
+        "source_latency_ms": {
+          "minimum": 0.0,
+          "title": "Source Latency Ms",
+          "type": "number"
+        },
+        "synchronization_error_ms": {
+          "minimum": 0.0,
+          "title": "Synchronization Error Ms",
+          "type": "number"
+        }
+      },
+      "required": [
+        "source_latency_ms",
+        "processing_latency_ms",
+        "data_gap",
+        "out_of_order_count",
+        "synchronization_error_ms"
+      ],
+      "title": "TransportEvent",
+      "type": "object"
+    }
+  },
+  "$id": "https://t21-safe.local/contracts/event.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "baseline": {
+      "$ref": "#/$defs/BaselineEvent"
+    },
+    "disclaimer": {
+      "const": "Research prototype; not for diagnosis, treatment, dosing, or clinical monitoring.",
+      "title": "Disclaimer",
+      "type": "string"
+    },
+    "features": {
+      "$ref": "#/$defs/FeaturesEvent"
+    },
+    "mode": {
+      "$ref": "#/$defs/PipelineMode"
+    },
+    "patient_context": {
+      "$ref": "#/$defs/PatientContextEvent"
+    },
+    "provenance": {
+      "$ref": "#/$defs/ProvenanceEvent"
+    },
+    "quality": {
+      "$ref": "#/$defs/QualityEvent"
+    },
+    "risk": {
+      "$ref": "#/$defs/RiskEvent"
+    },
+    "signals": {
+      "$ref": "#/$defs/SignalsEvent"
+    },
+    "source": {
+      "$ref": "#/$defs/SourceEvent"
+    },
+    "timestamp_ms": {
+      "minimum": 0,
+      "title": "Timestamp Ms",
+      "type": "integer"
+    },
+    "transport": {
+      "$ref": "#/$defs/TransportEvent"
+    }
+  },
+  "required": [
+    "timestamp_ms",
+    "mode",
+    "source",
+    "patient_context",
+    "signals",
+    "quality",
+    "baseline",
+    "features",
+    "risk",
+    "transport",
+    "provenance",
+    "disclaimer"
+  ],
+  "title": "StreamEvent",
+  "type": "object"
+}
