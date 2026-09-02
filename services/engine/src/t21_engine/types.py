@@ -131,6 +131,37 @@ class FeatureSet:
 
 
 @dataclass(frozen=True, slots=True)
+class ShadowFeatureWindow:
+    """Local research capture of already-computed features; never an action request."""
+
+    window_seconds: int
+    valid_beat_count: int
+    absolute_change: dict[str, float | None]
+    relative_change_pct: dict[str, float | None]
+    hrv: dict[str, float | None]
+    limitations: tuple[str, ...]
+    evidence_status: str = "RESEARCH_HYPOTHESIS"
+    clinical_decision_thresholds: str = "PI_TO_DEFINE"
+
+
+@dataclass(frozen=True, slots=True)
+class ShadowSafetyControls:
+    """Fail-closed capabilities for an observe-only Path B session."""
+
+    actuation: bool = False
+    dosing: bool = False
+    closed_loop: bool = False
+    drug_advice: bool = False
+    emr_write: bool = False
+
+    def __post_init__(self) -> None:
+        if any((self.actuation, self.dosing, self.closed_loop, self.drug_advice, self.emr_write)):
+            raise ValueError(
+                "shadow capture rejects actuation, dosing, closed-loop, drug advice, and EMR writes"
+            )
+
+
+@dataclass(frozen=True, slots=True)
 class RiskResult:
     score: float | None
     level: RiskLevel

@@ -1,0 +1,137 @@
+{
+  "$id": "https://t21-safe.local/contracts/shadow-capture.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "controls": {
+      "additionalProperties": false,
+      "properties": {
+        "actuation": { "const": false },
+        "closed_loop": { "const": false },
+        "dosing": { "const": false },
+        "drug_advice": { "const": false },
+        "emr_write": { "const": false }
+      },
+      "required": ["actuation", "dosing", "closed_loop", "drug_advice", "emr_write"],
+      "type": "object"
+    },
+    "event_id": { "minLength": 1, "type": "string" },
+    "feature_windows": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "absolute_change": { "$ref": "#/$defs/NullableNumberMap" },
+          "clinical_decision_thresholds": { "const": "PI_TO_DEFINE" },
+          "evidence_status": { "const": "RESEARCH_HYPOTHESIS" },
+          "hrv": { "$ref": "#/$defs/NullableNumberMap" },
+          "limitations": { "items": { "type": "string" }, "type": "array" },
+          "relative_change_pct": { "$ref": "#/$defs/NullableNumberMap" },
+          "valid_beat_count": { "minimum": 0, "type": "integer" },
+          "window_seconds": { "exclusiveMinimum": 0, "type": "integer" }
+        },
+        "required": [
+          "window_seconds",
+          "valid_beat_count",
+          "absolute_change",
+          "relative_change_pct",
+          "hrv",
+          "limitations",
+          "evidence_status",
+          "clinical_decision_thresholds"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "mode": { "const": "OBSERVE_ONLY_SHADOW" },
+    "quality_gate": {
+      "additionalProperties": false,
+      "properties": {
+        "artifacts": {
+          "additionalProperties": { "$ref": "#/$defs/ArtifactSummary" },
+          "type": "object"
+        },
+        "baseline_bypass": { "const": false },
+        "baseline_calibrated": { "type": "boolean" },
+        "implementation": {
+          "const": "t21_engine.quality.quality_gate.evaluate_quality"
+        },
+        "reasons": { "items": { "type": "string" }, "type": "array" },
+        "threshold_status": { "const": "ENGINEERING_HYPOTHESIS_OR_PI_TO_DEFINE" },
+        "usable": { "type": "boolean" }
+      },
+      "required": [
+        "implementation",
+        "usable",
+        "reasons",
+        "baseline_calibrated",
+        "baseline_bypass",
+        "threshold_status",
+        "artifacts"
+      ],
+      "type": "object"
+    },
+    "session": {
+      "additionalProperties": false,
+      "properties": {
+        "contains_phi": { "const": false },
+        "is_synthetic": { "type": "boolean" },
+        "pseudonymous_ids": { "const": true },
+        "session_id": { "minLength": 1, "type": "string" },
+        "storage_scope": { "const": "LOCAL_ONLY" },
+        "subject_id": { "minLength": 1, "type": "string" },
+        "synthetic_label": {
+          "anyOf": [{ "const": "SYNTHETIC_DATA" }, { "type": "null" }]
+        }
+      },
+      "required": [
+        "session_id",
+        "subject_id",
+        "pseudonymous_ids",
+        "is_synthetic",
+        "synthetic_label",
+        "storage_scope",
+        "contains_phi"
+      ],
+      "type": "object"
+    },
+    "waveform_persistence": { "const": "NONE" }
+  },
+  "required": [
+    "session",
+    "event_id",
+    "mode",
+    "controls",
+    "quality_gate",
+    "feature_windows",
+    "waveform_persistence"
+  ],
+  "title": "ShadowCaptureEvent",
+  "type": "object",
+  "$defs": {
+    "ArtifactSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "abrupt_change_fraction": { "maximum": 1, "minimum": 0, "type": "number" },
+        "clipping_fraction": { "maximum": 1, "minimum": 0, "type": "number" },
+        "flatline_fraction": { "maximum": 1, "minimum": 0, "type": "number" },
+        "implausible_fraction": { "maximum": 1, "minimum": 0, "type": "number" },
+        "missing_fraction": { "maximum": 1, "minimum": 0, "type": "number" }
+      },
+      "required": [
+        "missing_fraction",
+        "flatline_fraction",
+        "clipping_fraction",
+        "abrupt_change_fraction",
+        "implausible_fraction"
+      ],
+      "type": "object"
+    },
+    "NullableNumberMap": {
+      "additionalProperties": {
+        "anyOf": [{ "type": "number" }, { "type": "null" }]
+      },
+      "type": "object"
+    }
+  }
+}

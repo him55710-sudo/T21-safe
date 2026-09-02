@@ -4,11 +4,14 @@ import numpy as np
 import pytest
 from t21_engine.beats.pulse_peak import detect_pulse_peaks
 from t21_engine.beats.rpeak import detect_r_peaks
+from t21_engine.config import QualityConfig
 from t21_engine.preprocessing.filters import bandpass_filter, preprocess_abp
 from t21_engine.preprocessing.resampling import resample_signal
 from t21_engine.quality.abp_sqi import compute_abp_sqi
 from t21_engine.quality.ecg_sqi import compute_ecg_sqi
 from t21_engine.quality.ppg_sqi import compute_ppg_sqi
+from t21_engine.streaming.shadow_capture import build_shadow_capture
+from t21_engine.types import FeatureSet, ShadowSafetyControls
 
 
 def test_ecg_bandpass_preserves_passband_and_does_not_mutate() -> None:
@@ -107,3 +110,79 @@ def test_resampling_keeps_latest_duplicate_and_preserves_missing_tails() -> None
     assert resampled[1] == 2.0
     assert resampled[2] == 3.0
     assert np.isnan(resampled[3])
+
+
+def test_shadow_capture_reuses_quality_artifacts_and_dual_reports_changes() -> None:
+    features = FeatureSet(
+        values={
+            "delta_hr_bpm": -6.0,
+            "delta_hr_pct": -8.0,
+            "delta_map_mm_hg": -5.0,
+            "delta_map_pct": -6.0,
+            "ppg_amplitude_delta": -0.2,
+            "ppg_amp_delta_pct": -10.0,
+            "rmssd_ms": 20.0,
+            "sdnn_ms": 30.0,
+            "lf_power": None,
+            "hf_power": None,
+            "lf_hf_ratio": None,
+        },
+        window_seconds=30,
+        valid_beat_count=12,
+    )
+    capture = build_shadow_capture(
+        session_id="shadow-synthetic-001",
+        event_id="shadow-synthetic-001-1000",
+        subject_id="synthetic-001",
+        is_synthetic=True,
+        baseline_calibrated=True,
+        quality_config=QualityConfig(minimum_sqi=0.0),
+        feature_windows={30: features},
+        signals={"ecg_ii": np.asarray([0.0, 1.0, 0.0], dtype=np.float64)},
+        sample_rates_hz={"ecg_ii": 1.0},
+    )
+
+    assert capture["controls"] == {
+        "actuation": False,
+        "dosing": False,
+        "closed_loop": False,
+        "drug_advice": False,
+        "emr_write": False,
+    }
+    assert capture["session"]["synthetic_label"] == "SYNTHETIC_DATA"
+    assert capture["quality_gate"]["baseline_bypass"] is False
+    assert "ecg_ii" in capture["quality_gate"]["artifacts"]
+    window = capture["feature_windows"][0]
+    assert window["absolute_change"]["hr_bpm"] == -6.0
+    assert window["relative_change_pct"]["hr"] == -8.0
+    assert window["evidence_status"] == "RESEARCH_HYPOTHESIS"
+    assert window["clinical_decision_thresholds"] == "PI_TO_DEFINE"
+    assert any("limited utility" in item for item in window["limitations"])
+
+
+def test_shadow_controls_reject_action_capabilities() -> None:
+    with pytest.raises(ValueError, match="rejects actuation"):
+        ShadowSafetyControls(actuation=True)
+
+
+def test_shadow_capture_withholds_baseline_changes_without_calibration() -> None:
+    features = FeatureSet(
+        values={"delta_hr_bpm": -6.0, "delta_hr_pct": -8.0},
+        window_seconds=30,
+        valid_beat_count=12,
+    )
+    capture = build_shadow_capture(
+        session_id="shadow-synthetic-001",
+        event_id="shadow-synthetic-001-1000",
+        subject_id="synthetic-001",
+        is_synthetic=True,
+        baseline_calibrated=False,
+        quality_config=QualityConfig(minimum_sqi=0.0),
+        feature_windows={30: features},
+        signals={"ecg_ii": np.asarray([0.0, 1.0, 0.0], dtype=np.float64)},
+        sample_rates_hz={"ecg_ii": 1.0},
+    )
+
+    assert capture["quality_gate"]["usable"] is False
+    assert capture["feature_windows"][0]["absolute_change"]["hr_bpm"] is None
+    assert capture["feature_windows"][0]["relative_change_pct"]["hr"] is None
