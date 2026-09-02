@@ -4,6 +4,7 @@ import copy
 from pathlib import Path
 
 import pytest
+
 from t21_engine.streaming.export_manifest import build_export_manifest
 from t21_engine.streaming.local_capture_writer import LocalCaptureJsonlWriter
 
@@ -86,3 +87,29 @@ def test_writer_appends_manifest_line(tmp_path: Path) -> None:
 
     assert writer.append_manifest(_manifest()) == tmp_path / "capture.jsonl"
     assert writer.path.read_text(encoding="utf-8").count("\n") == 1
+
+
+def test_writer_refuses_append_that_would_exceed_size_limit(tmp_path: Path) -> None:
+    first_writer = LocalCaptureJsonlWriter(tmp_path, max_file_bytes=10_000)
+    first_writer.append_manifest(_manifest())
+    original_content = first_writer.path.read_bytes()
+    bounded_writer = LocalCaptureJsonlWriter(
+        tmp_path,
+        max_file_bytes=len(original_content),
+    )
+
+    with pytest.raises(ValueError, match="exceeds max_file_bytes"):
+        bounded_writer.append_manifest(_manifest())
+
+    assert bounded_writer.path.read_bytes() == original_content
+
+
+def test_writer_refuses_single_oversized_record_without_creating_file(
+    tmp_path: Path,
+) -> None:
+    writer = LocalCaptureJsonlWriter(tmp_path, max_file_bytes=1)
+
+    with pytest.raises(ValueError, match="record exceeds max_file_bytes"):
+        writer.append_manifest(_manifest())
+
+    assert not writer.path.exists()

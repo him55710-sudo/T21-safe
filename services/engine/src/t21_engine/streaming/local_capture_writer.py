@@ -10,6 +10,7 @@ from urllib.parse import urlsplit
 
 _DISABLED_CONTROLS = ("actuation", "dosing", "closed_loop", "drug_advice", "emr_write")
 _WAVEFORM_KEYS = {"signals", "waveforms", "raw_waveforms", "raw_signals"}
+_DEFAULT_MAX_FILE_BYTES = 10 * 1024 * 1024
 
 
 def _require_disabled_controls(value: object) -> None:
@@ -71,18 +72,27 @@ class LocalCaptureJsonlWriter:
         self,
         directory: str | os.PathLike[str],
         filename: str = "shadow-capture.jsonl",
+        *,
+        max_file_bytes: int = _DEFAULT_MAX_FILE_BYTES,
     ) -> None:
         directory_text = os.fspath(directory)
         if urlsplit(directory_text).scheme:
             raise ValueError("local capture directory must not use a URI scheme")
         if not filename or Path(filename).name != filename or "://" in filename:
             raise ValueError("local capture filename must be a local basename")
+        if (
+            isinstance(max_file_bytes, bool)
+            or not isinstance(max_file_bytes, int)
+            or max_file_bytes <= 0
+        ):
+            raise ValueError("local capture max_file_bytes must be a positive integer")
 
         local_directory = Path(directory_text).expanduser()
         local_directory.mkdir(parents=True, exist_ok=True)
         if not local_directory.is_dir():
             raise ValueError("local capture directory must be a directory")
         self.path = local_directory.resolve() / filename
+        self.max_file_bytes = max_file_bytes
         if self.path.is_symlink():
             raise ValueError("local capture file must not be a symbolic link")
 
@@ -96,9 +106,14 @@ class LocalCaptureJsonlWriter:
 
     def _append(self, value: Mapping[str, object]) -> Path:
         line = json.dumps(value, allow_nan=False, separators=(",", ":"), sort_keys=True)
-        with self.path.open("a", encoding="utf-8", newline="\n") as handle:
-            handle.write(line)
-            handle.write("\n")
+        encoded_line = f"{line}\n".encode()
+        if len(encoded_line) > self.max_file_bytes:
+            raise ValueError("local capture record exceeds max_file_bytes")
+        with self.path.open("ab") as handle:
+            current_size = os.fstat(handle.fileno()).st_size
+            if current_size + len(encoded_line) > self.max_file_bytes:
+                raise ValueError("local capture file exceeds max_file_bytes")
+            handle.write(encoded_line)
             handle.flush()
             os.fsync(handle.fileno())
         return self.path
