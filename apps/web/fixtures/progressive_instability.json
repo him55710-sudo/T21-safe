@@ -1,0 +1,8 @@
+{
+  "id": "progressive_instability",
+  "label": "SYNTHETIC",
+  "expected": {
+    "trend": ["STABLE", "WATCH", "ELEVATED"],
+    "drivers": ["HR decline", "MAP decline", "PPG amplitude decline"]
+  }
+}

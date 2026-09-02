@@ -1,0 +1,1137 @@
+{
+  "components": {
+    "schemas": {
+      "AnalyzeWindowRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "age_group": {
+            "default": "unknown",
+            "maxLength": 50,
+            "title": "Age Group",
+            "type": "string"
+          },
+          "baseline_seconds": {
+            "default": 180,
+            "maximum": 600.0,
+            "minimum": 3.0,
+            "title": "Baseline Seconds",
+            "type": "integer"
+          },
+          "ds_status": {
+            "default": "unknown_or_non_ds",
+            "enum": [
+              "unknown_or_non_ds",
+              "research_hypothesis_only"
+            ],
+            "title": "Ds Status",
+            "type": "string"
+          },
+          "mode": {
+            "$ref": "#/components/schemas/PipelineMode",
+            "default": "GENERIC_VALIDATION_MODE"
+          },
+          "sample_rate_hz": {
+            "exclusiveMinimum": 0.0,
+            "maximum": 1000.0,
+            "title": "Sample Rate Hz",
+            "type": "number"
+          },
+          "signals": {
+            "additionalProperties": {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            "title": "Signals",
+            "type": "object"
+          },
+          "timestamps_s": {
+            "items": {
+              "type": "number"
+            },
+            "maxItems": 120000,
+            "minItems": 2,
+            "title": "Timestamps S",
+            "type": "array"
+          }
+        },
+        "required": [
+          "timestamps_s",
+          "signals",
+          "sample_rate_hz"
+        ],
+        "title": "AnalyzeWindowRequest",
+        "type": "object"
+      },
+      "BaselineEvent": {
+        "additionalProperties": false,
+        "properties": {
+          "calibrated": {
+            "title": "Calibrated",
+            "type": "boolean"
+          },
+          "confidence": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Confidence",
+            "type": "number"
+          },
+          "progress": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Progress",
+            "type": "number"
+          },
+          "reasons": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Reasons",
+            "type": "array"
+          },
+          "values": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "title": "Values",
+            "type": "object"
+          }
+        },
+        "required": [
+          "calibrated",
+          "progress",
+          "confidence",
+          "reasons",
+          "values"
+        ],
+        "title": "BaselineEvent",
+        "type": "object"
+      },
+      "CaseResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "attribution": {
+            "title": "Attribution",
+            "type": "string"
+          },
+          "available_signals": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Available Signals",
+            "type": "array"
+          },
+          "case_id": {
+            "title": "Case Id",
+            "type": "string"
+          },
+          "clinical_use_allowed": {
+            "title": "Clinical Use Allowed",
+            "type": "boolean"
+          },
+          "data_type": {
+            "title": "Data Type",
+            "type": "string"
+          },
+          "ds_status": {
+            "title": "Ds Status",
+            "type": "string"
+          },
+          "is_synthetic": {
+            "title": "Is Synthetic",
+            "type": "boolean"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "case_id",
+          "title",
+          "source",
+          "data_type",
+          "available_signals",
+          "is_synthetic",
+          "ds_status",
+          "clinical_use_allowed",
+          "attribution"
+        ],
+        "title": "CaseResponse",
+        "type": "object"
+      },
+      "EvidenceItem": {
+        "additionalProperties": false,
+        "properties": {
+          "applicability": {
+            "title": "Applicability",
+            "type": "string"
+          },
+          "citation": {
+            "title": "Citation",
+            "type": "string"
+          },
+          "evidence_id": {
+            "title": "Evidence Id",
+            "type": "string"
+          },
+          "feature_or_model": {
+            "title": "Feature Or Model",
+            "type": "string"
+          },
+          "limitation": {
+            "title": "Limitation",
+            "type": "string"
+          },
+          "url": {
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "evidence_id",
+          "feature_or_model",
+          "citation",
+          "url",
+          "applicability",
+          "limitation"
+        ],
+        "title": "EvidenceItem",
+        "type": "object"
+      },
+      "EvidenceResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "clinical_validation": {
+            "title": "Clinical Validation",
+            "type": "boolean"
+          },
+          "feature_schema_version": {
+            "title": "Feature Schema Version",
+            "type": "string"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/EvidenceItem"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "model_version": {
+            "title": "Model Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "model_version",
+          "feature_schema_version",
+          "clinical_validation",
+          "items"
+        ],
+        "title": "EvidenceResponse",
+        "type": "object"
+      },
+      "FeaturesEvent": {
+        "additionalProperties": false,
+        "properties": {
+          "delta_hr_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Delta Hr Pct"
+          },
+          "hr_slope_bpm_min": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hr Slope Bpm Min"
+          },
+          "map_slope_mm_hg_min": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Map Slope Mm Hg Min"
+          },
+          "ppg_amp_delta_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ppg Amp Delta Pct"
+          },
+          "ptt_ms": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ptt Ms"
+          },
+          "rmssd_ms": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rmssd Ms"
+          },
+          "sdnn_ms": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sdnn Ms"
+          }
+        },
+        "required": [
+          "delta_hr_pct",
+          "hr_slope_bpm_min",
+          "rmssd_ms",
+          "sdnn_ms",
+          "ppg_amp_delta_pct",
+          "map_slope_mm_hg_min",
+          "ptt_ms"
+        ],
+        "title": "FeaturesEvent",
+        "type": "object"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "HealthResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "mode": {
+            "const": "research",
+            "default": "research",
+            "title": "Mode",
+            "type": "string"
+          },
+          "status": {
+            "const": "ok",
+            "default": "ok",
+            "title": "Status",
+            "type": "string"
+          },
+          "version": {
+            "default": "0.2.0",
+            "title": "Version",
+            "type": "string"
+          }
+        },
+        "title": "HealthResponse",
+        "type": "object"
+      },
+      "PatientContextEvent": {
+        "additionalProperties": false,
+        "properties": {
+          "age_group": {
+            "title": "Age Group",
+            "type": "string"
+          },
+          "ds_status": {
+            "title": "Ds Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ds_status",
+          "age_group"
+        ],
+        "title": "PatientContextEvent",
+        "type": "object"
+      },
+      "PipelineMode": {
+        "enum": [
+          "GENERIC_VALIDATION_MODE",
+          "DS_HYPOTHESIS_MODE"
+        ],
+        "title": "PipelineMode",
+        "type": "string"
+      },
+      "ProvenanceEvent": {
+        "additionalProperties": false,
+        "properties": {
+          "processed": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Processed",
+            "type": "object"
+          },
+          "raw": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Raw",
+            "type": "object"
+          }
+        },
+        "required": [
+          "raw",
+          "processed"
+        ],
+        "title": "ProvenanceEvent",
+        "type": "object"
+      },
+      "QualityEvent": {
+        "additionalProperties": false,
+        "properties": {
+          "abp_sqi": {
+            "anyOf": [
+              {
+                "maximum": 1.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Abp Sqi"
+          },
+          "ecg_sqi": {
+            "anyOf": [
+              {
+                "maximum": 1.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ecg Sqi"
+          },
+          "gap_fraction": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Gap Fraction",
+            "type": "number"
+          },
+          "ppg_sqi": {
+            "anyOf": [
+              {
+                "maximum": 1.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ppg Sqi"
+          },
+          "reasons": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Reasons",
+            "type": "array"
+          },
+          "timestamp_synchronized": {
+            "title": "Timestamp Synchronized",
+            "type": "boolean"
+          },
+          "unavailable_signals": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Unavailable Signals",
+            "type": "array"
+          },
+          "usable": {
+            "title": "Usable",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "usable",
+          "unavailable_signals",
+          "reasons",
+          "gap_fraction",
+          "timestamp_synchronized"
+        ],
+        "title": "QualityEvent",
+        "type": "object"
+      },
+      "ReplayRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "baseline_seconds": {
+            "default": 180,
+            "maximum": 600.0,
+            "minimum": 3.0,
+            "title": "Baseline Seconds",
+            "type": "integer"
+          },
+          "case_id": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Case Id",
+            "type": "string"
+          },
+          "mode": {
+            "$ref": "#/components/schemas/PipelineMode",
+            "default": "GENERIC_VALIDATION_MODE"
+          },
+          "speed": {
+            "default": 1.0,
+            "exclusiveMinimum": 0.0,
+            "maximum": 1000.0,
+            "title": "Speed",
+            "type": "number"
+          }
+        },
+        "required": [
+          "case_id"
+        ],
+        "title": "ReplayRequest",
+        "type": "object"
+      },
+      "ReplayResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "session_id": {
+            "title": "Session Id",
+            "type": "string"
+          },
+          "stream_url": {
+            "title": "Stream Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "session_id",
+          "stream_url"
+        ],
+        "title": "ReplayResponse",
+        "type": "object"
+      },
+      "RiskEvent": {
+        "additionalProperties": false,
+        "properties": {
+          "confidence": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Confidence",
+            "type": "number"
+          },
+          "level": {
+            "$ref": "#/components/schemas/RiskLevel"
+          },
+          "limitations": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Limitations",
+            "type": "array"
+          },
+          "model_version": {
+            "title": "Model Version",
+            "type": "string"
+          },
+          "name": {
+            "const": "Research Instability Index",
+            "title": "Name",
+            "type": "string"
+          },
+          "observation_context_seconds": {
+            "exclusiveMinimum": 0.0,
+            "title": "Observation Context Seconds",
+            "type": "integer"
+          },
+          "population_validated_on": {
+            "title": "Population Validated On",
+            "type": "string"
+          },
+          "reasons": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Reasons",
+            "type": "array"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "maximum": 100.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score"
+          },
+          "valid": {
+            "title": "Valid",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "name",
+          "level",
+          "valid",
+          "observation_context_seconds",
+          "confidence",
+          "reasons",
+          "model_version",
+          "population_validated_on",
+          "limitations"
+        ],
+        "title": "RiskEvent",
+        "type": "object"
+      },
+      "RiskLevel": {
+        "enum": [
+          "BASELINE",
+          "STABLE",
+          "WATCH",
+          "ELEVATED",
+          "HIGH",
+          "INVALID"
+        ],
+        "title": "RiskLevel",
+        "type": "string"
+      },
+      "SignalsEvent": {
+        "additionalProperties": false,
+        "properties": {
+          "abp": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "title": "Abp",
+            "type": "array"
+          },
+          "dbp_mm_hg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dbp Mm Hg"
+          },
+          "ecg_ii": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "title": "Ecg Ii",
+            "type": "array"
+          },
+          "etco2_mm_hg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Etco2 Mm Hg"
+          },
+          "hr_bpm": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hr Bpm"
+          },
+          "map_mm_hg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Map Mm Hg"
+          },
+          "ppg": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "title": "Ppg",
+            "type": "array"
+          },
+          "sbp_mm_hg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sbp Mm Hg"
+          },
+          "spo2_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Spo2 Pct"
+          }
+        },
+        "required": [
+          "ecg_ii",
+          "ppg",
+          "abp",
+          "hr_bpm",
+          "sbp_mm_hg",
+          "dbp_mm_hg",
+          "map_mm_hg",
+          "spo2_pct",
+          "etco2_mm_hg"
+        ],
+        "title": "SignalsEvent",
+        "type": "object"
+      },
+      "SourceEvent": {
+        "additionalProperties": false,
+        "properties": {
+          "attribution": {
+            "title": "Attribution",
+            "type": "string"
+          },
+          "case_id": {
+            "title": "Case Id",
+            "type": "string"
+          },
+          "data_type": {
+            "title": "Data Type",
+            "type": "string"
+          },
+          "dataset": {
+            "title": "Dataset",
+            "type": "string"
+          },
+          "is_synthetic": {
+            "title": "Is Synthetic",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "dataset",
+          "case_id",
+          "is_synthetic",
+          "attribution",
+          "data_type"
+        ],
+        "title": "SourceEvent",
+        "type": "object"
+      },
+      "StreamEvent": {
+        "additionalProperties": false,
+        "properties": {
+          "baseline": {
+            "$ref": "#/components/schemas/BaselineEvent"
+          },
+          "disclaimer": {
+            "const": "Research prototype; not for diagnosis, treatment, dosing, or clinical monitoring.",
+            "title": "Disclaimer",
+            "type": "string"
+          },
+          "features": {
+            "$ref": "#/components/schemas/FeaturesEvent"
+          },
+          "mode": {
+            "$ref": "#/components/schemas/PipelineMode"
+          },
+          "patient_context": {
+            "$ref": "#/components/schemas/PatientContextEvent"
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/ProvenanceEvent"
+          },
+          "quality": {
+            "$ref": "#/components/schemas/QualityEvent"
+          },
+          "risk": {
+            "$ref": "#/components/schemas/RiskEvent"
+          },
+          "signals": {
+            "$ref": "#/components/schemas/SignalsEvent"
+          },
+          "source": {
+            "$ref": "#/components/schemas/SourceEvent"
+          },
+          "timestamp_ms": {
+            "minimum": 0.0,
+            "title": "Timestamp Ms",
+            "type": "integer"
+          },
+          "transport": {
+            "$ref": "#/components/schemas/TransportEvent"
+          }
+        },
+        "required": [
+          "timestamp_ms",
+          "mode",
+          "source",
+          "patient_context",
+          "signals",
+          "quality",
+          "baseline",
+          "features",
+          "risk",
+          "transport",
+          "provenance",
+          "disclaimer"
+        ],
+        "title": "StreamEvent",
+        "type": "object"
+      },
+      "TransportEvent": {
+        "additionalProperties": false,
+        "properties": {
+          "data_gap": {
+            "title": "Data Gap",
+            "type": "boolean"
+          },
+          "out_of_order_count": {
+            "minimum": 0.0,
+            "title": "Out Of Order Count",
+            "type": "integer"
+          },
+          "processing_latency_ms": {
+            "minimum": 0.0,
+            "title": "Processing Latency Ms",
+            "type": "number"
+          },
+          "source_latency_ms": {
+            "minimum": 0.0,
+            "title": "Source Latency Ms",
+            "type": "number"
+          },
+          "synchronization_error_ms": {
+            "minimum": 0.0,
+            "title": "Synchronization Error Ms",
+            "type": "number"
+          }
+        },
+        "required": [
+          "source_latency_ms",
+          "processing_latency_ms",
+          "data_gap",
+          "out_of_order_count",
+          "synchronization_error_ms"
+        ],
+        "title": "TransportEvent",
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "description": "Research Use Only / Shadow Mode. Not for diagnosis, treatment, dosing, or clinical monitoring.",
+    "title": "T21 Safe Research Signal API",
+    "version": "0.2.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/health": {
+      "get": {
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Health"
+      }
+    },
+    "/v1/analyze-window": {
+      "post": {
+        "operationId": "analyze_window_v1_analyze_window_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnalyzeWindowRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StreamEvent"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Analyze Window"
+      }
+    },
+    "/v1/cases": {
+      "get": {
+        "operationId": "cases_v1_cases_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CaseResponse"
+                  },
+                  "title": "Response Cases V1 Cases Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Cases"
+      }
+    },
+    "/v1/evidence": {
+      "get": {
+        "operationId": "evidence_v1_evidence_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvidenceResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Evidence"
+      }
+    },
+    "/v1/replays": {
+      "post": {
+        "operationId": "create_replay_v1_replays_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReplayRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReplayResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Replay"
+      }
+    },
+    "/v1/stream/{session_id}": {
+      "get": {
+        "operationId": "stream_replay_v1_stream__session_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "session_id",
+            "required": true,
+            "schema": {
+              "title": "Session Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Stream Replay"
+      }
+    }
+  }
+}

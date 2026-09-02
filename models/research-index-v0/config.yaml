@@ -1,0 +1,25 @@
+model_version: rii-v0.1
+model_type: transparent_weighted_research_index
+feature_schema_version: features-v0.1
+pipeline_config_version: pipeline-v0.2
+calibrated_probability: false
+weights:
+  relative_hr_decline: 25
+  relative_map_decline: 35
+  relative_ppg_amplitude_decline: 15
+  hr_slope: 5
+  map_slope: 10
+  low_spo2: 10
+levels:
+  watch: 25
+  elevated: 50
+  high: 75
+observation_context_seconds: 120
+safety:
+  withhold_on_invalid_quality: true
+  withhold_on_incomplete_baseline: true
+  withhold_on_reported_dropout: true
+  maximum_source_latency_ms: 1000
+  synchronization_tolerance_ms: 100
+  ds_clinically_validated: false
+  pediatric_clinically_validated: false
