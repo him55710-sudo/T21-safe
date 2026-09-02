@@ -21,6 +21,8 @@ async def test_local_fixture_replay_adapter() -> None:
 
     assert batch.timestamps_s.size == 40
     assert {"ecg_ii", "ppg", "abp", "map_mm_hg"} <= batch.signals.keys()
+    assert batch.source.is_synthetic is True
+    assert batch.source.ds_status == "synthetic_not_applicable"
     assert batch.source.clinical_use_allowed is False
 
 
@@ -40,7 +42,8 @@ async def test_vitaldb_network_failure_uses_explicit_local_fallback() -> None:
     finally:
         await client.aclose()
 
-    assert batch.source.dataset == "Local fixture"
+    assert batch.source.dataset == "Local synthetic fixture"
+    assert batch.source.is_synthetic is True
     assert "fallback_reason" in batch.provenance
 
 

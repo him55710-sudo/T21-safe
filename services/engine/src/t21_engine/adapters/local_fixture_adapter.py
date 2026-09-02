@@ -22,14 +22,14 @@ class LocalFixtureAdapter(DataAdapter):
         return [
             CaseDescriptor(
                 case_id="local:fixture",
-                title="Bundled de-identified waveform fixture",
-                source="local fixture",
-                data_type="CSV waveform",
+                title="Bundled synthetic waveform fixture",
+                source="local synthetic fixture",
+                data_type="synthetic CSV waveform",
                 available_signals=("ECG_II", "PPG", "ABP", "HR", "MAP", "SpO2"),
-                is_synthetic=False,
-                ds_status="unknown_or_non_ds",
+                is_synthetic=True,
+                ds_status="synthetic_not_applicable",
                 clinical_use_allowed=False,
-                attribution="Local development fixture; not clinical data.",
+                attribution="Generated synthetic local fixture; contains no patient records.",
             )
         ]
 
@@ -65,10 +65,12 @@ class LocalFixtureAdapter(DataAdapter):
             signals=signals,
             sample_rates_hz={name: self.sample_rate_hz for name in signals},
             source=SourceMetadata(
-                dataset="Local fixture",
+                dataset="Local synthetic fixture",
                 case_id="local:fixture",
-                is_synthetic=False,
-                attribution="Local development fixture; not clinical data.",
+                is_synthetic=True,
+                ds_status="synthetic_not_applicable",
+                attribution="Generated synthetic local fixture; contains no patient records.",
+                data_type="synthetic CSV waveform",
             ),
             provenance={name: f"raw:csv:{self.fixture_path.name}" for name in signals},
         )

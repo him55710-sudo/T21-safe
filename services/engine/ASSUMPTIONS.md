@@ -26,7 +26,8 @@ inventing clinical claims.
    cut points.
 10. The VitalDB adapter uses public, read-only endpoints and preserves CC BY 4.0
     attribution. Network, package, or track failures fall back to an explicitly labeled
-    local fixture when requested; fallback data is never represented as remotely loaded.
+    synthetic local fixture when requested; fallback data is never represented as
+    remotely loaded or as a real patient record.
 11. Drug events or infusion rates, when present, are metadata only and never become a
     dosing recommendation or a control signal.
 12. No PHI is accepted or persisted. Replay sessions are in-memory and are cleaned up

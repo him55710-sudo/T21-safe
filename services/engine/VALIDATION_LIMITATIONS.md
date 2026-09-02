@@ -5,6 +5,7 @@
 This is a software and signal-processing prototype, not a clinically validated device.
 The deterministic Research Instability Index has not been probability-calibrated, has
 not been prospectively evaluated, and has no established alert threshold.
+The bundled CSV fixture is generated synthetic data and contains no real patient record.
 
 ## Population limits
 

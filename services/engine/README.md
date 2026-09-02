@@ -39,13 +39,13 @@ Start the API with:
   4.0 attribution preserved.
 - Optional WFDB catalog entries for BIDMC, Pulse Transit Time PPG, and the MIMIC-IV
   waveform preview through the `wfdb` extra. Custom WFDB records can also be supplied.
-- Bundled small local fixture for offline transport testing.
+- Bundled small, visibly labeled synthetic local fixture for offline transport testing.
 - Pinned deterministic synthetic scenarios for stable, deteriorating, artifact, signal
   loss, desaturation, and recovery paths.
 
 Unavailable tracks do not crash the pipeline. A public-source failure can explicitly
 fall back to the local fixture, and the output then identifies the source as Local
-fixture rather than VitalDB.
+synthetic fixture rather than VitalDB or a patient record.
 
 See [SIGNAL_PIPELINE.md](SIGNAL_PIPELINE.md),
 [FEATURE_DICTIONARY.md](FEATURE_DICTIONARY.md), and

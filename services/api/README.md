@@ -20,7 +20,7 @@ docker run --rm -p 8000:8000 t21-safe-api:0.1.0
 ## Contract
 
 - `GET /health` — exact service/mode/version status.
-- `GET /v1/cases` — public/local/synthetic case metadata and attribution.
+- `GET /v1/cases` — public and visibly labeled synthetic case metadata and attribution.
 - `POST /v1/replays` — creates one in-memory, single-consumer replay session.
 - `GET /v1/stream/{session_id}` — SSE `signal` events; session is removed on end/cancel.
 - `POST /v1/analyze-window` — ephemeral de-identified batch analysis.
