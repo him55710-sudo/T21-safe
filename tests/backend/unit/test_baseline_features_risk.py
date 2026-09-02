@@ -6,8 +6,9 @@ from t21_engine.adapters.synthetic_adapter import SyntheticAdapter
 from t21_engine.baseline.calibration import calibrate_baseline
 from t21_engine.beats.rpeak import detect_r_peaks
 from t21_engine.config import PipelineConfig
-from t21_engine.features import extract_features
+from t21_engine.features import extract_feature_windows, extract_features
 from t21_engine.features.hrv import rr_intervals_ms, time_domain_hrv
+from t21_engine.features.respiratory import extract_respiratory_features
 from t21_engine.quality.quality_gate import evaluate_quality
 from t21_engine.risk.deterministic_index import compute_research_instability_index
 from t21_engine.risk.explanations import explain_features
@@ -40,8 +41,117 @@ async def test_baseline_calibration_and_features_use_patient_baseline() -> None:
 
     assert baseline.calibrated
     assert baseline.median_hr == pytest.approx(72.0, abs=0.2)
+    assert baseline.hr_distribution is not None
+    assert baseline.quality_distribution is not None
     assert features.values["delta_hr_pct"] == pytest.approx(0.0, abs=0.5)
     assert features.valid_beat_count >= 4
+
+
+@pytest.mark.asyncio
+async def test_baseline_rejects_sparse_timestamp_coverage() -> None:
+    config = PipelineConfig(baseline_seconds=5)
+    batch = await SyntheticAdapter().load_case(
+        "synthetic:stable-baseline", duration_seconds=5
+    )
+    keep = (batch.timestamps_s < 1.0) | (batch.timestamps_s >= 4.0)
+    timestamps = batch.timestamps_s[keep]
+    signals = {name: values[keep] for name, values in batch.signals.items()}
+    quality = evaluate_quality(signals, batch.sample_rates_hz, config.quality)
+
+    baseline = calibrate_baseline(
+        timestamps,
+        signals,
+        100.0,
+        quality,
+        baseline_seconds=5,
+    )
+
+    assert baseline.calibrated is False
+    assert any("coverage" in reason for reason in baseline.reasons)
+
+
+def test_configured_feature_windows_are_calculated_independently() -> None:
+    timestamps = np.arange(0.0, 200.0, 1.0, dtype=np.float64)
+    hr = np.full(timestamps.size, 72.0, dtype=np.float64)
+    hr[-20:] = np.linspace(72.0, 52.0, 20)
+    map_values = np.full(timestamps.size, 82.0, dtype=np.float64)
+    baseline = BaselineState(
+        True,
+        1.0,
+        0.9,
+        median_hr=72.0,
+        median_map=82.0,
+    )
+
+    windows = extract_feature_windows(
+        timestamps,
+        {"hr_bpm": hr, "map_mm_hg": map_values},
+        baseline,
+        1.0,
+    )
+
+    assert tuple(windows) == (30, 60, 180)
+    assert all(result.window_seconds == window for window, result in windows.items())
+    assert windows[30].values["hr_slope_bpm_min"] is not None
+    assert windows[180].values["hr_slope_bpm_min"] is not None
+    assert (
+        windows[30].values["hr_slope_bpm_min"] < windows[180].values["hr_slope_bpm_min"]
+    )
+
+
+def test_ppg_peaks_use_processed_signal_while_amplitude_uses_raw_signal() -> None:
+    sample_rate_hz = 100.0
+    timestamps = np.arange(0.0, 10.0, 1.0 / sample_rate_hz)
+    phase = np.mod(timestamps, 1.0)
+    processed_ppg = np.exp(-0.5 * ((phase - 0.3) / 0.08) ** 2).astype(np.float64)
+    raw_ppg = (10.0 + 4.0 * processed_ppg).astype(np.float64)
+    baseline = BaselineState(
+        True,
+        1.0,
+        0.9,
+        median_hr=60.0,
+        median_map=82.0,
+        median_ppg_amplitude=4.0,
+    )
+
+    features = extract_features(
+        timestamps,
+        {"ppg": processed_ppg, "map_mm_hg": np.full(timestamps.size, 82.0)},
+        baseline,
+        sample_rate_hz,
+        window_seconds=10,
+        raw_signals={"ppg": raw_ppg, "map_mm_hg": np.full(timestamps.size, 82.0)},
+    )
+
+    assert features.values["ppg_peak_confidence"] is not None
+    assert features.values["ppg_peak_confidence"] > 0.6
+    assert features.values["ppg_amplitude"] == pytest.approx(4.0, abs=0.2)
+    assert features.values["ppg_amp_delta_pct"] == pytest.approx(0.0, abs=5.0)
+
+
+def test_resp_waveform_features_detect_rate_and_prolonged_pause_candidate() -> None:
+    sample_rate_hz = 10.0
+    timestamps = np.arange(0.0, 60.0, 1.0 / sample_rate_hz)
+    regular = np.sin(2.0 * np.pi * 0.25 * timestamps).astype(np.float64)
+
+    regular_features = extract_respiratory_features(timestamps, {"resp": regular})
+    paused = regular.copy()
+    paused[(timestamps >= 20.0) & (timestamps < 36.0)] = 0.0
+    paused_features = extract_respiratory_features(timestamps, {"resp": paused})
+    unavailable = regular.copy()
+    unavailable[:200] = np.nan
+    unavailable_features = extract_respiratory_features(
+        timestamps, {"resp": unavailable}
+    )
+
+    assert regular_features["respiratory_rate_bpm"] == pytest.approx(15.0, abs=0.2)
+    assert regular_features["resp_waveform_irregularity"] == pytest.approx(
+        0.0, abs=0.02
+    )
+    assert regular_features["resp_missing_breath_candidate"] == 0.0
+    assert paused_features["resp_missing_breath_candidate"] == 1.0
+    assert unavailable_features["respiratory_rate_bpm"] is None
+    assert unavailable_features["resp_missing_breath_candidate"] is None
 
 
 def test_hrv_time_domain_metrics() -> None:
@@ -120,6 +230,121 @@ def test_baseline_out_of_distribution_withholds_risk() -> None:
     assert result.valid is False
     assert result.score is None
     assert any("Baseline heart rate" in reason for reason in result.reasons)
+
+
+def test_feature_out_of_distribution_withholds_risk() -> None:
+    config = PipelineConfig()
+    features = FeatureSet(
+        values={
+            "current_hr_bpm": 250.0,
+            "current_map_mm_hg": 80.0,
+            "beat_detection_confidence": 0.9,
+            "available_modalities": 3.0,
+        },
+        window_seconds=60,
+        valid_beat_count=10,
+    )
+    quality = QualityResult(0.9, 0.9, 0.9, True)
+    baseline = BaselineState(
+        True,
+        1.0,
+        0.9,
+        median_hr=72.0,
+        median_map=80.0,
+    )
+
+    result = compute_research_instability_index(
+        features,
+        quality,
+        baseline,
+        PipelineMode.GENERIC_VALIDATION_MODE,
+        config,
+        data_source="test",
+    )
+
+    assert result.valid is False
+    assert result.score is None
+    assert any("Feature current_hr_bpm" in reason for reason in result.reasons)
+
+
+def test_insufficient_valid_beats_withholds_risk() -> None:
+    config = PipelineConfig()
+    features = FeatureSet(
+        values={
+            "current_hr_bpm": 72.0,
+            "current_map_mm_hg": 80.0,
+            "beat_detection_confidence": 0.0,
+            "available_modalities": 3.0,
+        },
+        window_seconds=60,
+        valid_beat_count=config.quality.minimum_valid_beats - 1,
+    )
+    quality = QualityResult(0.9, 0.9, 0.9, True)
+    baseline = BaselineState(
+        True,
+        1.0,
+        0.9,
+        median_hr=72.0,
+        median_map=80.0,
+    )
+
+    result = compute_research_instability_index(
+        features,
+        quality,
+        baseline,
+        PipelineMode.GENERIC_VALIDATION_MODE,
+        config,
+        data_source="test",
+    )
+
+    assert result.valid is False
+    assert result.score is None
+    assert any("too few valid beats" in reason for reason in result.reasons)
+
+
+def test_ds_hypothesis_mode_uses_same_index_but_reduces_confidence() -> None:
+    config = PipelineConfig()
+    features = FeatureSet(
+        values={
+            "current_hr_bpm": 60.0,
+            "current_map_mm_hg": 70.0,
+            "delta_hr_pct": -15.0,
+            "delta_map_pct": -12.0,
+            "beat_detection_confidence": 0.9,
+            "available_modalities": 3.0,
+        },
+        window_seconds=60,
+        valid_beat_count=10,
+    )
+    quality = QualityResult(0.9, 0.9, 0.9, True)
+    baseline = BaselineState(
+        True,
+        1.0,
+        0.9,
+        median_hr=72.0,
+        median_map=82.0,
+    )
+
+    generic = compute_research_instability_index(
+        features,
+        quality,
+        baseline,
+        PipelineMode.GENERIC_VALIDATION_MODE,
+        config,
+        data_source="test",
+    )
+    ds_hypothesis = compute_research_instability_index(
+        features,
+        quality,
+        baseline,
+        PipelineMode.DS_HYPOTHESIS_MODE,
+        config,
+        data_source="test",
+    )
+
+    assert ds_hypothesis.score == generic.score
+    assert ds_hypothesis.confidence == pytest.approx(generic.confidence * 0.5)
+    assert any("Down syndrome" in reason for reason in ds_hypothesis.reasons)
 
 
 def test_explanations_are_non_prescriptive() -> None:

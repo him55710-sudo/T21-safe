@@ -75,7 +75,11 @@ class SessionManager:
         if case_id.startswith("synthetic:"):
             duration = max(float(baseline_seconds + 60), 30.0)
         elif case_id == "vitaldb:public-live":
-            duration = min(float(baseline_seconds + 10), 60.0)
+            # The live API caps its own window at 60 s, while its local fallback can
+            # still honor the full offline baseline request.
+            duration = float(baseline_seconds + 5)
+        elif case_id == "local:fixture":
+            duration = float(baseline_seconds + 5)
         else:
             duration = None
         batch = await adapter.load_case(case_id, duration_seconds=duration)

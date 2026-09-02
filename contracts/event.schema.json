@@ -148,6 +148,15 @@
       "additionalProperties": false,
       "properties": {
         "age_group": {
+          "enum": [
+            "unknown",
+            "neonate",
+            "infant",
+            "child",
+            "adolescent",
+            "adult",
+            "older_adult"
+          ],
           "title": "Age Group",
           "type": "string"
         },
@@ -289,6 +298,10 @@
           "title": "Confidence",
           "type": "number"
         },
+        "data_source": {
+          "title": "Data Source",
+          "type": "string"
+        },
         "level": {
           "$ref": "#/$defs/RiskLevel"
         },
@@ -351,6 +364,7 @@
         "confidence",
         "reasons",
         "model_version",
+        "data_source",
         "population_validated_on",
         "limitations"
       ],

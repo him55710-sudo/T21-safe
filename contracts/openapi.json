@@ -6,7 +6,15 @@
         "properties": {
           "age_group": {
             "default": "unknown",
-            "maxLength": 50,
+            "enum": [
+              "unknown",
+              "neonate",
+              "infant",
+              "child",
+              "adolescent",
+              "adult",
+              "older_adult"
+            ],
             "title": "Age Group",
             "type": "string"
           },
@@ -384,6 +392,15 @@
         "additionalProperties": false,
         "properties": {
           "age_group": {
+            "enum": [
+              "unknown",
+              "neonate",
+              "infant",
+              "child",
+              "adolescent",
+              "adult",
+              "older_adult"
+            ],
             "title": "Age Group",
             "type": "string"
           },
@@ -575,6 +592,10 @@
             "title": "Confidence",
             "type": "number"
           },
+          "data_source": {
+            "title": "Data Source",
+            "type": "string"
+          },
           "level": {
             "$ref": "#/components/schemas/RiskLevel"
           },
@@ -636,6 +657,7 @@
           "confidence",
           "reasons",
           "model_version",
+          "data_source",
           "population_validated_on",
           "limitations"
         ],

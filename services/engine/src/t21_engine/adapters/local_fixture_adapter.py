@@ -22,14 +22,14 @@ class LocalFixtureAdapter(DataAdapter):
         return [
             CaseDescriptor(
                 case_id="local:fixture",
-                title="Bundled de-identified waveform fixture",
-                source="local fixture",
-                data_type="CSV waveform",
+                title="Bundled synthetic waveform fixture",
+                source="local synthetic fixture",
+                data_type="synthetic CSV waveform",
                 available_signals=("ECG_II", "PPG", "ABP", "HR", "MAP", "SpO2"),
-                is_synthetic=False,
-                ds_status="unknown_or_non_ds",
+                is_synthetic=True,
+                ds_status="synthetic_not_applicable",
                 clinical_use_allowed=False,
-                attribution="Local development fixture; not clinical data.",
+                attribution="Generated synthetic local fixture; contains no patient records.",
             )
         ]
 
@@ -56,19 +56,35 @@ class LocalFixtureAdapter(DataAdapter):
             )
             for name in names
         }
+        repeated = False
         if duration_seconds is not None:
-            keep = timestamps <= duration_seconds
-            timestamps = timestamps[keep]
-            signals = {name: values[keep] for name, values in signals.items()}
+            if not np.isfinite(duration_seconds) or duration_seconds <= 0.0:
+                raise ValueError("duration_seconds must be positive and finite")
+            target_count = max(1, int(round(duration_seconds * self.sample_rate_hz)))
+            repeated = target_count > timestamps.size
+            signals = {
+                name: np.resize(values, target_count).astype(np.float64)
+                for name, values in signals.items()
+            }
+            timestamps = np.arange(target_count, dtype=np.float64) / self.sample_rate_hz
+        provenance_suffix = (
+            f"; cyclic synthetic repetition to {duration_seconds:g}s"
+            if repeated and duration_seconds is not None
+            else ""
+        )
         return SignalBatch(
             timestamps_s=timestamps,
             signals=signals,
             sample_rates_hz={name: self.sample_rate_hz for name in signals},
             source=SourceMetadata(
-                dataset="Local fixture",
+                dataset="Local synthetic fixture",
                 case_id="local:fixture",
-                is_synthetic=False,
-                attribution="Local development fixture; not clinical data.",
+                is_synthetic=True,
+                ds_status="synthetic_not_applicable",
+                attribution="Generated synthetic local fixture; contains no patient records.",
+                data_type="synthetic CSV waveform",
             ),
-            provenance={name: f"raw:csv:{self.fixture_path.name}" for name in signals},
+            provenance={
+                name: f"raw:csv:{self.fixture_path.name}{provenance_suffix}" for name in signals
+            },
         )

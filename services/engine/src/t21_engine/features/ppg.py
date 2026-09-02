@@ -28,21 +28,36 @@ def extract_ppg_features(
     ppg: FloatArray,
     peaks: BeatSeries,
     sample_rate_hz: float,
+    *,
+    morphology_signal: FloatArray | None = None,
 ) -> dict[str, float | None]:
     values = np.asarray(ppg, dtype=np.float64)
+    morphology = np.asarray(
+        morphology_signal if morphology_signal is not None else ppg,
+        dtype=np.float64,
+    )
+    if morphology.shape != values.shape:
+        raise ValueError("PPG amplitude and morphology signals must align")
     amplitudes = pulse_amplitudes(values, peaks, sample_rate_hz)
     widths: np.ndarray = np.asarray([], dtype=np.float64)
-    if peaks.indices.size and np.isfinite(values).all():
-        widths = np.asarray(peak_widths(values, peaks.indices, rel_height=0.5)[0]) / sample_rate_hz
+    if peaks.indices.size and np.isfinite(morphology).all():
+        widths = (
+            np.asarray(peak_widths(morphology, peaks.indices, rel_height=0.5)[0]) / sample_rate_hz
+        )
     rise_times: list[float] = []
     areas: list[float] = []
     lookback = max(1, int(0.5 * sample_rate_hz))
     for peak in peaks.indices:
         start = max(0, int(peak) - lookback)
         segment = values[start : int(peak) + 1]
-        if not segment.size or not np.isfinite(segment).all():
+        morphology_segment = morphology[start : int(peak) + 1]
+        if (
+            not segment.size
+            or not np.isfinite(segment).all()
+            or not np.isfinite(morphology_segment).all()
+        ):
             continue
-        trough = int(np.argmin(segment))
+        trough = int(np.argmin(morphology_segment))
         rise_times.append((segment.size - 1 - trough) / sample_rate_hz)
         baseline = segment[trough]
         areas.append(float(np.trapezoid(segment[trough:] - baseline, dx=1.0 / sample_rate_hz)))

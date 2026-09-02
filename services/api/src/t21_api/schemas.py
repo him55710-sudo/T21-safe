@@ -7,6 +7,16 @@ from typing import Literal
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 from t21_engine.types import PipelineMode, RiskLevel
 
+AgeGroup = Literal[
+    "unknown",
+    "neonate",
+    "infant",
+    "child",
+    "adolescent",
+    "adult",
+    "older_adult",
+]
+
 
 class StrictModel(BaseModel):
     model_config = ConfigDict(extra="forbid")
@@ -52,7 +62,7 @@ class SourceEvent(StrictModel):
 
 class PatientContextEvent(StrictModel):
     ds_status: str
-    age_group: str
+    age_group: AgeGroup
 
 
 class SignalsEvent(StrictModel):
@@ -105,6 +115,7 @@ class RiskEvent(StrictModel):
     confidence: float = Field(ge=0.0, le=1.0)
     reasons: list[str]
     model_version: str
+    data_source: str
     population_validated_on: str
     limitations: list[str]
 
@@ -154,7 +165,7 @@ class AnalyzeWindowRequest(StrictModel):
     baseline_seconds: int = Field(default=180, ge=3, le=600)
     mode: PipelineMode = PipelineMode.GENERIC_VALIDATION_MODE
     ds_status: Literal["unknown_or_non_ds", "research_hypothesis_only"] = "unknown_or_non_ds"
-    age_group: str = Field(default="unknown", max_length=50)
+    age_group: AgeGroup = "unknown"
 
     @model_validator(mode="after")
     def validate_alignment(self) -> AnalyzeWindowRequest:

@@ -6,6 +6,7 @@ from t21_engine.adapters.synthetic_adapter import SCENARIOS, SyntheticAdapter
 from t21_engine.evaluation.labels import hypotension_candidate
 from t21_engine.evaluation.metrics import binary_metrics, bootstrap_confidence_interval
 from t21_engine.streaming.ring_buffer import RingBuffer
+from t21_engine.types import SignalBatch, SourceMetadata
 
 
 def test_ring_buffer_sorts_out_of_order_and_enforces_capacity() -> None:
@@ -65,3 +66,69 @@ def test_evaluation_metrics_and_bootstrap_are_reproducible() -> None:
     assert metrics["specificity"] == pytest.approx(1.0)
     assert interval is not None
     assert 0.0 <= interval[0] <= interval[1] <= 1.0
+
+
+def test_evaluation_metrics_are_tie_aware_and_never_validate_nan_scores() -> None:
+    tied = binary_metrics(
+        np.asarray([0, 1], dtype=np.int64),
+        np.asarray([50.0, 50.0], dtype=np.float64),
+    )
+    partly_missing = binary_metrics(
+        np.asarray([0, 1, 0], dtype=np.int64),
+        np.asarray([10.0, np.nan, 90.0], dtype=np.float64),
+        valid_mask=np.asarray([True, True, True]),
+    )
+    invalid_labels = binary_metrics(
+        np.asarray([0, 2], dtype=np.int64),
+        np.asarray([10.0, 90.0], dtype=np.float64),
+    )
+
+    assert tied["auroc"] == pytest.approx(0.5)
+    assert tied["auprc"] == pytest.approx(0.5)
+    assert partly_missing["invalid_prediction_rate"] == pytest.approx(1.0 / 3.0)
+    assert invalid_labels == {
+        "status": "NOT_EVALUATED",
+        "reason": "labels must be binary 0/1",
+    }
+
+
+def test_signal_batch_rejects_misaligned_signal_lengths() -> None:
+    with pytest.raises(ValueError, match="align"):
+        SignalBatch(
+            timestamps_s=np.asarray([0.0, 1.0], dtype=np.float64),
+            signals={"ecg_ii": np.asarray([0.0], dtype=np.float64)},
+            sample_rates_hz={"ecg_ii": 1.0},
+            source=SourceMetadata("test", "case", True),
+        )
+
+
+def test_signal_batch_rejects_invalid_transport_measurements() -> None:
+    with pytest.raises(ValueError, match="latency_ms"):
+        SignalBatch(
+            timestamps_s=np.asarray([0.0], dtype=np.float64),
+            signals={"ecg_ii": np.asarray([0.0], dtype=np.float64)},
+            sample_rates_hz={"ecg_ii": 1.0},
+            source=SourceMetadata("test", "case", True),
+            latency_ms=-1.0,
+        )
+    with pytest.raises(ValueError, match="synchronization_error_ms"):
+        SignalBatch(
+            timestamps_s=np.asarray([0.0], dtype=np.float64),
+            signals={"ecg_ii": np.asarray([0.0], dtype=np.float64)},
+            sample_rates_hz={"ecg_ii": 1.0},
+            source=SourceMetadata("test", "case", True),
+            synchronization_error_ms=float("nan"),
+        )
+
+
+def test_signal_batch_rejects_mixed_rates_on_one_timestamp_grid() -> None:
+    with pytest.raises(ValueError, match="share a sample rate"):
+        SignalBatch(
+            timestamps_s=np.asarray([0.0, 1.0], dtype=np.float64),
+            signals={
+                "ecg_ii": np.asarray([0.0, 1.0], dtype=np.float64),
+                "ppg": np.asarray([0.0, 1.0], dtype=np.float64),
+            },
+            sample_rates_hz={"ecg_ii": 100.0, "ppg": 50.0},
+            source=SourceMetadata("test", "case", True),
+        )

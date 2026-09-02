@@ -6,6 +6,7 @@ runtime dependency on WFDB or a network connection.
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -13,6 +14,41 @@ import numpy as np
 
 from t21_engine.adapters.base import CaseDescriptor, DataAdapter
 from t21_engine.types import SignalBatch, SourceMetadata
+
+
+@dataclass(frozen=True, slots=True)
+class WFDBCatalogMetadata:
+    title: str
+    available_signals: tuple[str, ...]
+    attribution: str
+
+
+WFDB_CATALOG = {
+    "wfdb:bidmc01": WFDBCatalogMetadata(
+        title="BIDMC PPG and Respiration record bidmc01",
+        available_signals=("ECG_II", "PPG", "RESP"),
+        attribution=(
+            "BIDMC PPG and Respiration Dataset v1.0.0, PhysioNet; "
+            "Open Data Commons Attribution License v1.0; DOI 10.13026/C2208R."
+        ),
+    ),
+    "wfdb:ptt-s10-sit": WFDBCatalogMetadata(
+        title="Pulse Transit Time PPG record s10_sit",
+        available_signals=("ECG_II", "PPG"),
+        attribution=(
+            "Mehrgardt et al., Pulse Transit Time PPG Dataset v1.1.0, PhysioNet; "
+            "DOI 10.13026/g3me-rt62; source release license applies."
+        ),
+    ),
+    "wfdb:mimic4-preview": WFDBCatalogMetadata(
+        title="MIMIC-IV Waveform Database preview record 83411188",
+        available_signals=("record-dependent",),
+        attribution=(
+            "Moody et al., MIMIC-IV Waveform Database v0.1.0, PhysioNet; "
+            "Open Data Commons Open Database License v1.0; DOI 10.13026/a2mw-f949."
+        ),
+    ),
+}
 
 
 class WFDBAdapter(DataAdapter):
@@ -27,20 +63,33 @@ class WFDBAdapter(DataAdapter):
         }
 
     async def list_cases(self) -> list[CaseDescriptor]:
-        return [
-            CaseDescriptor(
-                case_id=case_id,
-                title=f"WFDB record {record}",
-                source="PhysioNet/WFDB",
-                data_type="public waveform record",
-                available_signals=("record-dependent",),
-                is_synthetic=False,
-                ds_status="unknown_or_non_ds",
-                clinical_use_allowed=False,
-                attribution="Source-specific PhysioNet data use terms and citation apply.",
+        cases: list[CaseDescriptor] = []
+        for case_id, (record, _database) in self.records.items():
+            metadata = WFDB_CATALOG.get(
+                case_id,
+                WFDBCatalogMetadata(
+                    title=f"WFDB record {record}",
+                    available_signals=("record-dependent",),
+                    attribution=(
+                        "Custom WFDB record; caller must retain the source-specific "
+                        "license and citation metadata."
+                    ),
+                ),
             )
-            for case_id, (record, _database) in self.records.items()
-        ]
+            cases.append(
+                CaseDescriptor(
+                    case_id=case_id,
+                    title=metadata.title,
+                    source="PhysioNet/WFDB",
+                    data_type="public waveform record",
+                    available_signals=metadata.available_signals,
+                    is_synthetic=False,
+                    ds_status="unknown_or_non_ds",
+                    clinical_use_allowed=False,
+                    attribution=metadata.attribution,
+                )
+            )
+        return cases
 
     async def load_case(
         self,
@@ -50,6 +99,17 @@ class WFDBAdapter(DataAdapter):
     ) -> SignalBatch:
         if case_id not in self.records:
             raise KeyError(f"unknown WFDB record: {case_id}")
+        metadata = WFDB_CATALOG.get(
+            case_id,
+            WFDBCatalogMetadata(
+                title=f"WFDB record {case_id}",
+                available_signals=("record-dependent",),
+                attribution=(
+                    "Custom WFDB record; caller must retain the source-specific license "
+                    "and citation metadata."
+                ),
+            ),
+        )
         try:
             import wfdb
         except ImportError as exc:
@@ -91,7 +151,10 @@ class WFDBAdapter(DataAdapter):
                 dataset=f"WFDB/{database or 'local'}",
                 case_id=case_id,
                 is_synthetic=False,
-                attribution="Source-specific PhysioNet data use terms and citation apply.",
+                ds_status="unknown_or_non_ds",
+                clinical_use_allowed=False,
+                attribution=metadata.attribution,
+                data_type="public waveform record",
             ),
             provenance={name: f"raw:wfdb:{record_name}" for name in signals},
         )

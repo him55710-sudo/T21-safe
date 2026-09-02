@@ -8,7 +8,21 @@ from t21_engine.beats.pulse_peak import detect_pulse_peaks
 from t21_engine.beats.rpeak import detect_r_peaks
 from t21_engine.features.hrv import rr_intervals_ms, time_domain_hrv
 from t21_engine.features.ppg import pulse_amplitudes
-from t21_engine.types import BaselineState, FloatArray, QualityResult
+from t21_engine.types import BaselineState, DistributionSummary, FloatArray, QualityResult
+
+
+def _distribution(values: FloatArray) -> DistributionSummary | None:
+    finite = np.asarray(values, dtype=np.float64)
+    finite = finite[np.isfinite(finite)]
+    if not finite.size:
+        return None
+    return DistributionSummary(
+        minimum=float(np.min(finite)),
+        p25=float(np.percentile(finite, 25)),
+        median=float(np.median(finite)),
+        p75=float(np.percentile(finite, 75)),
+        maximum=float(np.max(finite)),
+    )
 
 
 def calibrate_baseline(
@@ -19,6 +33,7 @@ def calibrate_baseline(
     *,
     baseline_seconds: int = 180,
     minimum_fraction: float = 0.8,
+    raw_signals: dict[str, FloatArray] | None = None,
 ) -> BaselineState:
     timestamps = np.asarray(timestamps_s, dtype=np.float64)
     if baseline_seconds <= 0:
@@ -28,12 +43,22 @@ def calibrate_baseline(
     finite_times = timestamps[np.isfinite(timestamps)]
     if finite_times.size < 2:
         return BaselineState(False, 0.0, 0.0, reasons=("Baseline timestamps are insufficient.",))
-    median_interval = float(np.median(np.diff(finite_times)))
-    observed_seconds = max(0.0, float(finite_times[-1] - finite_times[0] + median_interval))
-    progress = float(np.clip(observed_seconds / baseline_seconds, 0.0, 1.0))
     baseline_end = finite_times[0] + baseline_seconds
     mask = timestamps < baseline_end
+    baseline_times = timestamps[mask & np.isfinite(timestamps)]
+    median_interval = float(np.median(np.diff(baseline_times))) if baseline_times.size >= 2 else 0.0
+    observed_seconds = (
+        max(0.0, float(baseline_times[-1] - baseline_times[0] + median_interval))
+        if baseline_times.size
+        else 0.0
+    )
+    progress = float(np.clip(observed_seconds / baseline_seconds, 0.0, 1.0))
+    expected_samples = max(1, int(round(baseline_seconds * sample_rate_hz)))
+    coverage_fraction = float(np.clip(baseline_times.size / expected_samples, 0.0, 1.0))
     baseline_signals = {name: np.asarray(values)[mask] for name, values in signals.items()}
+    raw_baseline_signals = {
+        name: np.asarray(values)[mask] for name, values in (raw_signals or signals).items()
+    }
 
     ecg_beats = (
         detect_r_peaks(baseline_signals["ecg_ii"], sample_rate_hz)
@@ -51,13 +76,16 @@ def calibrate_baseline(
         finite_hr = hr_values[np.isfinite(hr_values)]
         median_hr = float(np.median(finite_hr))
         hr_iqr = float(np.percentile(finite_hr, 75) - np.percentile(finite_hr, 25))
+        hr_distribution = _distribution(finite_hr)
     elif ecg_beats is not None:
         rr_ms = rr_intervals_ms(ecg_beats)
         median_hr = float(60000.0 / np.median(rr_ms)) if rr_ms.size else None
         hr_iqr = None
+        hr_distribution = _distribution(60000.0 / rr_ms) if rr_ms.size else None
     else:
         median_hr = None
         hr_iqr = None
+        hr_distribution = None
 
     map_values = baseline_signals.get("map_mm_hg")
     if map_values is None:
@@ -66,8 +94,8 @@ def calibrate_baseline(
     median_map = float(np.median(finite_map)) if finite_map.size else None
 
     ppg_amplitudes = (
-        pulse_amplitudes(baseline_signals["ppg"], pulse_beats, sample_rate_hz)
-        if pulse_beats is not None
+        pulse_amplitudes(raw_baseline_signals["ppg"], pulse_beats, sample_rate_hz)
+        if pulse_beats is not None and "ppg" in raw_baseline_signals
         else np.asarray([], dtype=np.float64)
     )
     median_ppg_amplitude = float(np.median(ppg_amplitudes)) if ppg_amplitudes.size else None
@@ -80,6 +108,7 @@ def calibrate_baseline(
         value for value in (quality.ecg_sqi, quality.ppg_sqi, quality.abp_sqi) if value is not None
     ]
     quality_median = float(np.median(sqi_values)) if sqi_values else 0.0
+    quality_distribution = _distribution(np.asarray(sqi_values, dtype=np.float64))
     modalities = tuple(
         name
         for name in ("ecg_ii", "ppg", "abp", "map_mm_hg", "spo2_pct", "etco2_mm_hg")
@@ -89,7 +118,7 @@ def calibrate_baseline(
     reasons: list[str] = []
     if progress < 1.0:
         reasons.append("Baseline calibration is incomplete.")
-    if observed_seconds < baseline_seconds * minimum_fraction:
+    if coverage_fraction < minimum_fraction:
         reasons.append("Too little baseline coverage is available.")
     if not quality.usable:
         reasons.append("Baseline signal quality is insufficient.")
@@ -120,4 +149,6 @@ def calibrate_baseline(
         quality_median=quality_median,
         available_modalities=modalities,
         reasons=tuple(dict.fromkeys(reasons)),
+        hr_distribution=hr_distribution,
+        quality_distribution=quality_distribution,
     )

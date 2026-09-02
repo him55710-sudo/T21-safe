@@ -11,12 +11,12 @@ import numpy as np
 
 from t21_engine.baseline.calibration import calibrate_baseline
 from t21_engine.config import PipelineConfig
-from t21_engine.features import extract_features
-from t21_engine.preprocessing.filters import preprocess_ecg, preprocess_ppg
+from t21_engine.features import extract_feature_windows
+from t21_engine.preprocessing.filters import preprocess_abp, preprocess_ecg, preprocess_ppg
 from t21_engine.quality.quality_gate import evaluate_quality
 from t21_engine.risk.deterministic_index import compute_research_instability_index
 from t21_engine.streaming.ring_buffer import RingBuffer
-from t21_engine.types import PipelineMode, SignalBatch
+from t21_engine.types import BaselineState, PipelineMode, QualityResult, SignalBatch
 
 DISCLAIMER = "Research prototype; not for diagnosis, treatment, dosing, or clinical monitoring."
 
@@ -32,6 +32,40 @@ def _waveform_values(values: np.ndarray | None) -> list[float | None]:
     if values is None:
         return []
     return [float(value) if np.isfinite(value) else None for value in values]
+
+
+def _apply_timestamp_gap_gate(
+    quality: QualityResult,
+    gap_fraction: float,
+    maximum_gap_fraction: float,
+) -> QualityResult:
+    if gap_fraction <= maximum_gap_fraction:
+        return quality
+    return replace(
+        quality,
+        usable=False,
+        gap_fraction=max(quality.gap_fraction, gap_fraction),
+        reasons=tuple(
+            dict.fromkeys(
+                [
+                    *quality.reasons,
+                    "Network or source timestamps contain excessive gaps.",
+                ]
+            )
+        ),
+    )
+
+
+def _timestamps_synchronized(
+    batch: SignalBatch,
+    out_of_order_count: int,
+    tolerance_ms: float,
+) -> bool:
+    return (
+        batch.timestamp_synchronized
+        and batch.synchronization_error_ms <= tolerance_ms
+        and out_of_order_count == 0
+    )
 
 
 class ReplayPipeline:
@@ -56,7 +90,15 @@ class ReplayPipeline:
             next(iter(batch.sample_rates_hz.values()), effective_config.waveform_sample_rate_hz),
         )
         chunk_size = max(1, int(round(fs * effective_config.feature_update_seconds)))
-        buffer = RingBuffer(effective_config.buffer_seconds, fs)
+        buffer_seconds = max(
+            effective_config.buffer_seconds,
+            baseline_duration,
+            max(effective_config.feature_windows_seconds, default=0),
+        )
+        buffer = RingBuffer(buffer_seconds, fs)
+        baseline: BaselineState | None = None
+        baseline_locked = False
+        baseline_start_s: float | None = None
         try:
             for start in range(0, batch.timestamps_s.size, chunk_size):
                 processing_started = time.perf_counter()
@@ -89,47 +131,61 @@ class ReplayPipeline:
                         high_hz=ppg_high_hz,
                         order=effective_config.filters.order,
                     )
+                if "abp" in processed:
+                    abp_high_hz = min(effective_config.filters.abp_high_hz, fs * 0.45)
+                    processed["abp"] = preprocess_abp(
+                        processed["abp"],
+                        fs,
+                        low_hz=effective_config.filters.abp_low_hz,
+                        high_hz=abp_high_hz,
+                        order=effective_config.filters.order,
+                    )
                 feature_signals = {name: values.copy() for name, values in processed.items()}
-                if "ppg" in snapshot.signals:
-                    # Preserve absolute PPG amplitude for within-patient change features.
-                    feature_signals["ppg"] = snapshot.signals["ppg"].copy()
                 sample_rates = {name: fs for name in processed}
-                baseline_cutoff = snapshot.timestamps_s[0] + baseline_duration
-                baseline_mask = snapshot.timestamps_s < baseline_cutoff
-                timestamp_synchronized = (
-                    batch.timestamp_synchronized
-                    and batch.synchronization_error_ms
-                    <= effective_config.quality.synchronization_tolerance_ms
-                    and snapshot.out_of_order_count == 0
+                timestamps_synchronized = _timestamps_synchronized(
+                    batch,
+                    snapshot.out_of_order_count,
+                    effective_config.quality.synchronization_tolerance_ms,
                 )
-                baseline_quality = evaluate_quality(
-                    {
-                        name: values[baseline_mask]
-                        for name, values in snapshot.signals.items()
-                    },
-                    sample_rates,
-                    effective_config.quality,
-                    out_of_order_count=snapshot.out_of_order_count,
-                    timestamp_synchronized=timestamp_synchronized,
-                )
-                baseline = calibrate_baseline(
-                    snapshot.timestamps_s,
-                    feature_signals,
-                    fs,
-                    baseline_quality,
-                    baseline_seconds=baseline_duration,
-                    minimum_fraction=effective_config.baseline_minimum_fraction,
-                )
-                feature_set = extract_features(
+                if baseline is None or not baseline_locked:
+                    if baseline_start_s is None:
+                        baseline_start_s = float(snapshot.timestamps_s[0])
+                    baseline_cutoff = baseline_start_s + baseline_duration
+                    baseline_mask = (snapshot.timestamps_s >= baseline_start_s) & (
+                        snapshot.timestamps_s < baseline_cutoff
+                    )
+                    baseline_quality = evaluate_quality(
+                        {name: values[baseline_mask] for name, values in processed.items()},
+                        sample_rates,
+                        effective_config.quality,
+                        out_of_order_count=snapshot.out_of_order_count,
+                        timestamp_synchronized=timestamps_synchronized,
+                    )
+                    baseline_quality = _apply_timestamp_gap_gate(
+                        baseline_quality,
+                        snapshot.gap_fraction,
+                        effective_config.quality.maximum_gap_fraction,
+                    )
+                    baseline = calibrate_baseline(
+                        snapshot.timestamps_s,
+                        feature_signals,
+                        fs,
+                        baseline_quality,
+                        baseline_seconds=baseline_duration,
+                        minimum_fraction=effective_config.baseline_minimum_fraction,
+                        raw_signals=snapshot.signals,
+                    )
+                    baseline_locked = float(snapshot.timestamps_s[-1]) >= baseline_cutoff
+                feature_windows = extract_feature_windows(
                     snapshot.timestamps_s,
                     feature_signals,
                     baseline,
                     fs,
-                    window_seconds=min(
-                        60,
-                        max(1, int(snapshot.timestamps_s[-1] - snapshot.timestamps_s[0] + 1)),
-                    ),
+                    windows_seconds=effective_config.feature_windows_seconds,
+                    raw_signals=snapshot.signals,
                 )
+                primary_window = min(feature_windows, key=lambda window: abs(window - 60))
+                feature_set = feature_windows[primary_window]
                 quality_cutoff = snapshot.timestamps_s[-1] - min(60.0, baseline_duration)
                 quality_mask = snapshot.timestamps_s >= quality_cutoff
                 quality = evaluate_quality(
@@ -140,23 +196,14 @@ class ReplayPipeline:
                     sample_rates,
                     effective_config.quality,
                     out_of_order_count=snapshot.out_of_order_count,
-                    timestamp_synchronized=timestamp_synchronized,
+                    timestamp_synchronized=timestamps_synchronized,
                     valid_beat_count=feature_set.valid_beat_count,
                 )
-                if snapshot.gap_fraction > effective_config.quality.maximum_gap_fraction:
-                    quality = replace(
-                        quality,
-                        usable=False,
-                        gap_fraction=max(quality.gap_fraction, snapshot.gap_fraction),
-                        reasons=tuple(
-                            dict.fromkeys(
-                                [
-                                    *quality.reasons,
-                                    "Network or source timestamps contain excessive gaps.",
-                                ]
-                            )
-                        ),
-                    )
+                quality = _apply_timestamp_gap_gate(
+                    quality,
+                    snapshot.gap_fraction,
+                    effective_config.quality.maximum_gap_fraction,
+                )
                 if batch.gap_detected:
                     quality = replace(
                         quality,
@@ -253,6 +300,7 @@ class ReplayPipeline:
                         "confidence": risk.confidence,
                         "reasons": list(risk.reasons),
                         "model_version": risk.model_version,
+                        "data_source": risk.data_source,
                         "population_validated_on": risk.population_validated_on,
                         "limitations": list(risk.limitations),
                     },
@@ -266,8 +314,9 @@ class ReplayPipeline:
                     "provenance": {
                         "raw": batch.provenance,
                         "processed": {
-                            "ecg_ii": effective_config.config_version,
-                            "ppg": effective_config.config_version,
+                            name: effective_config.config_version
+                            for name in ("ecg_ii", "ppg", "abp")
+                            if name in processed
                         },
                     },
                     "disclaimer": DISCLAIMER,

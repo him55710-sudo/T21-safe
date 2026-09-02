@@ -30,6 +30,8 @@ update.
 Filter cutoffs are in `config.py` and are limited below the actual source Nyquist.
 Functions never overwrite the raw arrays. Flatline, clipping, abrupt motion, missing
 data, implausible ABP range, and pulse regularity contribute to SQI values from 0 to 1.
+ECG/PPG beat timing is detected from processed waveforms, while raw PPG values at those
+indices retain within-person amplitude and morphology scale.
 
 An index is withheld when the beat source or pressure source is unusable, gaps exceed
 the configured threshold, timestamps are unsynchronized, valid beats are insufficient,
@@ -42,6 +44,11 @@ The default baseline is the first 180 seconds and does not slide after calibrati
 Calibration records HR/MAP/PPG summaries, HRV, quality, modalities, and confidence. An
 unstable or low-quality baseline fails explicitly. Change features prioritize the
 individual baseline over a fixed DS normal range.
+
+The engine calculates each configured 30-, 60-, and 180-second feature window on every
+update. The existing flat SSE contract exposes the 60-second window (or the configured
+window nearest 60 seconds) as its primary view; all window results remain available to
+engine evaluation callers through `extract_feature_windows`.
 
 LF/HF is optional, requires at least 180 seconds and 20 valid beats, reports respiratory
 confounding, and is not used by the core index.

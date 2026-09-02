@@ -8,7 +8,7 @@
   ECG/PPG/ABP SQI, beat/pulse detection, first-window baseline, feature extraction,
   OOD/uncertainty gate, transparent `rii-v0.1`, and SSE payload generation.
 - FastAPI health/cases/replay/stream/analyze/evidence routes with Pydantic v2 contracts.
-- Offline local fixture and mocked VitalDB failure fallback.
+- Offline, visibly labeled synthetic local fixture and mocked VitalDB failure fallback.
 - Unit/integration tests covering required safety and transport paths.
 
 ## Safety invariants

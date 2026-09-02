@@ -17,13 +17,17 @@ docker build -f services/api/Dockerfile -t t21-safe-api:0.2.0 .
 docker run --rm -e OFFLINE_MODE=true -p 8000:8000 t21-safe-api:0.2.0
 ```
 
+The image pins `T21_FIXTURE_PATH` to the copied, visibly synthetic fixture so the local
+demo remains available when the container has no network access.
+
 ## Contract
 
 - `GET /health` — exact service/mode/version status.
-- `GET /v1/cases` — public/local/synthetic case metadata and attribution.
+- `GET /v1/cases` — public and visibly labeled synthetic case metadata and attribution.
 - `POST /v1/replays` — creates one in-memory, single-consumer replay session.
 - `GET /v1/stream/{session_id}` — SSE `signal` events; session is removed on end/cancel.
-- `POST /v1/analyze-window` — ephemeral de-identified batch analysis.
+- `POST /v1/analyze-window` — ephemeral de-identified batch analysis; age context is
+  limited to coarse enumerated groups.
 - `GET /v1/evidence` — evidence/version metadata and limitations.
 
 Example:

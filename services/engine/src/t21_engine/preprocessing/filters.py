@@ -108,4 +108,19 @@ def preprocess_abp(
     high_hz: float = 12.0,
     order: int = 3,
 ) -> FloatArray:
-    return bandpass_filter(values, sample_rate_hz, low_hz, high_hz, order=order)
+    raw = np.asarray(values, dtype=np.float64)
+    if not 0.0 < low_hz < high_hz < sample_rate_hz / 2.0:
+        raise ValueError("ABP cutoffs must satisfy 0 < low < high < Nyquist")
+    clean, missing = _interpolate_missing(raw)
+    if np.isfinite(clean).sum() < max(12, order * 6):
+        return raw.copy()
+
+    pulsatile = bandpass_filter(clean, sample_rate_hz, low_hz, high_hz, order=order)
+    trend_sos = signal.butter(order, low_hz, btype="lowpass", fs=sample_rate_hz, output="sos")
+    try:
+        slow_trend = signal.sosfiltfilt(trend_sos, clean)
+    except ValueError:
+        slow_trend = signal.sosfilt(trend_sos, clean)
+    filtered = np.asarray(pulsatile + slow_trend, dtype=np.float64)
+    filtered[missing] = np.nan
+    return filtered
