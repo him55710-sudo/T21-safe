@@ -86,3 +86,37 @@ async def test_timestamp_synchronization_failure_withholds_risk() -> None:
     assert final["risk"]["valid"] is False
     assert final["risk"]["score"] is None
     assert any("Timestamp" in reason for reason in final["risk"]["reasons"])
+
+
+@pytest.mark.asyncio
+async def test_excessive_timestamp_gap_withholds_risk() -> None:
+    batch = await SyntheticAdapter().load_case(
+        "synthetic:stable-baseline", duration_seconds=8
+    )
+    keep = (batch.timestamps_s < 4.0) | (batch.timestamps_s >= 6.0)
+    batch.timestamps_s = batch.timestamps_s[keep]
+    batch.signals = {name: values[keep] for name, values in batch.signals.items()}
+
+    final = await _final_event(batch, baseline_seconds=3)
+
+    assert final["transport"]["data_gap"] is True
+    assert final["quality"]["gap_fraction"] > 0.15
+    assert final["risk"]["valid"] is False
+    assert final["risk"]["score"] is None
+    assert any("excessive gaps" in reason for reason in final["risk"]["reasons"])
+
+
+@pytest.mark.asyncio
+async def test_out_of_order_samples_are_normalized_and_withhold_risk() -> None:
+    batch = await SyntheticAdapter().load_case(
+        "synthetic:stable-baseline", duration_seconds=8
+    )
+    batch.timestamps_s[[350, 351]] = batch.timestamps_s[[351, 350]]
+
+    final = await _final_event(batch, baseline_seconds=3)
+
+    assert final["transport"]["out_of_order_count"] >= 1
+    assert final["quality"]["timestamp_synchronized"] is False
+    assert final["risk"]["valid"] is False
+    assert final["risk"]["score"] is None
+    assert any("Timestamp" in reason for reason in final["risk"]["reasons"])

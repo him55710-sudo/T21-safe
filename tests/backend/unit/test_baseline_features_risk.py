@@ -124,6 +124,76 @@ def test_baseline_out_of_distribution_withholds_risk() -> None:
     assert any("Baseline heart rate" in reason for reason in result.reasons)
 
 
+def test_feature_out_of_distribution_withholds_risk() -> None:
+    config = PipelineConfig()
+    features = FeatureSet(
+        values={
+            "current_hr_bpm": 250.0,
+            "current_map_mm_hg": 80.0,
+            "beat_detection_confidence": 0.9,
+            "available_modalities": 3.0,
+        },
+        window_seconds=60,
+        valid_beat_count=10,
+    )
+    quality = QualityResult(0.9, 0.9, 0.9, True)
+    baseline = BaselineState(
+        True,
+        1.0,
+        0.9,
+        median_hr=72.0,
+        median_map=80.0,
+    )
+
+    result = compute_research_instability_index(
+        features,
+        quality,
+        baseline,
+        PipelineMode.GENERIC_VALIDATION_MODE,
+        config,
+        data_source="test",
+    )
+
+    assert result.valid is False
+    assert result.score is None
+    assert any("Feature current_hr_bpm" in reason for reason in result.reasons)
+
+
+def test_insufficient_valid_beats_withholds_risk() -> None:
+    config = PipelineConfig()
+    features = FeatureSet(
+        values={
+            "current_hr_bpm": 72.0,
+            "current_map_mm_hg": 80.0,
+            "beat_detection_confidence": 0.0,
+            "available_modalities": 3.0,
+        },
+        window_seconds=60,
+        valid_beat_count=config.quality.minimum_valid_beats - 1,
+    )
+    quality = QualityResult(0.9, 0.9, 0.9, True)
+    baseline = BaselineState(
+        True,
+        1.0,
+        0.9,
+        median_hr=72.0,
+        median_map=80.0,
+    )
+
+    result = compute_research_instability_index(
+        features,
+        quality,
+        baseline,
+        PipelineMode.GENERIC_VALIDATION_MODE,
+        config,
+        data_source="test",
+    )
+
+    assert result.valid is False
+    assert result.score is None
+    assert any("too few valid beats" in reason for reason in result.reasons)
+
+
 def test_ds_hypothesis_mode_uses_same_index_but_reduces_confidence() -> None:
     config = PipelineConfig()
     features = FeatureSet(
