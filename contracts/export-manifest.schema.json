@@ -1,0 +1,46 @@
+{
+  "$id": "https://t21-safe.local/contracts/export-manifest.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "export_id": { "minLength": 1, "type": "string" },
+    "session_id": { "minLength": 1, "type": "string" },
+    "event_ids": {
+      "items": { "minLength": 1, "type": "string" },
+      "minItems": 1,
+      "type": "array"
+    },
+    "storage_scope": { "const": "LOCAL_ONLY" },
+    "content_scope": { "const": "SHADOW_CAPTURE_METADATA_ONLY" },
+    "mode": { "const": "OBSERVE_ONLY_SHADOW" },
+    "is_synthetic": { "const": true },
+    "includes_waveforms": { "const": false },
+    "includes_phi": { "const": false },
+    "controls": {
+      "additionalProperties": false,
+      "properties": {
+        "actuation": { "const": false },
+        "closed_loop": { "const": false },
+        "dosing": { "const": false },
+        "drug_advice": { "const": false },
+        "emr_write": { "const": false }
+      },
+      "required": ["actuation", "dosing", "closed_loop", "drug_advice", "emr_write"],
+      "type": "object"
+    }
+  },
+  "required": [
+    "export_id",
+    "session_id",
+    "event_ids",
+    "storage_scope",
+    "content_scope",
+    "mode",
+    "is_synthetic",
+    "includes_waveforms",
+    "includes_phi",
+    "controls"
+  ],
+  "title": "ExportManifest",
+  "type": "object"
+}

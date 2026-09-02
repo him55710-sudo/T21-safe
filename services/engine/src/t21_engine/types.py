@@ -162,6 +162,38 @@ class ShadowSafetyControls:
 
 
 @dataclass(frozen=True, slots=True)
+class ExportManifest:
+    """Fail-closed description of a local shadow-metadata research export."""
+
+    export_id: str
+    session_id: str
+    event_ids: tuple[str, ...]
+    includes_waveforms: bool = False
+    includes_phi: bool = False
+    storage_scope: str = "LOCAL_ONLY"
+    content_scope: str = "SHADOW_CAPTURE_METADATA_ONLY"
+    mode: str = "OBSERVE_ONLY_SHADOW"
+    is_synthetic: bool = True
+    controls: ShadowSafetyControls = field(default_factory=ShadowSafetyControls)
+
+    def __post_init__(self) -> None:
+        if not self.export_id or not self.session_id or not self.event_ids:
+            raise ValueError("export_id, session_id, and event_ids must be non-empty")
+        if any(not event_id for event_id in self.event_ids):
+            raise ValueError("event_ids must not contain empty values")
+        if self.includes_waveforms or self.includes_phi:
+            raise ValueError("local research exports reject waveforms and PHI")
+        if self.storage_scope != "LOCAL_ONLY":
+            raise ValueError("research exports are local-only")
+        if self.content_scope != "SHADOW_CAPTURE_METADATA_ONLY":
+            raise ValueError("research exports contain shadow-capture metadata only")
+        if self.mode != "OBSERVE_ONLY_SHADOW":
+            raise ValueError("research exports are observe-only")
+        if not self.is_synthetic:
+            raise ValueError("research exports require synthetic, non-PHI data")
+
+
+@dataclass(frozen=True, slots=True)
 class RiskResult:
     score: float | None
     level: RiskLevel
