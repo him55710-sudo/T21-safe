@@ -50,6 +50,13 @@ real BIDMC bytes or patient data. They are engineering **PROXY** results, with
 `clinical_validation=false`, and make no DS or clinical-performance claim. The report
 schema is `bidmc-align-resp-bench/1.0`.
 
+### Baseline window sensitivity (CODEX-012, synthetic)
+
+See `docs/benchmarks/BASELINE_WINDOW_SENSITIVITY.md`. Module
+`t21_engine.evaluation.baseline_window_sensitivity` compares 180s vs 300s
+pre-induction windows on synthetic hospital cases only (`clinical_validation=false`,
+`clinical_window_choice=PI_TO_DEFINE`). Not a public-data claim.
+
 ---
 
 ## Commits / engineering trail (facts only)
