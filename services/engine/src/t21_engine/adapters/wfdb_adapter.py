@@ -21,6 +21,9 @@ class WFDBCatalogMetadata:
     title: str
     available_signals: tuple[str, ...]
     attribution: str
+    dataset_name: str = ""
+    dataset_version: str = ""
+    license_notes: str = ""
 
 
 WFDB_CATALOG = {
@@ -31,6 +34,20 @@ WFDB_CATALOG = {
             "BIDMC PPG and Respiration Dataset v1.0.0, PhysioNet; "
             "Open Data Commons Attribution License v1.0; DOI 10.13026/C2208R."
         ),
+        dataset_name="BIDMC PPG and Respiration Dataset",
+        dataset_version="1.0.0",
+        license_notes="Open Data Commons Attribution License v1.0; cite DOI 10.13026/C2208R.",
+    ),
+    "wfdb:mitdb-100": WFDBCatalogMetadata(
+        title="MIT-BIH Arrhythmia Database record 100",
+        available_signals=("ECG",),
+        attribution=(
+            "MIT-BIH Arrhythmia Database v1.0.0, PhysioNet; Open Data Commons "
+            "Attribution License v1.0; DOI 10.13026/C2F305."
+        ),
+        dataset_name="MIT-BIH Arrhythmia Database",
+        dataset_version="1.0.0",
+        license_notes="Open Data Commons Attribution License v1.0; cite DOI 10.13026/C2F305.",
     ),
     "wfdb:ptt-s10-sit": WFDBCatalogMetadata(
         title="Pulse Transit Time PPG record s10_sit",
@@ -55,6 +72,7 @@ class WFDBAdapter(DataAdapter):
     def __init__(self, records: dict[str, tuple[str, str | None]] | None = None) -> None:
         self.records = records or {
             "wfdb:bidmc01": ("bidmc01", "bidmc/1.0.0"),
+            "wfdb:mitdb-100": ("100", "mitdb/1.0.0"),
             "wfdb:ptt-s10-sit": ("s10_sit", "pulse-transit-time-ppg/1.1.0"),
             "wfdb:mimic4-preview": (
                 "83411188",
@@ -129,7 +147,7 @@ class WFDBAdapter(DataAdapter):
         signals: dict[str, np.ndarray[Any, np.dtype[np.float64]]] = {}
         for column, raw_name in enumerate(record.sig_name):
             normalized = str(raw_name).strip().lower().rstrip(",")
-            if normalized in {"ii", "ecg", "ekg", "ecg_ii"}:
+            if normalized in {"ii", "mlii", "ecg", "ekg", "ecg_ii"}:
                 canonical = "ecg_ii"
             elif normalized == "pleth" or normalized.startswith("ppg"):
                 canonical = "ppg"
