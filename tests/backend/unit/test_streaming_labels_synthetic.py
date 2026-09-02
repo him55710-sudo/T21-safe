@@ -95,3 +95,16 @@ def test_signal_batch_rejects_invalid_transport_measurements() -> None:
             source=SourceMetadata("test", "case", True),
             synchronization_error_ms=float("nan"),
         )
+
+
+def test_signal_batch_rejects_mixed_rates_on_one_timestamp_grid() -> None:
+    with pytest.raises(ValueError, match="share a sample rate"):
+        SignalBatch(
+            timestamps_s=np.asarray([0.0, 1.0], dtype=np.float64),
+            signals={
+                "ecg_ii": np.asarray([0.0, 1.0], dtype=np.float64),
+                "ppg": np.asarray([0.0, 1.0], dtype=np.float64),
+            },
+            sample_rates_hz={"ecg_ii": 100.0, "ppg": 50.0},
+            source=SourceMetadata("test", "case", True),
+        )

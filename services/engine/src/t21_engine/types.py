@@ -64,6 +64,9 @@ class SignalBatch:
             sample_rate = self.sample_rates_hz.get(name)
             if sample_rate is None or not np.isfinite(sample_rate) or sample_rate <= 0.0:
                 raise ValueError(f"signal {name} requires a positive finite sample rate")
+        rates = [self.sample_rates_hz[name] for name in self.signals]
+        if rates and not all(np.isclose(rate, rates[0]) for rate in rates[1:]):
+            raise ValueError("signals on one timestamp grid must share a sample rate")
         if not np.isfinite(self.latency_ms) or self.latency_ms < 0.0:
             raise ValueError("latency_ms must be non-negative and finite")
         if self.out_of_order_count < 0:
