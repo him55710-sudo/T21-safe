@@ -38,6 +38,7 @@ def extract_features(
     sample_rate_hz: float,
     *,
     window_seconds: int = 60,
+    raw_signals: dict[str, FloatArray] | None = None,
 ) -> FeatureSet:
     timestamps = np.asarray(timestamps_s, dtype=np.float64)
     if not timestamps.size:
@@ -46,6 +47,9 @@ def extract_features(
     mask = timestamps >= cutoff
     window_times = timestamps[mask]
     window_signals = {name: np.asarray(values)[mask] for name, values in signals.items()}
+    raw_window_signals = {
+        name: np.asarray(values)[mask] for name, values in (raw_signals or signals).items()
+    }
 
     r_peaks = (
         detect_r_peaks(window_signals["ecg_ii"], sample_rate_hz)
@@ -94,8 +98,13 @@ def extract_features(
     delta_hr, delta_hr_pct = _relative_delta(current_hr, baseline.median_hr)
 
     ppg_features = (
-        extract_ppg_features(window_signals["ppg"], pulse_peaks, sample_rate_hz)
-        if "ppg" in window_signals
+        extract_ppg_features(
+            raw_window_signals["ppg"],
+            pulse_peaks,
+            sample_rate_hz,
+            morphology_signal=window_signals["ppg"],
+        )
+        if "ppg" in window_signals and "ppg" in raw_window_signals
         else {
             "ppg_amplitude": None,
             "ppg_pulse_width_s": None,
@@ -158,6 +167,7 @@ def extract_feature_windows(
     sample_rate_hz: float,
     *,
     windows_seconds: tuple[int, ...] = (30, 60, 180),
+    raw_signals: dict[str, FloatArray] | None = None,
 ) -> dict[int, FeatureSet]:
     """Calculate each configured research window without changing the flat API view."""
     if not windows_seconds or any(window <= 0 for window in windows_seconds):
@@ -171,6 +181,7 @@ def extract_feature_windows(
             baseline,
             sample_rate_hz,
             window_seconds=window,
+            raw_signals=raw_signals,
         )
         for window in windows_seconds
     }

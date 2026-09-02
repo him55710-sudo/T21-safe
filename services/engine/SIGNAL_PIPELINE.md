@@ -30,6 +30,8 @@ update.
 Filter cutoffs are in `config.py` and are limited below the actual source Nyquist.
 Functions never overwrite the raw arrays. Flatline, clipping, abrupt motion, missing
 data, implausible ABP range, and pulse regularity contribute to SQI values from 0 to 1.
+ECG/PPG beat timing is detected from processed waveforms, while raw PPG values at those
+indices retain within-person amplitude and morphology scale.
 
 An index is withheld when the beat source or pressure source is unusable, gaps exceed
 the configured threshold, timestamps are unsynchronized, valid beats are insufficient,

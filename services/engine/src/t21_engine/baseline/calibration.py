@@ -33,6 +33,7 @@ def calibrate_baseline(
     *,
     baseline_seconds: int = 180,
     minimum_fraction: float = 0.8,
+    raw_signals: dict[str, FloatArray] | None = None,
 ) -> BaselineState:
     timestamps = np.asarray(timestamps_s, dtype=np.float64)
     if baseline_seconds <= 0:
@@ -55,6 +56,9 @@ def calibrate_baseline(
     expected_samples = max(1, int(round(baseline_seconds * sample_rate_hz)))
     coverage_fraction = float(np.clip(baseline_times.size / expected_samples, 0.0, 1.0))
     baseline_signals = {name: np.asarray(values)[mask] for name, values in signals.items()}
+    raw_baseline_signals = {
+        name: np.asarray(values)[mask] for name, values in (raw_signals or signals).items()
+    }
 
     ecg_beats = (
         detect_r_peaks(baseline_signals["ecg_ii"], sample_rate_hz)
@@ -90,8 +94,8 @@ def calibrate_baseline(
     median_map = float(np.median(finite_map)) if finite_map.size else None
 
     ppg_amplitudes = (
-        pulse_amplitudes(baseline_signals["ppg"], pulse_beats, sample_rate_hz)
-        if pulse_beats is not None
+        pulse_amplitudes(raw_baseline_signals["ppg"], pulse_beats, sample_rate_hz)
+        if pulse_beats is not None and "ppg" in raw_baseline_signals
         else np.asarray([], dtype=np.float64)
     )
     median_ppg_amplitude = float(np.median(ppg_amplitudes)) if ppg_amplitudes.size else None

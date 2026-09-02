@@ -129,9 +129,6 @@ class ReplayPipeline:
                         order=effective_config.filters.order,
                     )
                 feature_signals = {name: values.copy() for name, values in processed.items()}
-                if "ppg" in snapshot.signals:
-                    # Preserve absolute PPG amplitude for within-patient change features.
-                    feature_signals["ppg"] = snapshot.signals["ppg"].copy()
                 sample_rates = {name: fs for name in processed}
                 if baseline is None or not baseline_locked:
                     if baseline_start_s is None:
@@ -161,6 +158,7 @@ class ReplayPipeline:
                         baseline_quality,
                         baseline_seconds=baseline_duration,
                         minimum_fraction=effective_config.baseline_minimum_fraction,
+                        raw_signals=snapshot.signals,
                     )
                     baseline_locked = float(snapshot.timestamps_s[-1]) >= baseline_cutoff
                 feature_windows = extract_feature_windows(
@@ -169,6 +167,7 @@ class ReplayPipeline:
                     baseline,
                     fs,
                     windows_seconds=effective_config.feature_windows_seconds,
+                    raw_signals=snapshot.signals,
                 )
                 primary_window = min(feature_windows, key=lambda window: abs(window - 60))
                 feature_set = feature_windows[primary_window]

@@ -99,6 +99,36 @@ def test_configured_feature_windows_are_calculated_independently() -> None:
     )
 
 
+def test_ppg_peaks_use_processed_signal_while_amplitude_uses_raw_signal() -> None:
+    sample_rate_hz = 100.0
+    timestamps = np.arange(0.0, 10.0, 1.0 / sample_rate_hz)
+    phase = np.mod(timestamps, 1.0)
+    processed_ppg = np.exp(-0.5 * ((phase - 0.3) / 0.08) ** 2).astype(np.float64)
+    raw_ppg = (10.0 + 4.0 * processed_ppg).astype(np.float64)
+    baseline = BaselineState(
+        True,
+        1.0,
+        0.9,
+        median_hr=60.0,
+        median_map=82.0,
+        median_ppg_amplitude=4.0,
+    )
+
+    features = extract_features(
+        timestamps,
+        {"ppg": processed_ppg, "map_mm_hg": np.full(timestamps.size, 82.0)},
+        baseline,
+        sample_rate_hz,
+        window_seconds=10,
+        raw_signals={"ppg": raw_ppg, "map_mm_hg": np.full(timestamps.size, 82.0)},
+    )
+
+    assert features.values["ppg_peak_confidence"] is not None
+    assert features.values["ppg_peak_confidence"] > 0.6
+    assert features.values["ppg_amplitude"] == pytest.approx(4.0, abs=0.2)
+    assert features.values["ppg_amp_delta_pct"] == pytest.approx(0.0, abs=5.0)
+
+
 def test_resp_waveform_features_detect_rate_and_prolonged_pause_candidate() -> None:
     sample_rate_hz = 10.0
     timestamps = np.arange(0.0, 60.0, 1.0 / sample_rate_hz)
