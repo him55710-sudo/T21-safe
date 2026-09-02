@@ -118,7 +118,7 @@ def extract_features(
     ppg_amp_delta, ppg_amp_delta_pct = _relative_delta(
         ppg_features["ppg_amplitude"], baseline.median_ppg_amplitude
     )
-    bp_features = extract_blood_pressure_features(window_times, window_signals)
+    bp_features = extract_blood_pressure_features(window_times, window_signals, sample_rate_hz)
     delta_map, delta_map_pct = _relative_delta(
         bp_features["current_map_mm_hg"], baseline.median_map
     )

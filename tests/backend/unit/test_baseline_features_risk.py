@@ -10,6 +10,7 @@ from t21_engine.baseline.calibration import calibrate_baseline
 from t21_engine.beats.rpeak import detect_r_peaks
 from t21_engine.config import PipelineConfig, RiskConfig
 from t21_engine.features import extract_feature_windows, extract_features
+from t21_engine.features.blood_pressure import extract_blood_pressure_features
 from t21_engine.features.hrv import rr_intervals_ms, time_domain_hrv
 from t21_engine.features.respiratory import extract_respiratory_features
 from t21_engine.quality.quality_gate import evaluate_quality
@@ -155,6 +156,23 @@ def test_resp_waveform_features_detect_rate_and_prolonged_pause_candidate() -> N
     assert paused_features["resp_missing_breath_candidate"] == 1.0
     assert unavailable_features["respiratory_rate_bpm"] is None
     assert unavailable_features["resp_missing_breath_candidate"] is None
+
+
+def test_abp_waveform_derives_current_pressures_and_beat_variability() -> None:
+    sample_rate_hz = 100.0
+    timestamps = np.arange(0.0, 10.0, 1.0 / sample_rate_hz)
+    abp = (80.0 + 20.0 * np.sin(2.0 * np.pi * timestamps)).astype(np.float64)
+
+    features = extract_blood_pressure_features(
+        timestamps,
+        {"abp": abp},
+        sample_rate_hz,
+    )
+
+    assert features["current_sbp_mm_hg"] == pytest.approx(100.0, abs=1.0)
+    assert features["current_dbp_mm_hg"] == pytest.approx(60.0, abs=1.0)
+    assert features["current_map_mm_hg"] == pytest.approx(80.0, abs=1.0)
+    assert features["pressure_variability"] == pytest.approx(0.0, abs=0.5)
 
 
 def test_hrv_time_domain_metrics() -> None:

@@ -24,11 +24,11 @@ population reference ranges.
 | `ppg_pulse_area` | source-unit·s | valid pulse | Area above local trough |
 | `ppg_amplitude_variability` | source units | >=2 pulses | Beat-to-beat amplitude variation |
 | `ppg_peak_confidence` | 0-1 | >=2 s | Pulse timing confidence |
-| `current_sbp_mm_hg`, `current_dbp_mm_hg`, `current_map_mm_hg` | mmHg | current | Numeric trend; ABP median proxy when MAP absent |
+| `current_sbp_mm_hg`, `current_dbp_mm_hg`, `current_map_mm_hg` | mmHg | current | Numeric trend or ABP peak/trough/median research proxy |
 | `delta_map_mm_hg`, `delta_map_pct` | mmHg, % | baseline required | Change from individual MAP baseline |
 | `map_slope_mm_hg_min` | mmHg/min | >=2 points | MAP/ABP trend |
 | `map_duration_below_threshold_s` | s | current window | Adult generic candidate only; not DS/pediatric |
-| `pressure_variability` | mmHg | >=2 points | Window dispersion |
+| `pressure_variability` | mmHg | >=2 ABP beats or points | Beat-to-beat pulse-pressure variability when ABP exists; otherwise trend dispersion |
 | `ptt_ms` | ms | aligned ECG and PPG | Pulse-arrival/transit proxy, not true PTT validation |
 | `ecg_ppg_alignment_confidence` | 0-1 | paired beats | Fraction and quality of plausible pairs |
 | `hr_ppg_divergence`, `hr_map_divergence` | percentage points | paired trends | Exploratory cross-modal divergence |
