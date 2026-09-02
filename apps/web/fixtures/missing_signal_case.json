@@ -1,0 +1,5 @@
+{
+  "id": "missing_signal_case",
+  "label": "SYNTHETIC",
+  "expected": { "missing": "PPG", "operation": "degraded", "risk": "INVALID" }
+}
