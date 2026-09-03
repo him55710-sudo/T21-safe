@@ -81,4 +81,12 @@ shadow-export inspection tools. The MIT-BIH and BIDMC tools are read-only,
 network-free PROXY engineering benches with pinned records, no arbitrary path input,
 `clinical_validation=false`, and no DS or clinical claims.
 
+## proxy-hyp evidence boundary
+
+For Founder meeting context, see the
+[PROXY meeting one-pager](../founder/MEETING_ONEPAGER_PROXY_v0.1_KR.md).
+The `t21-proxy-hyp` / `proxy_hyp_mcp` scope is ECG HR-event/SQI only,
+`clinical_validation=false`, with no FACT claim; conclusions remain
+`PARTIALLY_SUPPORTED` or `STRETCH` under RUO / Path B.
+
 > **Research Use Only / Shadow Mode · clinical_validation=false**
