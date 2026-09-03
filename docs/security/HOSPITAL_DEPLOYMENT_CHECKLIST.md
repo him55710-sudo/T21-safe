@@ -33,3 +33,8 @@
 ## Banned go-live language
 
 Do not describe the node as a cleared patient monitor or dosing advisor.
+
+## Partner pack
+
+- PHI-false ExportManifest one-pager: [`docs/business/export-manifest-phi-false-1p.md`](../business/export-manifest-phi-false-1p.md)
+- KR: [`docs/founder/EXPORT_MANIFEST_PHI_FALSE_KR.md`](../founder/EXPORT_MANIFEST_PHI_FALSE_KR.md)
