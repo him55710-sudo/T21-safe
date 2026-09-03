@@ -1,6 +1,6 @@
 # Research engineering artifacts index
 
-> **PUBLIC_DATA_REPORT_V1 freeze: `v1.8-hospital-demo-html` · `2026-09-03 UTC`**
+> **PUBLIC_DATA_REPORT_V1 freeze: `v1.9-hospital-demo-pack` · `2026-09-03 UTC`**
 >
 > **PROXY / engineering only**  
 > **clinical_validation=false**  
@@ -251,7 +251,7 @@ CODEX-078 checklist of Path B eng smoke workflows landed after MCP verify packag
 
 `clinical_validation=false` · PROXY/RUO only · no DS clinical claims · VitalDB not included.
 
-## Hospital demo packaging (079–093)
+## Hospital demo packaging (079–097)
 
 Founder/partner showable Path B demo track after eng CI packaging (`v1.6-eng-ci` tip moves to `v1.7-hospital-demo` in CODEX-088).
 
@@ -270,6 +270,9 @@ Founder/partner showable Path B demo track after eng CI packaging (`v1.6-eng-ci`
 | Hospital demo runbook (KR) | `abbac57` | `docs/founder/HOSPITAL_DEMO_RUNBOOK_KR.md` |
 | CI HTML showcard + chain units | `12f01c7` | `.github/workflows/hospital-demo-smoke.yml` |
 | Partner pack HTML showcard default | `abca64c` | `scripts/pack_hospital_demo_partner.sh` |
+| Partner pack business 1-pagers | `d5aa785` | `scripts/pack_hospital_demo_partner.sh` |
+| Print-friendly HTML show-card | `b9862e3` | `scripts/generate_hospital_demo_showcard_html.py` |
+| Pack freeze / runbook refresh | `e14ae3b` | `docs/founder/HOSPITAL_DEMO_RUNBOOK_KR.md`, `docs/benchmarks/**` |
 
 `clinical_validation=false` · synthetic/local · `includes_phi=false` · no DS clinical claims · VitalDB not included.
 
@@ -286,5 +289,13 @@ See **Hospital demo packaging (079–086)** above for paths/commits. CODEX-087 r
 Freeze companion: [`PUBLIC_DATA_REPORT_V1.md`](PUBLIC_DATA_REPORT_V1.md) (`v1.8-hospital-demo-html`).
 
 See **Hospital demo packaging (079–093)** above. Tip freeze is `v1.8-hospital-demo-html`.
+
+`clinical_validation=false` · synthetic/local · PHI-false · no DS clinical claims · VitalDB not included.
+
+## Hospital demo pack freeze (095–097)
+
+Freeze companion: [`PUBLIC_DATA_REPORT_V1.md`](PUBLIC_DATA_REPORT_V1.md) (`v1.9-hospital-demo-pack`).
+
+Tip freeze after business 1-pagers + print-friendly HTML show-card.
 
 `clinical_validation=false` · synthetic/local · PHI-false · no DS clinical claims · VitalDB not included.

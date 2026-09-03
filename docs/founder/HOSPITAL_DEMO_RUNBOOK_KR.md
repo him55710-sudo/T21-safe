@@ -44,6 +44,20 @@ PROXY 공개 벤치(BIDMC/MIT-BIH/Fantasia)는 **별도 PROXY 라벨** — 이 �
 
 ---
 
+
+## 파트너 zip에 들어가는 문서
+
+`scripts/pack_hospital_demo_partner.sh`는 존재할 때만 복사합니다.
+
+- `export-manifest-phi-false-1p.md`
+- `research-node-one-pager.md`
+- `research-overview-2p.md`
+- `safety-local-first-1p.md`
+- `HOSPITAL_POC_ONEPAGER.md` (있으면)
+- HTML show-card (`showcard.html`) — 브라우저에서 열고 **인쇄** 가능 (CODEX-096)
+
+shadow JSONL · 파형 · PHI는 zip에 **넣지 않습니다**.
+
 ## 단계별 (디버그)
 
 ```bash
