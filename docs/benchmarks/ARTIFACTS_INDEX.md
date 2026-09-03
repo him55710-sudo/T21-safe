@@ -340,7 +340,7 @@ Method Master: Notion `P2E-METHOD-PROXY-PLAN-V01` (CODEX_READY).
 | CI smoke for PROXY HYP runner | `385b812` | `.github/workflows/proxy-hyp-bench-smoke.yml` |
 | Founder PROXY results pack (KR) | `b710db6` | [`docs/founder/PROXY_HYP_RESULTS_KR.md`](../founder/PROXY_HYP_RESULTS_KR.md) |
 | METHODS_CRITIQUE prominence | `628911e` | `docs/founder/PROXY_HYP_RESULTS_KR.md`, `ARTIFACTS_INDEX.md` |
-| Auditor DSCS founder-pack wording | *(CODEX-111)* | `docs/founder/PROXY_HYP_RESULTS_KR.md`, pack README |
+| Auditor DSCS founder-pack wording |  | `docs/founder/PROXY_HYP_RESULTS_KR.md`, pack README |
 | PROXY HYP partner zip | `3025cca` | `scripts/pack_proxy_hyp_partner.sh` |
 | PROXY HYP MCP list/run | `e2c3d6d` | `t21_engine.proxy_hyp_mcp`, `t21-proxy-hyp-mcp` |
 
