@@ -267,7 +267,7 @@ Founder/partner showable Path B demo track after eng CI packaging (`v1.6-eng-ci`
 | CI extends showcard + partner pack | `73a5cf1` | `.github/workflows/hospital-demo-smoke.yml` |
 | HTML browser show-card | `b1a5597` | `scripts/generate_hospital_demo_showcard_html.py` |
 | Demo → HTML → partner zip chain | `001a008` | `scripts/run_hospital_demo_chain.sh` |
-| Hospital demo runbook (KR) | `e511421` | `docs/founder/HOSPITAL_DEMO_RUNBOOK_KR.md` |
+| Hospital demo runbook (KR) | `abbac57` | `docs/founder/HOSPITAL_DEMO_RUNBOOK_KR.md` |
 
 `clinical_validation=false` · synthetic/local · `includes_phi=false` · no DS clinical claims · VitalDB not included.
 
