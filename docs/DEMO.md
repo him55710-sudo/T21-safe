@@ -16,6 +16,16 @@ After the demo entrypoints work, optional Path B MCP tooling can be enabled in C
 These MCP servers remain Research Use Only with `clinical_validation=false`. They are not
 a clinical monitor and do not add dosing, alerts, or DS clinical claims.
 
+## One-command hospital demo (CODEX-079)
+
+Showable Path B synthetic hospital run with local shadow JSONL + `ExportManifest` gate checks (`clinical_validation=false`, `includes_phi=false`):
+
+```bash
+bash scripts/run_hospital_demo.sh /tmp/t21-hospital-demo
+```
+
+Korean Founder onboarding: [`docs/founder/HOSPITAL_DEMO_ONBOARDING_KR.md`](founder/HOSPITAL_DEMO_ONBOARDING_KR.md).
+
 ## Run in under six minutes
 
 From the repository root, use Python 3.11 or newer:
