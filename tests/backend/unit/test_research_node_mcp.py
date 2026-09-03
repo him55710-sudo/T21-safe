@@ -281,3 +281,39 @@ def test_list_demo_presets_read_only_defaults() -> None:
     assert default["seed"] == 20250321
     assert default["clinical_validation"] is False
     _assert_gates(payload)
+
+
+def test_list_demo_presets_tools_call_is_error_free() -> None:
+    """CODEX-046: empty-args tools/call stays PASS with clinical_validation=false."""
+    response = handle_request(
+        {
+            "jsonrpc": "2.0",
+            "id": 46,
+            "method": "tools/call",
+            "params": {"name": "list_demo_presets", "arguments": {}},
+        }
+    )
+    assert response is not None
+    assert response["id"] == 46
+    assert response["result"]["isError"] is False
+    payload = json.loads(response["result"]["content"][0]["text"])
+    assert payload["status"] == "PASS"
+    assert payload["clinical_validation"] is False
+    assert payload["presets"]
+    assert payload["failure_reason_code"] is None if "failure_reason_code" in payload else True
+    _assert_gates(payload)
+
+
+def test_list_demo_presets_rejects_unknown_arguments() -> None:
+    response = handle_request(
+        {
+            "jsonrpc": "2.0",
+            "id": 47,
+            "method": "tools/call",
+            "params": {"name": "list_demo_presets", "arguments": {"extra": True}},
+        }
+    )
+    assert response is not None
+    # Unknown kwargs → TypeError path → JSON-RPC invalid params, not clinical claim
+    assert "error" in response
+    assert response["error"]["code"] == -32602
