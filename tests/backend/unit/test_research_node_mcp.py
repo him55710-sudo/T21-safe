@@ -317,3 +317,24 @@ def test_list_demo_presets_rejects_unknown_arguments() -> None:
     # Unknown kwargs → TypeError path → JSON-RPC invalid params, not clinical claim
     assert "error" in response
     assert response["error"]["code"] == -32602
+
+
+def test_export_shadow_summary_roundtrip_valid_fixture_jsonl(tmp_path: Path) -> None:
+    """CODEX-060: write fixture shadow JSONL then summarize via export_shadow_summary."""
+    fixture = (
+        Path(__file__).resolve().parents[1]
+        / "fixtures"
+        / "shadow_capture.synthetic.json"
+    )
+    capture = json.loads(fixture.read_text(encoding="utf-8"))
+    out = tmp_path / "shadow-capture.jsonl"
+    out.write_text(json.dumps(capture, separators=(",", ":")) + "\n", encoding="utf-8")
+
+    payload = export_shadow_summary(path=str(out))
+    assert payload["status"] == "PASS"
+    assert payload["clinical_validation"] is False
+    assert payload["capture_count"] == 1
+    assert payload["manifest_count"] == 0
+    assert payload["record_count"] == 1
+    assert payload["capture_schema_version"] == "shadow-capture/1.0"
+    _assert_gates(payload)
