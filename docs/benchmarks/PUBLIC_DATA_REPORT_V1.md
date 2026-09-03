@@ -1,6 +1,6 @@
 # Public Data Report v1 — PROXY engine smoke
 
-**Freeze version:** `v1.9-hospital-demo-pack`
+**Freeze version:** `v2.0-hospital-demo-ready`
 
 **Freeze date:** `2026-09-03 UTC`
 
@@ -190,6 +190,21 @@ clinical claims.
 
 No VitalDB download or implementation, and no CapnoBase or PulseDB benchmark, is part
 of `v1.9-hospital-demo-pack` (superseding `v1.8-hospital-demo-html` for partner-pack packaging). All entries remain research
+engineering artifacts with
+`clinical_validation=false`; none supports a DS-specific or other clinical claim.
+
+The `v2.0-hospital-demo-ready` bump records Founder-ready hospital demo packaging after
+`v1.9-hospital-demo-pack` (fail-closed partner zip CI, Makefile wrappers, ARTIFACTS
+refresh). Documentation/DX packaging only; no new datasets or clinical claims.
+
+| Delivery | Shipped ready artifact | Commit |
+| --- | --- | --- |
+| CODEX-098 | Partner zip fail-closed contents CI/unit | `a46aa74` |
+| CODEX-099 | Makefile `hospital-demo` / `hospital-demo-pack` | `5f68050` |
+| CODEX-100 | ARTIFACTS + freeze tip | `3659fc3` |
+
+No VitalDB download or implementation, and no CapnoBase or PulseDB benchmark, is part
+of `v2.0-hospital-demo-ready` (superseding `v1.9-hospital-demo-pack` for Founder-ready packaging). All entries remain research
 engineering artifacts with
 `clinical_validation=false`; none supports a DS-specific or other clinical claim.
 
