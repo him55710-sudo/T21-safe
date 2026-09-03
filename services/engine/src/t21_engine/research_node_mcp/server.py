@@ -11,6 +11,8 @@ from t21_engine.research_node_mcp.handlers import (
     export_shadow_summary,
     list_local_shadow_exports,
     run_baseline_window_sensitivity,
+    run_bidmc_align_resp_bench,
+    run_mitbih_beat_bench,
     run_sqi_missingness_impact,
     run_synthetic_demo,
     run_time_align_qc,
@@ -70,6 +72,34 @@ TOOLS = [
         },
     },
     {
+        "name": "run_mitbih_beat_bench",
+        "description": (
+            "Run the pinned local MIT-BIH beat-detection PROXY engineering benchmark."
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "match_window_ms": {
+                    "type": "number",
+                    "minimum": 0,
+                    "default": 150,
+                }
+            },
+            "additionalProperties": False,
+        },
+    },
+    {
+        "name": "run_bidmc_align_resp_bench",
+        "description": (
+            "Run the pinned local BIDMC alignment/RESP PROXY engineering benchmark."
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {},
+            "additionalProperties": False,
+        },
+    },
+    {
         "name": "run_sqi_missingness_impact",
         "description": (
             "Run synthetic-only SQI/missingness engineering sensitivity; PI_TO_DEFINE."
@@ -118,6 +148,8 @@ HANDLERS: dict[str, Callable[..., dict[str, Any]]] = {
     "run_time_align_qc": run_time_align_qc,
     "run_sqi_missingness_impact": run_sqi_missingness_impact,
     "run_baseline_window_sensitivity": run_baseline_window_sensitivity,
+    "run_mitbih_beat_bench": run_mitbih_beat_bench,
+    "run_bidmc_align_resp_bench": run_bidmc_align_resp_bench,
 }
 
 

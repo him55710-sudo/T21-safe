@@ -91,8 +91,8 @@ Fantasia download is required.
 - Guide: [`docs/mcp/RESEARCH_NODE_MCP.md`](../mcp/RESEARCH_NODE_MCP.md)
 - Module / command: `t21_engine.research_node_mcp` / `t21-research-node-mcp`
 - Tools: `run_synthetic_demo`, `run_time_align_qc`, `run_sqi_missingness_impact`,
-  `run_baseline_window_sensitivity`, `list_local_shadow_exports`,
-  `export_shadow_summary`
+  `run_baseline_window_sensitivity`, `run_mitbih_beat_bench`,
+  `run_bidmc_align_resp_bench`, `list_local_shadow_exports`, `export_shadow_summary`
 - Verification command:
   `python -m pytest tests/backend/unit/test_research_node_mcp.py tests/backend/unit/test_research_node_mcp_stdio.py tests/backend/integration/test_research_node_demo.py`
 
@@ -105,6 +105,11 @@ Shadow JSONL records expose `shadow-capture/1.0` and `export-manifest/1.0`; the
 read-only MCP tools list local files or return validated aggregate counts only.
 The two sensitivity tools reuse the indexed evaluation modules as read-only MCP
 operations and return a `PI_TO_DEFINE` banner on both success and failure.
+The MIT-BIH and BIDMC tools reuse their indexed evaluation modules and local fixture
+fallbacks as pinned-record, read-only PROXY operations. Every result, including a
+failure, carries `clinical_validation=false`, a PROXY banner, and no DS or clinical
+claim; the underlying dataset block retains `master_verified_proxy` where applicable.
+Neither tool adds a network, arbitrary-path, artifact-write, or VitalDB path.
 
 ## Baseline 180 / 300
 

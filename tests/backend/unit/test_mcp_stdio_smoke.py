@@ -27,6 +27,8 @@ import pytest
                 "run_baseline_window_sensitivity",
                 "list_local_shadow_exports",
                 "export_shadow_summary",
+                "run_mitbih_beat_bench",
+                "run_bidmc_align_resp_bench",
             },
         ),
     ],

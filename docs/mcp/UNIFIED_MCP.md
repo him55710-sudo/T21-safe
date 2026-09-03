@@ -74,8 +74,10 @@ For the short Cursor install-and-restart sequence, see the
 [Founder dual-MCP setup checklist](FOUNDER_DUAL_MCP_SETUP.md).
 
 The Research Node advertises `run_synthetic_demo`, `run_time_align_qc`,
-`run_sqi_missingness_impact`, and `run_baseline_window_sensitivity`. The latter two
-are read-only, synthetic-only engineering evaluations with `PI_TO_DEFINE` output
-and `clinical_validation=false`.
+`run_sqi_missingness_impact`, `run_baseline_window_sensitivity`,
+`run_mitbih_beat_bench`, and `run_bidmc_align_resp_bench`, plus the two bounded
+shadow-export inspection tools. The MIT-BIH and BIDMC tools are read-only,
+network-free PROXY engineering benches with pinned records, no arbitrary path input,
+`clinical_validation=false`, and no DS or clinical claims.
 
 > **Research Use Only / Shadow Mode · clinical_validation=false**

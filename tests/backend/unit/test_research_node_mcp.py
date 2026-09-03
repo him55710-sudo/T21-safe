@@ -9,6 +9,8 @@ from t21_engine.research_node_mcp import handlers
 from t21_engine.research_node_mcp.handlers import (
     export_shadow_summary,
     list_local_shadow_exports,
+    run_bidmc_align_resp_bench,
+    run_mitbih_beat_bench,
     run_synthetic_demo,
     run_time_align_qc,
 )
@@ -129,6 +131,64 @@ def test_stdio_handler_wraps_happy_payload() -> None:
     result = response["result"]
     assert result["isError"] is False
     _assert_gates(json.loads(result["content"][0]["text"]))
+
+
+@pytest.mark.parametrize(
+    ("runner", "evaluation_name", "scope", "schema_version"),
+    [
+        (
+            run_mitbih_beat_bench,
+            "evaluate_mitbih_beat_bench",
+            "MITBIH_BEAT_PROXY",
+            "mitbih-beat-bench/1.0",
+        ),
+        (
+            run_bidmc_align_resp_bench,
+            "evaluate_bidmc_align_resp_bench",
+            "BIDMC_ALIGN_RESP_PROXY",
+            "bidmc-align-resp-bench/1.0",
+        ),
+    ],
+)
+def test_public_proxy_handlers_reuse_existing_benches_and_add_banners(
+    monkeypatch: pytest.MonkeyPatch,
+    runner: Callable[..., dict[str, object]],
+    evaluation_name: str,
+    scope: str,
+    schema_version: str,
+) -> None:
+    expected = {
+        "schema_version": schema_version,
+        "status": "PASS",
+        "clinical_validation": False,
+        "dataset": {"master_verified_proxy": True},
+        "records": [{"annotation_source": "SYNTHETIC_JSON_EQUIVALENT"}],
+        "aggregate": {"records_evaluated": 1},
+    }
+    monkeypatch.setattr(handlers, evaluation_name, lambda **_kwargs: expected)
+
+    payload = runner()
+
+    assert payload["status"] == "PASS"
+    assert payload["scope"] == scope
+    assert payload["mission"] == "CODEX-026"
+    assert payload["read_only"] is True
+    assert payload["clinical_validation"] is False
+    assert payload["dataset"] == {"master_verified_proxy": True}
+    assert payload["master_verified_proxy"] is True
+    assert "PROXY / ENGINEERING ONLY" in str(payload["proxy_banner"])
+    assert "no DS or clinical claims" in str(payload["proxy_banner"])
+    assert payload["network_required"] is False
+    assert payload["vitaldb_allowed"] is False
+
+
+def test_mitbih_proxy_handler_fails_closed_on_invalid_match_window() -> None:
+    payload = run_mitbih_beat_bench(match_window_ms=float("nan"))
+
+    assert payload["status"] == "FAIL_CLOSED"
+    assert payload["failure_reason_code"] == "INVALID_PARAMETERS"
+    assert payload["clinical_validation"] is False
+    assert "PROXY" in str(payload["proxy_banner"])
 
 
 @pytest.mark.parametrize(

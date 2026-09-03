@@ -21,6 +21,9 @@
 4. Open Cursor's MCP tools view and verify that both `fantasia-proxy` and
    `research-node` appear with their tools. Their outputs must retain the
    `clinical_validation=false` and Research Use Only / Shadow Mode boundaries.
+   The Research Node list includes `run_mitbih_beat_bench` and
+   `run_bidmc_align_resp_bench`; both are read-only public-data PROXY benches, not
+   clinical or DS validation.
 
 Before opening Cursor, verify both server processes directly from the repository
 root:

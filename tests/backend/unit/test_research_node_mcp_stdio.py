@@ -52,4 +52,6 @@ def test_stdio_server_initialize_and_lists_tools() -> None:
         "run_time_align_qc",
         "run_sqi_missingness_impact",
         "run_baseline_window_sensitivity",
+        "run_mitbih_beat_bench",
+        "run_bidmc_align_resp_bench",
     }

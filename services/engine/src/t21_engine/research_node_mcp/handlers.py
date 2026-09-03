@@ -16,6 +16,12 @@ from t21_engine.demo import run_demo
 from t21_engine.evaluation.baseline_window_sensitivity import (
     run_baseline_window_sensitivity as evaluate_baseline_window_sensitivity,
 )
+from t21_engine.evaluation.bidmc_align_resp_bench import (
+    run_bidmc_align_resp_bench as evaluate_bidmc_align_resp_bench,
+)
+from t21_engine.evaluation.mitbih_beat_bench import (
+    run_mitbih_beat_bench as evaluate_mitbih_beat_bench,
+)
 from t21_engine.evaluation.sqi_missingness_impact import (
     run_sqi_missingness_impact as evaluate_sqi_missingness_impact,
 )
@@ -78,6 +84,85 @@ def _evaluation_failure(schema_version: str, reason: str = "INVALID_PARAMETERS")
             "rows": [],
         }
     )
+
+
+def _proxy_bench_result(payload: dict[str, Any], *, scope: str) -> dict[str, Any]:
+    """Attach explicit Path B non-clinical gates to an existing PROXY report."""
+    dataset = payload.get("dataset")
+    master_verified_proxy = (
+        dataset.get("master_verified_proxy") if isinstance(dataset, dict) else False
+    )
+    records = payload.get("records")
+    sources = records if isinstance(records, list) else []
+    synthetic_only = bool(sources) and all(
+        isinstance(row, dict)
+        and (
+            row.get("annotation_source") == "SYNTHETIC_JSON_EQUIVALENT"
+            or (
+                isinstance(row.get("respiration_rate"), dict)
+                and row["respiration_rate"].get("reference_source")
+                == "SYNTHETIC_JSON_EQUIVALENT"
+            )
+        )
+        for row in sources
+    )
+    return {
+        **payload,
+        **_gates(),
+        "synthetic_only": synthetic_only,
+        "mission": "CODEX-026",
+        "scope": scope,
+        "read_only": True,
+        "master_verified_proxy": master_verified_proxy is True,
+        "proxy_banner": (
+            "PROXY / ENGINEERING ONLY — clinical_validation=false; "
+            "no DS or clinical claims"
+        ),
+    }
+
+
+def run_mitbih_beat_bench(*, match_window_ms: float = 150.0) -> dict[str, Any]:
+    """Run the pinned-record, local-only MIT-BIH beat-detection PROXY bench."""
+    if (
+        isinstance(match_window_ms, bool)
+        or not isinstance(match_window_ms, (int, float))
+        or not math.isfinite(match_window_ms)
+        or match_window_ms < 0
+    ):
+        payload = {
+            "schema_version": "mitbih-beat-bench/1.0",
+            "status": "FAIL_CLOSED",
+            "failure_reason_code": "INVALID_PARAMETERS",
+            "records": [],
+            "aggregate": None,
+        }
+    else:
+        try:
+            payload = evaluate_mitbih_beat_bench(match_window_ms=float(match_window_ms))
+        except (ImportError, OSError, OverflowError, RuntimeError, TypeError, ValueError):
+            payload = {
+                "schema_version": "mitbih-beat-bench/1.0",
+                "status": "FAIL_CLOSED",
+                "failure_reason_code": "BENCH_EXECUTION_FAILED",
+                "records": [],
+                "aggregate": None,
+            }
+    return _proxy_bench_result(payload, scope="MITBIH_BEAT_PROXY")
+
+
+def run_bidmc_align_resp_bench() -> dict[str, Any]:
+    """Run the pinned-record, local-only BIDMC alignment/RESP PROXY bench."""
+    try:
+        payload = evaluate_bidmc_align_resp_bench()
+    except (ImportError, OSError, RuntimeError, TypeError, ValueError):
+        payload = {
+            "schema_version": "bidmc-align-resp-bench/1.0",
+            "status": "FAIL_CLOSED",
+            "failure_reason_code": "BENCH_EXECUTION_FAILED",
+            "records": [],
+            "aggregate": None,
+        }
+    return _proxy_bench_result(payload, scope="BIDMC_ALIGN_RESP_PROXY")
 
 
 def _local_output_dir(
@@ -313,6 +398,8 @@ __all__ = [
     "export_shadow_summary",
     "list_local_shadow_exports",
     "run_baseline_window_sensitivity",
+    "run_bidmc_align_resp_bench",
+    "run_mitbih_beat_bench",
     "run_sqi_missingness_impact",
     "run_synthetic_demo",
     "run_time_align_qc",
