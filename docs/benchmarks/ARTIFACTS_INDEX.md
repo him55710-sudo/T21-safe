@@ -228,3 +228,25 @@ Freeze companion: [`PUBLIC_DATA_REPORT_V1.md`](PUBLIC_DATA_REPORT_V1.md) (`v1.6-
 | Empty signal batch fail-closed | `8b1ba66` | `services/engine/src/t21_engine/streaming/replay.py` |
 
 `clinical_validation=false` · PROXY/RUO only · no DS clinical claims · VitalDB not included.
+
+## Eng CI workflow inventory (066–076)
+
+CODEX-078 checklist of Path B eng smoke workflows landed after MCP verify packaging.
+`CODEX-077` SKIP — RingBuffer zero-capacity already raises in `__init__`; empty `append` is intentional no-op (ReplayPipeline empty-batch fail-closed is CODEX-074).
+
+| CODEX | Workflow / note | Commit | Path |
+| --- | --- | --- | --- |
+| 066 | Public PROXY bench smoke (BIDMC + MIT-BIH) | `f0d661d` | `.github/workflows/proxy-bench-smoke.yml` |
+| 067 | Synthetic hospital QC smoke | `904cc9e` | `.github/workflows/synthetic-hospital-qc-smoke.yml` |
+| 068 | Freeze `v1.5-mcp-verify` (docs) | `6b52604` | `docs/benchmarks/**` |
+| 069 | Fantasia HRV/age added to proxy-bench | `ae1a59b` | `.github/workflows/proxy-bench-smoke.yml` |
+| 070 | Replay pipeline smoke | `48feac4` | `.github/workflows/replay-pipeline-smoke.yml` |
+| 071 | Research node demo smoke | `85ed55f` | `.github/workflows/research-node-demo-smoke.yml` |
+| 072 | Sensitivity bench smoke | `6e0d4c2` | `.github/workflows/sensitivity-bench-smoke.yml` |
+| 073 | `public_data_bench` on proxy-bench | `f7dd376` | `.github/workflows/proxy-bench-smoke.yml` |
+| 074 | Empty signal batch fail-closed (engine) | `8b1ba66` | `services/engine/src/t21_engine/streaming/replay.py` |
+| 075 | Freeze `v1.6-eng-ci` (docs) | `a153e74` | `docs/benchmarks/**` |
+| 076 | Baseline features risk smoke | `7a35713` | `.github/workflows/baseline-features-risk-smoke.yml` |
+| 077 | SKIP (RingBuffer already fail-closed / empty append no-op) | — | `services/engine/src/t21_engine/streaming/ring_buffer.py` |
+
+`clinical_validation=false` · PROXY/RUO only · no DS clinical claims · VitalDB not included.
