@@ -28,7 +28,7 @@ def test_pack_script_bash_syntax() -> None:
 def test_pack_script_excludes_waveforms_and_includes_docs() -> None:
     text = SCRIPT.read_text(encoding="utf-8")
     assert "export-manifest-phi-false-1p.md" in text
-    assert "never copy shadow JSONL" in text.lower()
+    assert "never copy shadow jsonl" in text.lower()
     assert "includes_waveforms" in text
     assert "clinical_validation" in text
     assert "zipfile" in text
