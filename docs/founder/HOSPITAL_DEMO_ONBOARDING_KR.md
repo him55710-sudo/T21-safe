@@ -46,6 +46,14 @@ bash scripts/run_hospital_demo.sh /tmp/t21-hospital-demo
 
 ---
 
+## Partner pack (zip)
+
+```bash
+bash scripts/pack_hospital_demo_partner.sh /tmp/t21-hospital-demo
+```
+
+리포트·show-card·EN/KR 1페이지만 포함합니다. shadow JSONL/파형/PHI는 **넣지 않습니다**.
+
 ## Show-card (데모 화면용)
 
 리포트 JSON으로 PHI-false Markdown 카드 생성:
