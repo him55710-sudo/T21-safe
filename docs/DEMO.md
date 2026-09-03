@@ -4,6 +4,9 @@ This is a synthetic-only, local demonstration of the Path B research workflow. I
 Research Use Only (RUO), runs in observe-only shadow mode, contains no patient data,
 and always reports `clinical_validation=false`. It is not a clinical monitor.
 
+Korean PROXY v0.1 meeting talk track (ECG HR-event/SQI only; no FACT):
+[`docs/founder/MEETING_ONEPAGER_PROXY_v0.1_KR.md`](founder/MEETING_ONEPAGER_PROXY_v0.1_KR.md).
+Freeze: `v2.4-meeting-demo-links`.
 
 ## Cursor dual-MCP (Founder)
 
