@@ -1,6 +1,6 @@
 # Public Data Report v1 — PROXY engine smoke
 
-**Freeze version:** `v1.1-mcp-pre-VitalDB`
+**Freeze version:** `v1.2-mcp-dx`
 
 **Freeze date:** `2026-09-03 UTC`
 
@@ -45,8 +45,19 @@ they do not add clinical validation or expand the datasets in this freeze.
 | CODEX-022 | Unified Fantasia + Research Node MCP configuration and CI smoke | `66c792a` |
 | CODEX-023 | Research Node MCP read-only SQI and baseline tools | `3cd2dab` |
 
+The `v1.2-mcp-dx` bump records Founder/DX packaging after the MCP tool surface stabilized.
+These are documentation and onboarding artifacts only; they do not expand datasets or
+clinical claims.
+
+| Delivery | Shipped DX / packaging artifact | Commit |
+| --- | --- | --- |
+| CODEX-025 | Founder dual-MCP setup checklist + `scripts/smoke_dual_mcp.py` | `e6514fc` |
+| CODEX-027 | Shadow JSONL schema versions + local MCP list/export tools | `ed13e47` |
+| CODEX-026 | BIDMC/MIT-BIH PROXY benches as Research Node MCP read-only tools | `03468f1` |
+| CODEX-028 | Founder KR MCP onboarding one-pager (`docs/founder/`) | `fa9b152` |
+
 No VitalDB download or implementation, and no CapnoBase or PulseDB benchmark, is part
-of `v1.1-mcp-pre-VitalDB`. All entries, including the MCP track, remain research
+of `v1.2-mcp-dx` (superseding `v1.1-mcp-pre-VitalDB` for DX packaging). All entries, including the MCP and DX track, remain research
 engineering artifacts with
 `clinical_validation=false`; none supports a DS-specific or other clinical claim.
 

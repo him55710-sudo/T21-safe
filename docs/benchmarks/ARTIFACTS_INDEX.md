@@ -1,6 +1,6 @@
 # Research engineering artifacts index
 
-> **PUBLIC_DATA_REPORT_V1 freeze: `v1.1-mcp-pre-VitalDB` · `2026-09-03 UTC`**
+> **PUBLIC_DATA_REPORT_V1 freeze: `v1.2-mcp-dx` · `2026-09-03 UTC`**
 >
 > **PROXY / engineering only**  
 > **clinical_validation=false**  
@@ -154,3 +154,17 @@ The PI-facing documents are under `docs/business/`:
 
 These materials retain Path B observe-only and RUO boundaries. They do not authorize
 dosing alerts, clinical decisions, or DS-specific clinical claims.
+
+## Founder / DX packaging (025–028)
+
+Freeze companion: [`PUBLIC_DATA_REPORT_V1.md`](PUBLIC_DATA_REPORT_V1.md) (`v1.2-mcp-dx`).
+
+| Item | Commit | Pointer |
+| --- | --- | --- |
+| Dual-MCP smoke + EN setup checklist | `e6514fc` | `docs/mcp/FOUNDER_DUAL_MCP_SETUP.md`, `scripts/smoke_dual_mcp.py` |
+| Shadow JSONL schema + MCP list/export | `ed13e47` | Research Node MCP tools `list_local_shadow_exports` / `export_shadow_summary` |
+| BIDMC/MIT-BIH PROXY MCP tools | `03468f1` | `run_mitbih_beat_bench` / `run_bidmc_align_resp_bench` |
+| Founder KR MCP onboarding | `fa9b152` | `docs/founder/MCP_ONBOARDING_KR.md` |
+
+`clinical_validation=false` · PROXY/RUO only · no DS clinical claims · VitalDB not included.
+
