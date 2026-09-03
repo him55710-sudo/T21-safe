@@ -13,6 +13,9 @@ on:
       - "services/engine/src/t21_engine/evaluation/fantasia_age_band_hrv_stability.py"
       - "tests/backend/unit/test_proxy_hyp_bench_runner.py"
       - "tests/backend/unit/test_run_proxy_hyp_benches_script.py"
+      - "tests/backend/unit/test_proxy_hyp_auditor_doc_pins.py"
+      - "docs/founder/PROXY_HYP_RESULTS_KR.md"
+      - "docs/benchmarks/ARTIFACTS_INDEX.md"
       - "tests/backend/unit/test_mitbih_brady_def_sensitivity.py"
       - "tests/backend/unit/test_fantasia_short_window_hrv_lfhf.py"
       - "tests/backend/unit/test_fantasia_age_band_hrv_stability.py"
@@ -30,6 +33,9 @@ on:
       - "services/engine/src/t21_engine/evaluation/fantasia_age_band_hrv_stability.py"
       - "tests/backend/unit/test_proxy_hyp_bench_runner.py"
       - "tests/backend/unit/test_run_proxy_hyp_benches_script.py"
+      - "tests/backend/unit/test_proxy_hyp_auditor_doc_pins.py"
+      - "docs/founder/PROXY_HYP_RESULTS_KR.md"
+      - "docs/benchmarks/ARTIFACTS_INDEX.md"
       - "tests/backend/unit/test_mitbih_brady_def_sensitivity.py"
       - "tests/backend/unit/test_fantasia_short_window_hrv_lfhf.py"
       - "tests/backend/unit/test_fantasia_age_band_hrv_stability.py"
@@ -61,6 +67,7 @@ jobs:
             tests/backend/unit/test_fantasia_age_band_hrv_stability.py \
             tests/backend/unit/test_proxy_hyp_bench_runner.py \
             tests/backend/unit/test_run_proxy_hyp_benches_script.py \
+            tests/backend/unit/test_proxy_hyp_auditor_doc_pins.py \
             -q --tb=short
       - name: Full local runner (tmp, fixture-only)
         env:
