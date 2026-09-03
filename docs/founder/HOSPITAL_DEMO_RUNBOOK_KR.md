@@ -1,6 +1,6 @@
 # Hospital Demo 런북 (KR)
 
-**Status:** Path B / RUO / Shadow · freeze tip `v1.7-hospital-demo`+  
+**Status:** Path B / RUO / Shadow · freeze tip `v2.0-hospital-demo-ready`  
 **clinical_validation:** `false`  
 **목적:** Founder/파트너 앞에서 **브라우저 카드까지** 한 번에 보여 주는 실행 순서  
 **금지:** PHI · 파형 · VitalDB/CapnoBase/PulseDB · 투약/알림/closed-loop · 임상 claim · Kim/PI 메일 대행
