@@ -18,6 +18,10 @@ def test_run_proxy_hyp_benches_emits_layers_and_artifacts(tmp_path: Path) -> Non
     report = run_proxy_hyp_benches(output_dir=out)
 
     assert report["schema_version"] == SCHEMA_VERSION
+    assert report["clinical_fact"] is False
+    assert report["auditor_dual_gate"]["hypotheses"]["HYP-01"]["auditor_label"] == "PARTIALLY_SUPPORTED"
+    assert report["auditor_dual_gate"]["airway_bidmc_do_not_run"] is True
+    assert all(row.get("auditor_label") for row in report["summary_rows"])
     assert report["status"] == "PASS"
     assert report["clinical_validation"] is False
     assert report["network_required"] is False

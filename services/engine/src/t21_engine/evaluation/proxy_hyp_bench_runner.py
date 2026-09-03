@@ -25,11 +25,38 @@ from t21_engine.evaluation.mitbih_brady_def_sensitivity import (
     run_mitbih_brady_def_sensitivity,
 )
 
-SCHEMA_VERSION = "proxy-hyp-bench-runner/1.0"
+SCHEMA_VERSION = "proxy-hyp-bench-runner/1.1"
 BENCH_COMMITS = {
     "CODEX-101": "af98247",
     "CODEX-102": "6318771",
     "CODEX-103": "f0f7692",
+}
+
+# Auditor DUAL-GATE labels (CODEX-112) — stamped into JSON/MD; not clinical FACT.
+AUDITOR_DUAL_GATE = {
+    "clinical_validation": False,
+    "clinical_fact": False,
+    "pi_to_define": True,
+    "airway_bidmc_do_not_run": True,
+    "hypotheses": {
+        "HYP-01": {
+            "auditor_label": "PARTIALLY_SUPPORTED",
+            "scope": "HR-event/SQI",
+            "note": "Partial support in ECG HR-event/SQI PROXY only — not clinical FACT.",
+        },
+        "HYP-03": {
+            "auditor_label": "STRETCH_IF_POSITIVE_PROXY",
+            "ok_as": "neg-control-QA",
+            "lf_hf_primary": False,
+            "note": "STRETCH if read as positive PROXY; OK as negative-control / methods QA.",
+        },
+        "HYP-07": {
+            "auditor_label": "STRETCH_IF_POSITIVE_PROXY",
+            "ok_as": "neg-control-QA",
+            "note": "STRETCH if read as positive PROXY; OK as age-band engine QA only.",
+        },
+    },
+    "prohibited_tracks": ["Airway", "BIDMC", "HYP-06b", "Driver-map"],
 }
 
 
@@ -94,6 +121,7 @@ def _install_fixture_wfdb_shim_if_needed() -> str:
 
 
 def _row_summary(codex_id: str, hyp_id: str, report: dict[str, Any]) -> dict[str, Any]:
+    gate = AUDITOR_DUAL_GATE["hypotheses"].get(hyp_id, {})
     return {
         "codex_id": codex_id,
         "hypothesis_id": hyp_id,
@@ -110,28 +138,41 @@ def _row_summary(codex_id: str, hyp_id: str, report: dict[str, Any]) -> dict[str
             "human_review_required"
         ),
         "thresholds_note": (report.get("thresholds") or {}).get("note"),
+        "auditor_label": gate.get("auditor_label"),
+        "auditor_ok_as": gate.get("ok_as"),
+        "clinical_fact": False,
     }
 
 
 def _markdown_table(rows: list[dict[str, Any]], aggregate: dict[str, Any]) -> str:
+    dual = aggregate.get("auditor_dual_gate") or AUDITOR_DUAL_GATE
     lines = [
         "# PROXY HYP-01/03/07 bench results",
         "",
+        "## Auditor DUAL-GATE (not clinical FACT)",
+        "",
+        f"- clinical_validation: `{aggregate['clinical_validation']}`",
+        f"- clinical_fact: `{dual.get('clinical_fact', False)}`",
+        f"- PI_TO_DEFINE: `{dual.get('pi_to_define', True)}`",
+        f"- Airway+BIDMC: **do-not-run** (`{dual.get('airway_bidmc_do_not_run', True)}`)",
+        f"- HYP-01: **PARTIALLY_SUPPORTED** (HR-event/SQI)",
+        f"- HYP-03/07: **STRETCH if positive PROXY** / OK as **neg-control-QA**",
+        "",
         f"- schema: `{SCHEMA_VERSION}`",
         f"- generated_at_utc: `{aggregate['generated_at_utc']}`",
-        f"- clinical_validation: `{aggregate['clinical_validation']}`",
         f"- network_required: `{aggregate['network_required']}`",
         f"- wfdb_backend: `{aggregate['wfdb_backend']}`",
         f"- pooled_instability_score: `{aggregate['pooled_instability_score']}`",
         "",
-        "| CODEX | HYP | status | role_tag | FACT | INTERPRETATION | HYPOTHESIS | landing |",
-        "| --- | --- | --- | --- | --- | --- | --- | --- |",
+        "| CODEX | HYP | auditor_label | status | role_tag | FACT | INTERPRETATION | HYPOTHESIS | landing |",
+        "| --- | --- | --- | --- | --- | --- | --- | --- | --- |",
     ]
     for row in rows:
         lines.append(
-            "| {codex} | {hyp} | {status} | `{role}` | {fact} | {interp} | {hyp_st} | `{sha}` |".format(
+            "| {codex} | {hyp} | `{label}` | {status} | `{role}` | {fact} | {interp} | {hyp_st} | `{sha}` |".format(
                 codex=row["codex_id"],
                 hyp=row["hypothesis_id"],
+                label=row.get("auditor_label") or "—",
                 status=row["status"],
                 role=row.get("role_tag") or "",
                 fact=row.get("fact_layer") or "—",
@@ -147,8 +188,8 @@ def _markdown_table(rows: list[dict[str, Any]], aggregate: dict[str, Any]) -> st
             "",
             "- PROXY ≠ DS · RUO / Shadow Path B",
             "- Thresholds remain `PI_TO_DEFINE` (no clinical cutoffs hardcoded)",
-            "- No BIDMC / Airway / Driver-map / dosing / closed-loop / PHI",
-            "- HYP Claims with `HUMAN_REVIEW_REQUIRED` stay labels, not clinical facts",
+            "- Airway+BIDMC **do-not-run** · no Driver-map / dosing / closed-loop / PHI",
+            "- No clinical FACT from these benches; HUMAN_REVIEW_REQUIRED labels only",
             "",
         ]
     )
@@ -186,6 +227,8 @@ def run_proxy_hyp_benches(
         "network_required": False,
         "proxy_not_ds": True,
         "pooled_instability_score": None,
+        "clinical_fact": False,
+        "auditor_dual_gate": AUDITOR_DUAL_GATE,
         "wfdb_backend": wfdb_backend,
         "generated_at_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "fixture_roots": {
@@ -249,4 +292,4 @@ if __name__ == "__main__":
     raise SystemExit(main())
 
 
-__all__ = ["run_proxy_hyp_benches", "main", "SCHEMA_VERSION", "BENCH_COMMITS"]
+__all__ = ["run_proxy_hyp_benches", "main", "SCHEMA_VERSION", "BENCH_COMMITS", "AUDITOR_DUAL_GATE"]

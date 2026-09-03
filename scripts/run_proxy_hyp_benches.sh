@@ -58,7 +58,9 @@ from pathlib import Path
 
 out = Path("${OUT_DIR}")
 report = json.loads((out / "proxy-hyp-bench-report.json").read_text(encoding="utf-8"))
-assert report.get("schema_version") == "proxy-hyp-bench-runner/1.0", report
+assert report.get("schema_version") == "proxy-hyp-bench-runner/1.1", report
+assert report.get("clinical_fact") is False, report
+assert (report.get("auditor_dual_gate") or {}).get("hypotheses", {}).get("HYP-01", {}).get("auditor_label") == "PARTIALLY_SUPPORTED", report
 assert report.get("status") == "PASS", report
 assert report.get("clinical_validation") is False, report
 assert report.get("network_required") is False, report
