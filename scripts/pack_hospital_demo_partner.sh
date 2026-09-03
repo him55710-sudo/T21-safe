@@ -38,6 +38,7 @@ python3 scripts/generate_hospital_demo_showcard_html.py \
 cp docs/business/export-manifest-phi-false-1p.md "${STAGING}/docs/"
 cp docs/founder/EXPORT_MANIFEST_PHI_FALSE_KR.md "${STAGING}/docs/"
 cp docs/founder/HOSPITAL_DEMO_ONBOARDING_KR.md "${STAGING}/docs/"
+cp docs/founder/MEETING_ONEPAGER_PROXY_v0.1_KR.md "${STAGING}/docs/"
 cp docs/founder/hospital-demo-showcard.example.md "${STAGING}/docs/"
 if [[ -f docs/founder/hospital-demo-showcard.example.html ]]; then
   cp docs/founder/hospital-demo-showcard.example.html "${STAGING}/docs/"
@@ -61,14 +62,14 @@ cat > "${STAGING}/README.md" << 'README'
 
 RUO / Shadow · `clinical_validation=false` · PHI-false · synthetic only.
 
-Hospital-demo freeze tip: `v2.0-hospital-demo-ready`. Related PROXY Analysis Plan tip: `v2.1-proxy-hyp-benches` (Auditor DUAL-GATE labels in `PROXY_HYP_RESULTS_KR.md`; **no FACT**; Airway/BIDMC do-not-run on PROXY track).
+Hospital-demo freeze tip: `v2.0-hospital-demo-ready`. Meeting one-pager freeze: `v2.3-meeting-onepager`; PROXY talk-track is ECG HR-event / SQI only. Related PROXY Analysis Plan tip: `v2.1-proxy-hyp-benches` (Auditor DUAL-GATE labels in `PROXY_HYP_RESULTS_KR.md`; **no FACT**; Airway/BIDMC do-not-run on PROXY track).
 
 ## Contents
 
 - `reports/hospital-demo-report.json` — demo gates + QC summary
 - `reports/showcard.md` — PHI-false Markdown show card
 - `reports/showcard.html` — browser-openable PHI-false HTML show card
-- `docs/` — EN/KR ExportManifest PHI-false story + hospital demo onboarding
+- `docs/` — EN/KR ExportManifest PHI-false story + hospital demo onboarding + meeting one-pager
 
 ## Not included
 
