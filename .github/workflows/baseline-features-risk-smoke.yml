@@ -1,0 +1,47 @@
+# CODEX-076: CI smoke for baseline/features/risk unit suite.
+# Synthetic/PROXY · clinical_validation=false · no VitalDB.
+name: Baseline features risk smoke
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "services/engine/src/t21_engine/baseline/**"
+      - "services/engine/src/t21_engine/features/**"
+      - "services/engine/src/t21_engine/risk/**"
+      - "services/engine/src/t21_engine/quality/**"
+      - "services/engine/src/t21_engine/beats/**"
+      - "services/engine/src/t21_engine/adapters/synthetic_adapter.py"
+      - "tests/backend/unit/test_baseline_features_risk.py"
+      - ".github/workflows/baseline-features-risk-smoke.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "services/engine/src/t21_engine/baseline/**"
+      - "services/engine/src/t21_engine/features/**"
+      - "services/engine/src/t21_engine/risk/**"
+      - "services/engine/src/t21_engine/quality/**"
+      - "services/engine/src/t21_engine/beats/**"
+      - "services/engine/src/t21_engine/adapters/synthetic_adapter.py"
+      - "tests/backend/unit/test_baseline_features_risk.py"
+      - ".github/workflows/baseline-features-risk-smoke.yml"
+
+jobs:
+  baseline-features-risk-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install engine (dev)
+        run: python -m pip install -e "services/engine[dev]"
+      - name: Pytest baseline/features/risk units
+        env:
+          PYTHONPATH: services/engine/src
+        run: |
+          set -euo pipefail
+          python -m pytest \
+            tests/backend/unit/test_baseline_features_risk.py \
+            -q --tb=short
