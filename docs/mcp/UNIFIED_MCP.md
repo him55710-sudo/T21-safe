@@ -51,16 +51,27 @@ the same block also works directly from a source checkout. If preferred, remove 
 them.
 
 No live desktop client is needed to verify either server. Run the shared stdio smoke
-matrix from the repository root:
+script from the repository root:
 
 ```bash
-python -m pytest tests/backend/unit/test_mcp_stdio_smoke.py
+python scripts/smoke_dual_mcp.py
 ```
 
-The matrix starts each server, completes MCP `initialize`, and asserts its
+It prints a `PASS` or `FAIL` result and the discovered tool list for each server.
+The equivalent pytest checks are:
+
+```bash
+python -m pytest tests/backend/unit/test_mcp_stdio_smoke.py \
+  tests/backend/unit/test_smoke_dual_mcp_script.py
+```
+
+These checks start each server, complete MCP `initialize`, and assert its
 `tools/list` response. See the server-specific guides for tool scope and additional
 checks: [Fantasia MCP](FANTASIA_MCP.md) and
 [Research Node MCP](RESEARCH_NODE_MCP.md).
+
+For the short Cursor install-and-restart sequence, see the
+[Founder dual-MCP setup checklist](FOUNDER_DUAL_MCP_SETUP.md).
 
 The Research Node advertises `run_synthetic_demo`, `run_time_align_qc`,
 `run_sqi_missingness_impact`, and `run_baseline_window_sensitivity`. The latter two

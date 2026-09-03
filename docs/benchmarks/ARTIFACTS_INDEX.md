@@ -65,6 +65,9 @@ fixture has no age metadata, so age-stability is unavailable / `PI_TO_DEFINE`.
 - Commit: `66c792a` (CODEX-022)
 - Two-server client configuration and shared stdio smoke matrix:
   [`docs/mcp/UNIFIED_MCP.md`](../mcp/UNIFIED_MCP.md)
+- Founder Cursor checklist:
+  [`docs/mcp/FOUNDER_DUAL_MCP_SETUP.md`](../mcp/FOUNDER_DUAL_MCP_SETUP.md)
+- Desktop-independent dual-server check: `python scripts/smoke_dual_mcp.py`
 
 ## Fantasia local-first MCP
 
