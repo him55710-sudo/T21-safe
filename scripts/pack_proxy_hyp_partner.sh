@@ -40,21 +40,24 @@ fi
 cat > "${STAGING}/README.md" << 'README'
 # T21 PROXY HYP-01/03/07 — Partner Pack
 
-## METHODS_CRITIQUE (read first)
+## Auditor DSCS + METHODS_CRITIQUE (read first)
 
-| Gate | Status |
+| Label | Status |
 | --- | --- |
-| PROXY ≠ DS | **Required** — MIT-BIH/Fantasia ≠ Down syndrome peri-op |
-| `clinical_validation` | **`false`** on all JSON/MD |
-| Thresholds | **`PI_TO_DEFINE`** — no clinical cutoffs hardcoded |
-| RQ-004 (resting HRV → peri-op) | **HYPOTHESIS / gap only** — never FACT |
-| LF/HF | **Not primary** (HYP-03 methods stress) |
-| Selection / confounding / leakage | Public/resting fixtures only; not OR/ICU/DS; local observe-only; no PHI/waveform cloud; Dataset rows are PROXY fixtures not experiment-approved |
+| HYP-01 | **PARTIALLY_SUPPORTED** (HR-event/SQI) — not clinical FACT |
+| HYP-03 / HYP-07 | **STRETCH if positive PROXY** / **OK as neg-control-QA** |
+| RQ-004 | **HYPOTHESIS** (never FACT) |
+| LF/HF | **Not primary**; **&lt;180s withheld** |
+| Age metadata | **UNAVAILABLE** / PI_TO_DEFINE |
+| v0.1 claims | Collapsed to **ECG HR-event / SQI** only |
+| Airway + BIDMC | **do-not-run** |
+| `clinical_validation` | **`false`** |
+| PROXY ≠ DS | **Required** |
 | Pooled instability score | **None** |
 
-Forbidden: 06b / BIDMC / Airway / Driver-map / PHI / dosing / closed-loop / DS peri-op performance claims.
+Forbidden: 06b / BIDMC / Airway / Driver-map / PHI / dosing / closed-loop / DS peri-op performance claims / positive HRV PROXY stretch-as-FACT.
 
-See `docs/PROXY_HYP_RESULTS_KR.md` (METHODS_CRITIQUE at top).
+See `docs/PROXY_HYP_RESULTS_KR.md` (Auditor DSCS + METHODS_CRITIQUE at top).
 
 ## Contents
 
@@ -90,11 +93,13 @@ assert report.get("pooled_instability_score") is None, report
 assert "BIDMC" in (report.get("prohibited") or []), report
 assert report.get("status") == "PASS", report
 readme = Path("${STAGING}/README.md").read_text(encoding="utf-8")
-assert "METHODS_CRITIQUE" in readme
+assert "METHODS_CRITIQUE" in readme or "Auditor DSCS" in readme
+assert "PARTIALLY_SUPPORTED" in readme
 assert "clinical_validation" in readme
 assert "waveforms" in readme.lower() or "Waveforms" in readme
 kr = Path("${STAGING}/docs/PROXY_HYP_RESULTS_KR.md").read_text(encoding="utf-8")
-assert kr.index("METHODS_CRITIQUE") < kr.index("랜딩 SHA")
+assert min(kr.index("METHODS_CRITIQUE"), kr.index("Auditor DSCS")) < kr.index("랜딩 SHA")
+assert "PARTIALLY_SUPPORTED" in kr
 print("pack gates OK")
 PY
 

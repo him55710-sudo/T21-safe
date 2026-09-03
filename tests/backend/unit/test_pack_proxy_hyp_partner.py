@@ -25,7 +25,8 @@ def test_pack_proxy_hyp_script_exists_and_syntax() -> None:
 
 def test_pack_proxy_hyp_banner_gates() -> None:
     text = SCRIPT.read_text(encoding="utf-8")
-    assert "METHODS_CRITIQUE" in text
+    assert "METHODS_CRITIQUE" in text or "Auditor DSCS" in text
+    assert "PARTIALLY_SUPPORTED" in text or "METHODS_CRITIQUE" in text
     assert "No waveforms" in text or "no waveforms" in text.lower()
     assert "PROXY_HYP_RESULTS_KR.md" in text
     assert "BIDMC" in text
@@ -58,6 +59,8 @@ def test_pack_proxy_hyp_zip_contents(tmp_path: Path) -> None:
     assert "docs/PROXY_HYP_RESULTS_KR.md" in names
     assert "docs/ARTIFACTS_INDEX.md" in names
     assert not any(n.endswith((".dat", ".hea", ".jsonl")) for n in names), names
-    assert "METHODS_CRITIQUE" in readme
-    assert readme.index("METHODS_CRITIQUE") < readme.index("## Contents")
+    assert "PARTIALLY_SUPPORTED" in readme
+    assert "METHODS_CRITIQUE" in readme or "Auditor DSCS" in readme
+    head = readme.split("## Contents")[0]
+    assert "PARTIALLY_SUPPORTED" in head
     assert "BIDMC" in readme

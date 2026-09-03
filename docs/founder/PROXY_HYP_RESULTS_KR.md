@@ -1,8 +1,25 @@
 # PROXY HYP-01/03/07 결과 팩 (Founder)
 
-## METHODS_CRITIQUE (먼저 읽기)
+## Auditor DSCS labels (먼저 읽기)
 
-이 문서는 **엔지니어링 PROXY 벤치 결과 포인터**입니다. 임상 성능·DS·마취 성과 claim이 **아닙니다.**
+Notion HANDOFF: `https://app.notion.com/p/3d09631d743b81bcbfd6f4d0fa78522a`
+
+| HYP | Auditor label | 의미 (엔지니어링만) |
+| --- | --- | --- |
+| HYP-01 | **PARTIALLY_SUPPORTED** | HR-event / SQI PROXY 범위에서만 부분 지지 — **clinical FACT 아님** |
+| HYP-03 | **STRETCH if positive PROXY** / **OK as neg-control-QA** | 양성 PROXY로 과장 금지; negative-control / methods QA로만 OK |
+| HYP-07 | **STRETCH if positive PROXY** / **OK as neg-control-QA** | age-band engine QA만; 양성 해석 STRETCH |
+| RQ-004 | **HYPOTHESIS** | resting HRV → peri-op = gap — FACT 승격 금지 |
+| LF/HF | **not primary**; **&lt;180s withheld** | Task Force 게이트 미만 창에서 withhold |
+| Age metadata | **UNAVAILABLE** / `PI_TO_DEFINE` | synthetic fixture에 age band 없음 |
+| v0.1 claim collapse | **ECG HR-event / SQI만** | broader autonomic/age/HRV “positive PROXY”로 확대 금지 |
+| Airway + BIDMC | **do-not-run** | 이 트랙에서 실행·확장 금지 |
+| `clinical_validation` | **`false`** | 전 산출물 |
+| FACT | **없음** | Auditor/Founder pack에 clinical FACT 선언 없음 |
+
+## METHODS_CRITIQUE (이어서 읽기)
+
+이 문서는 **엔지니어링 PROXY 벤치 결과 포인터**입니다. 임상 성능·DS·마취 성과 claim이 **아닙니다.** Auditor DSCS 라벨이 결과표·SHA보다 우선합니다.
 
 | 게이트 | 상태 |
 | --- | --- |
@@ -31,7 +48,7 @@ Path B · RUO · MIT-BIH + Fantasia **로컬 fixture만**.
 
 ## Freeze tip
 
-`v2.1-proxy-hyp-benches` (`2026-09-04 UTC`) — CODEX-101–109.
+`v2.1-proxy-hyp-benches` (`2026-09-04 UTC`) — CODEX-101–109; wording patch CODEX-111 (Auditor DSCS labels).
 
 ## 한 줄 요약
 
@@ -63,6 +80,9 @@ bash scripts/run_proxy_hyp_benches.sh /tmp/t21-proxy-hyp-benches
 
 ## 결과 읽는 법 (게이트 재확인)
 
+- Auditor: HYP-01 **PARTIALLY_SUPPORTED** (HR-event/SQI); HYP-03/07 **STRETCH**/neg-control-QA — **no FACT**
+- Airway+BIDMC **do-not-run**; v0.1 claims collapsed to ECG HR-event/SQI
+- LF/HF **&lt;180s withheld**; age metadata **UNAVAILABLE**
 - `clinical_validation=false` 스탬프 확인
 - 레이어 분리: FACT ≠ INTERPRETATION ≠ HYPOTHESIS
 - HYP Claim은 `HUMAN_REVIEW_REQUIRED` 라벨 — 임상 사실 아님
