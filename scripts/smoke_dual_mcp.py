@@ -22,6 +22,10 @@ class ServerSpec:
     expected_tools: frozenset[str]
 
 
+PROXY_PUBLIC_BENCH_TOOLS = frozenset(
+    {"run_mitbih_beat_bench", "run_bidmc_align_resp_bench"}
+)
+
 SERVERS = (
     ServerSpec(
         label="fantasia-proxy",
@@ -107,10 +111,14 @@ def smoke_server(spec: ServerSpec, *, timeout: float = 10) -> list[str]:
     tools = sorted(
         tool["name"] for tool in tools_response.get("result", {}).get("tools", [])
     )
-    if set(tools) != spec.expected_tools:
+    advertised = set(tools)
+    if advertised != spec.expected_tools:
         raise RuntimeError(
             f"expected tools {sorted(spec.expected_tools)!r}, received {tools!r}"
         )
+    if spec.label == "research-node" and not PROXY_PUBLIC_BENCH_TOOLS <= advertised:
+        missing = sorted(PROXY_PUBLIC_BENCH_TOOLS - advertised)
+        raise RuntimeError(f"missing BIDMC/MIT-BIH PROXY MCP tools: {missing!r}")
     return tools
 
 

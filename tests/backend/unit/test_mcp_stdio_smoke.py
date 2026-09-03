@@ -9,6 +9,11 @@ from pathlib import Path
 import pytest
 
 
+PROXY_PUBLIC_BENCH_TOOLS = frozenset(
+    {"run_mitbih_beat_bench", "run_bidmc_align_resp_bench"}
+)
+
+
 @pytest.mark.parametrize(
     ("module", "server_name", "expected_tools"),
     [
@@ -78,4 +83,7 @@ def test_mcp_stdio_initialize_and_tools_list(
     assert responses[0]["result"]["serverInfo"]["name"] == server_name
     assert responses[0]["result"]["capabilities"] == {"tools": {}}
     assert responses[1]["id"] == 2
-    assert {tool["name"] for tool in responses[1]["result"]["tools"]} == expected_tools
+    advertised = {tool["name"] for tool in responses[1]["result"]["tools"]}
+    assert advertised == expected_tools
+    if server_name == "t21-research-node-mcp":
+        assert PROXY_PUBLIC_BENCH_TOOLS <= advertised
