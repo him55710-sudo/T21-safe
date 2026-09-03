@@ -5,7 +5,8 @@
 > **PROXY / engineering only**  
 > **clinical_validation=false**  
 > **No DS clinical claims.**  
-> **Fantasia Master Notion: `PENDING` (`operational_proxy_ok` only).**
+> **Fantasia Master Notion: `VERIFIED PROXY` (page `3d09631d743b81efae8fe2731113b4f6`).**
+> The frozen `PUBLIC_DATA_REPORT_V1` retains its historical `PENDING` label.
 >
 > **VitalDB, CapnoBase, and PulseDB are NOT included in this freeze.**
 >
@@ -56,9 +57,20 @@ non-claims in the public-data report.
   “Fantasia HRV / age-stability PROXY (CODEX-016)”
 - Verification command: `python -m pytest tests/backend/unit/test_fantasia_hrv_age_bench.py`
 
-Authorization is `operational_proxy_ok`; Notion Master remains pending. The fixture has
-no age metadata, so age-stability is unavailable / `PI_TO_DEFINE`.
+Authorization is `operational_proxy_ok`; the Notion Master is VERIFIED PROXY. The
+fixture has no age metadata, so age-stability is unavailable / `PI_TO_DEFINE`.
 `clinical_validation=false`; no DS, anesthesia, clinical age-effect, or PTT/PPG claim.
+
+## Fantasia local-first MCP
+
+- Guide: [`docs/mcp/FANTASIA_MCP.md`](../mcp/FANTASIA_MCP.md)
+- Module / command: `t21_engine.fantasia_mcp` / `t21-fantasia-mcp`
+- Tools: `list_records`, `load_sample`, `run_hrv_proxy_bench`
+- Verification command: `python -m pytest tests/backend/unit/test_fantasia_mcp.py`
+
+The tools are local-only, bounded, and gated to `PROXY_HRV_AGE_STABILITY` with
+`clinical_validation=false`. VERIFIED PROXY references Notion page
+`3d09631d743b81efae8fe2731113b4f6`; this does not create a clinical claim.
 
 ## Baseline 180 / 300
 
