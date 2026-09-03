@@ -10,7 +10,7 @@ from t21_engine.config import PipelineConfig
 from t21_engine.streaming.export_manifest import build_export_manifest
 from t21_engine.streaming.local_capture_writer import LocalCaptureJsonlWriter
 from t21_engine.streaming.replay import ReplayPipeline
-from t21_engine.types import SourceMetadata
+from t21_engine.types import SignalBatch, SourceMetadata
 
 
 async def _final_event(batch, *, baseline_seconds: int):  # type: ignore[no-untyped-def]
@@ -338,3 +338,51 @@ async def test_failed_initial_baseline_does_not_retry_on_later_samples() -> None
     assert any("coverage" in reason for reason in final["baseline"]["reasons"])
     assert final["risk"]["valid"] is False
     assert final["risk"]["score"] is None
+
+
+@pytest.mark.asyncio
+async def test_empty_signal_batch_fails_closed() -> None:
+    """CODEX-074: ReplayPipeline rejects empty timestamps fail-closed."""
+    batch = SignalBatch(
+        timestamps_s=np.asarray([], dtype=np.float64),
+        signals={"ecg_ii": np.asarray([], dtype=np.float64)},
+        sample_rates_hz={"ecg_ii": 100.0},
+        source=SourceMetadata(
+            dataset="Synthetic",
+            case_id="empty-batch",
+            is_synthetic=True,
+        ),
+    )
+    with pytest.raises(ValueError, match="at least one sample"):
+        await anext(
+            ReplayPipeline().events(
+                batch,
+                baseline_seconds=3,
+                speed=1000.0,
+                real_time=False,
+            )
+        )
+
+
+@pytest.mark.asyncio
+async def test_signal_batch_without_signals_fails_closed() -> None:
+    """CODEX-074: ReplayPipeline rejects batches with no signal channels."""
+    batch = SignalBatch(
+        timestamps_s=np.asarray([0.0, 0.01], dtype=np.float64),
+        signals={},
+        sample_rates_hz={},
+        source=SourceMetadata(
+            dataset="Synthetic",
+            case_id="no-signals",
+            is_synthetic=True,
+        ),
+    )
+    with pytest.raises(ValueError, match="at least one signal"):
+        await anext(
+            ReplayPipeline().events(
+                batch,
+                baseline_seconds=3,
+                speed=1000.0,
+                real_time=False,
+            )
+        )

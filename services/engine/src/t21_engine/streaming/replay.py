@@ -96,6 +96,10 @@ class ReplayPipeline:
             raise ValueError("export manifest requires local_capture_dir")
         if shadow_session_id is not None and not batch.source.is_synthetic:
             raise ValueError("shadow capture is limited to synthetic/local replay")
+        if batch.timestamps_s.size == 0:
+            raise ValueError("signal batch must contain at least one sample")
+        if not batch.signals:
+            raise ValueError("signal batch must contain at least one signal")
         local_capture_writer = (
             LocalCaptureJsonlWriter(local_capture_dir) if local_capture_dir is not None else None
         )
