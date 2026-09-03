@@ -58,6 +58,7 @@ python scripts/smoke_dual_mcp.py
 ```
 
 It prints a `PASS` or `FAIL` result and the discovered tool list for each server.
+For a one-command Founder DX Path B check (demo + dual-MCP smoke + `TOOL_CATALOG` dry-diff), run `bash scripts/verify_path_b_mcp.sh`.
 The equivalent pytest checks are:
 
 ```bash
