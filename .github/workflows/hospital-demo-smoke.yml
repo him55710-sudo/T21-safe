@@ -1,4 +1,4 @@
-# CODEX-082/086: CI smoke for hospital demo runner + showcard + partner pack units.
+# CODEX-082/086/092: CI smoke for hospital demo runner + MD/HTML showcard + pack + chain.
 # Synthetic-only · clinical_validation=false · PHI-false · no VitalDB.
 name: Hospital demo smoke
 
@@ -7,10 +7,14 @@ on:
     branches: [main]
     paths:
       - "scripts/run_hospital_demo.sh"
+      - "scripts/run_hospital_demo_chain.sh"
       - "scripts/generate_hospital_demo_showcard.py"
+      - "scripts/generate_hospital_demo_showcard_html.py"
       - "scripts/pack_hospital_demo_partner.sh"
       - "tests/backend/unit/test_run_hospital_demo.py"
+      - "tests/backend/unit/test_run_hospital_demo_chain.py"
       - "tests/backend/unit/test_generate_hospital_demo_showcard.py"
+      - "tests/backend/unit/test_generate_hospital_demo_showcard_html.py"
       - "tests/backend/unit/test_pack_hospital_demo_partner.py"
       - "services/engine/src/t21_engine/demo.py"
       - "services/engine/src/t21_engine/adapters/synthetic_hospital_case.py"
@@ -20,10 +24,14 @@ on:
     branches: [main]
     paths:
       - "scripts/run_hospital_demo.sh"
+      - "scripts/run_hospital_demo_chain.sh"
       - "scripts/generate_hospital_demo_showcard.py"
+      - "scripts/generate_hospital_demo_showcard_html.py"
       - "scripts/pack_hospital_demo_partner.sh"
       - "tests/backend/unit/test_run_hospital_demo.py"
+      - "tests/backend/unit/test_run_hospital_demo_chain.py"
       - "tests/backend/unit/test_generate_hospital_demo_showcard.py"
+      - "tests/backend/unit/test_generate_hospital_demo_showcard_html.py"
       - "tests/backend/unit/test_pack_hospital_demo_partner.py"
       - "services/engine/src/t21_engine/demo.py"
       - "services/engine/src/t21_engine/adapters/synthetic_hospital_case.py"
@@ -33,7 +41,7 @@ on:
 jobs:
   hospital-demo-smoke:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -47,10 +55,13 @@ jobs:
         run: |
           set -euo pipefail
           bash -n scripts/run_hospital_demo.sh
+          bash -n scripts/run_hospital_demo_chain.sh
           bash -n scripts/pack_hospital_demo_partner.sh
           python -m pytest \
             tests/backend/unit/test_run_hospital_demo.py \
+            tests/backend/unit/test_run_hospital_demo_chain.py \
             tests/backend/unit/test_generate_hospital_demo_showcard.py \
+            tests/backend/unit/test_generate_hospital_demo_showcard_html.py \
             tests/backend/unit/test_pack_hospital_demo_partner.py \
             -q --tb=short
       - name: Full hospital demo runner (tmp)
@@ -59,7 +70,7 @@ jobs:
         run: |
           set -euo pipefail
           bash scripts/run_hospital_demo.sh "${RUNNER_TEMP}/t21-hospital-demo"
-      - name: Show-card + partner pack smoke
+      - name: MD + HTML show-card + partner pack smoke
         env:
           PYTHONPATH: services/engine/src
         run: |
@@ -67,6 +78,9 @@ jobs:
           python3 scripts/generate_hospital_demo_showcard.py \
             "${RUNNER_TEMP}/t21-hospital-demo/hospital-demo-report.json" \
             -o "${RUNNER_TEMP}/t21-hospital-demo/showcard.md"
+          python3 scripts/generate_hospital_demo_showcard_html.py \
+            "${RUNNER_TEMP}/t21-hospital-demo/hospital-demo-report.json" \
+            -o "${RUNNER_TEMP}/t21-hospital-demo/showcard.html"
           bash scripts/pack_hospital_demo_partner.sh \
             "${RUNNER_TEMP}/t21-hospital-demo" \
             "${RUNNER_TEMP}/t21-hospital-demo-partner-pack"
