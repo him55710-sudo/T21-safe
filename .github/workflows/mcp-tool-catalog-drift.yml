@@ -1,4 +1,4 @@
-# CODEX-047: fail if docs/mcp/TOOL_CATALOG.md drifts from generate_mcp_tool_catalog.py
+# CODEX-045: fail if docs/mcp/TOOL_CATALOG.md drifts from generate_mcp_tool_catalog.py
 name: MCP tool catalog drift
 
 on:
