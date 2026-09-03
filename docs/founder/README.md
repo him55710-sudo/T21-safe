@@ -17,3 +17,7 @@ Path B · Research Use Only · `clinical_validation=false` · freeze `v1.2-mcp-d
 - [`docs/mcp/FANTASIA_MCP.md`](../mcp/FANTASIA_MCP.md)
 - [`docs/mcp/RESEARCH_NODE_MCP.md`](../mcp/RESEARCH_NODE_MCP.md)
 - [`docs/benchmarks/PUBLIC_DATA_REPORT_V1.md`](../benchmarks/PUBLIC_DATA_REPORT_V1.md)
+
+## MCP tool catalog
+
+- English auto-generated catalog: [`docs/mcp/TOOL_CATALOG.md`](../mcp/TOOL_CATALOG.md) (RUO / `clinical_validation=false`)
