@@ -61,6 +61,11 @@ Authorization is `operational_proxy_ok`; the Notion Master is VERIFIED PROXY. Th
 fixture has no age metadata, so age-stability is unavailable / `PI_TO_DEFINE`.
 `clinical_validation=false`; no DS, anesthesia, clinical age-effect, or PTT/PPG claim.
 
+## Unified local MCP setup
+
+- Two-server client configuration and shared stdio smoke matrix:
+  [`docs/mcp/UNIFIED_MCP.md`](../mcp/UNIFIED_MCP.md)
+
 ## Fantasia local-first MCP
 
 - Guide: [`docs/mcp/FANTASIA_MCP.md`](../mcp/FANTASIA_MCP.md)
