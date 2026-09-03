@@ -1,6 +1,6 @@
 # Public Data Report v1 — PROXY engine smoke
 
-**Freeze version:** `v1.2-mcp-dx`
+**Freeze version:** `v1.3-mcp-dx2`
 
 **Freeze date:** `2026-09-03 UTC`
 
@@ -58,6 +58,24 @@ clinical claims.
 
 No VitalDB download or implementation, and no CapnoBase or PulseDB benchmark, is part
 of `v1.2-mcp-dx` (superseding `v1.1-mcp-pre-VitalDB` for DX packaging). All entries, including the MCP and DX track, remain research
+engineering artifacts with
+`clinical_validation=false`; none supports a DS-specific or other clinical claim.
+
+The `v1.3-mcp-dx2` bump records MCP DX follow-ons after `v1.2-mcp-dx` (tool catalog,
+CI path filters, shadow JSONL pin, list_demo_presets, Fantasia age PI_TO_DEFINE asserts,
+catalog regen). Documentation/test packaging only; no new datasets or clinical claims.
+
+| Delivery | Shipped MCP DX2 artifact | Commit |
+| --- | --- | --- |
+| CODEX-039 | MCP tool catalog auto-gen (`docs/mcp/TOOL_CATALOG.md`) | `2b890ac` |
+| CODEX-040 | mcp-stdio-smoke GHA path filters + server matrix | `da75ff1` |
+| CODEX-041 | Research Node MCP `list_demo_presets` read-only tool | `0fbaf5d` |
+| CODEX-042 | Shadow JSONL schema/version pin unit tests | `79e977b` |
+| CODEX-043 | Fantasia MCP age stays `PI_TO_DEFINE` / non-clinical asserts | `43f1859` |
+| CODEX-044 | TOOL_CATALOG regen including `list_demo_presets` | `1acb911` |
+
+No VitalDB download or implementation, and no CapnoBase or PulseDB benchmark, is part
+of `v1.3-mcp-dx2` (superseding `v1.2-mcp-dx` for MCP DX2 packaging). All entries remain research
 engineering artifacts with
 `clinical_validation=false`; none supports a DS-specific or other clinical claim.
 
