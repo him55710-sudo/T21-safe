@@ -338,3 +338,25 @@ def test_export_shadow_summary_roundtrip_valid_fixture_jsonl(tmp_path: Path) -> 
     assert payload["record_count"] == 1
     assert payload["capture_schema_version"] == "shadow-capture/1.0"
     _assert_gates(payload)
+
+
+def test_list_local_shadow_exports_roundtrip_tmp_jsonl(tmp_path: Path) -> None:
+    """CODEX-064: list_local_shadow_exports sees tmp JSONL without reading content."""
+    fixture = (
+        Path(__file__).resolve().parents[1]
+        / "fixtures"
+        / "shadow_capture.synthetic.json"
+    )
+    capture = json.loads(fixture.read_text(encoding="utf-8"))
+    out = tmp_path / "shadow-capture.jsonl"
+    out.write_text(json.dumps(capture, separators=(",", ":")) + "\n", encoding="utf-8")
+
+    payload = list_local_shadow_exports(directory=str(tmp_path))
+    assert payload["status"] == "PASS"
+    assert payload["clinical_validation"] is False
+    exports = payload["exports"]
+    assert isinstance(exports, list) and len(exports) == 1
+    assert exports[0]["filename"] == "shadow-capture.jsonl"
+    assert exports[0]["size_bytes"] > 0
+    assert exports[0]["summarizable"] is True
+    _assert_gates(payload)
