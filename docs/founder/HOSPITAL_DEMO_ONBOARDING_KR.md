@@ -12,6 +12,14 @@
 
 ## 1분 실행
 
+**체인(권장):** demo → HTML showcard → partner zip — [`HOSPITAL_DEMO_RUNBOOK_KR.md`](HOSPITAL_DEMO_RUNBOOK_KR.md)
+
+```bash
+bash scripts/run_hospital_demo_chain.sh /tmp/t21-hospital-demo
+```
+
+또는 데모만:
+
 레포 루트에서:
 
 ```bash

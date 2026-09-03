@@ -1,0 +1,57 @@
+# Hospital Demo 런북 (KR)
+
+**Status:** Path B / RUO / Shadow · freeze tip `v1.7-hospital-demo`+  
+**clinical_validation:** `false`  
+**목적:** Founder/파트너 앞에서 **브라우저 카드까지** 한 번에 보여 주는 실행 순서  
+**금지:** PHI · 파형 · VitalDB/CapnoBase/PulseDB · 투약/알림/closed-loop · 임상 claim · Kim/PI 메일 대행
+
+관련: [`HOSPITAL_DEMO_ONBOARDING_KR.md`](HOSPITAL_DEMO_ONBOARDING_KR.md) · [`EXPORT_MANIFEST_PHI_FALSE_KR.md`](EXPORT_MANIFEST_PHI_FALSE_KR.md)
+
+---
+
+## 원커맨드 체인 (권장)
+
+```bash
+bash scripts/run_hospital_demo_chain.sh /tmp/t21-hospital-demo /tmp/t21-hospital-demo-partner-pack
+```
+
+순서:
+
+1. `scripts/run_hospital_demo.sh` — synthetic hospital demo + ExportManifest 게이트  
+2. `scripts/generate_hospital_demo_showcard_html.py` — 브라우저용 HTML show-card  
+3. `scripts/pack_hospital_demo_partner.sh` — 파트너 zip (shadow JSONL/파형 **미포함**)
+
+열기:
+
+```bash
+# macOS
+open /tmp/t21-hospital-demo/showcard.html
+# Linux
+xdg-open /tmp/t21-hospital-demo/showcard.html
+```
+
+---
+
+## 산출물 체크
+
+| 경로 | 확인 |
+| --- | --- |
+| `hospital-demo-report.json` | `clinical_validation=false`, `contains_phi=false` |
+| `showcard.html` | 브라우저에서 게이트 표 + QC (이미지/파형 없음) |
+| `t21-hospital-demo-partner-pack.zip` | 리포트·docs·showcard (EN/KR 1페이지) |
+
+PROXY 공개 벤치(BIDMC/MIT-BIH/Fantasia)는 **별도 PROXY 라벨** — 이 체인 필수 입력 아님.
+
+---
+
+## 단계별 (디버그)
+
+```bash
+bash scripts/run_hospital_demo.sh /tmp/t21-hospital-demo
+python3 scripts/generate_hospital_demo_showcard_html.py \
+  /tmp/t21-hospital-demo/hospital-demo-report.json \
+  -o /tmp/t21-hospital-demo/showcard.html
+bash scripts/pack_hospital_demo_partner.sh /tmp/t21-hospital-demo
+```
+
+예시 HTML: [`hospital-demo-showcard.example.html`](hospital-demo-showcard.example.html)
