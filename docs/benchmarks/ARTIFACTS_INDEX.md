@@ -1,6 +1,6 @@
 # Research engineering artifacts index
 
-> **PUBLIC_DATA_REPORT_V1 freeze: `v1.4-path-b-verify` · `2026-09-03 UTC`**
+> **PUBLIC_DATA_REPORT_V1 freeze: `v1.5-mcp-verify` · `2026-09-03 UTC`**
 >
 > **PROXY / engineering only**  
 > **clinical_validation=false**  
@@ -197,3 +197,19 @@ Freeze companion: [`PUBLIC_DATA_REPORT_V1.md`](PUBLIC_DATA_REPORT_V1.md) (`v1.4-
 
 `clinical_validation=false` · PROXY/RUO only · no DS clinical claims · VitalDB not included.
 
+## MCP verify hardening (059–067)
+
+Freeze companion: [`PUBLIC_DATA_REPORT_V1.md`](PUBLIC_DATA_REPORT_V1.md) (`v1.5-mcp-verify`).
+
+| Item | Commit | Pointer |
+| --- | --- | --- |
+| Schema pins + roundtrip CI | `af5e869` | `.github/workflows/mcp-schema-unit-pins.yml` |
+| `export_shadow_summary` roundtrip | `8c99037` | `tests/backend/unit/test_research_node_mcp.py` |
+| Catalog drift fail-closed | `9d788c1` | `tests/backend/unit/test_mcp_tool_catalog.py` |
+| Verify unit in Path B / schema CI | `4cdb61c` | `.github/workflows/path-b-mcp-verify.yml`, `mcp-schema-unit-pins.yml` |
+| Shadow exports list tmp roundtrip | `048336b` | `tests/backend/unit/test_research_node_mcp.py` |
+| Fantasia list_records sha256 | `09fa324` | `tests/backend/unit/test_fantasia_mcp.py` |
+| Public PROXY bench CI | `f0d661d` | `.github/workflows/proxy-bench-smoke.yml` |
+| Synthetic hospital QC CI | `904cc9e` | `.github/workflows/synthetic-hospital-qc-smoke.yml` |
+
+`clinical_validation=false` · PROXY/RUO only · no DS clinical claims · VitalDB not included.

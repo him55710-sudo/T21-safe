@@ -1,6 +1,6 @@
 # Public Data Report v1 — PROXY engine smoke
 
-**Freeze version:** `v1.4-path-b-verify`
+**Freeze version:** `v1.5-mcp-verify`
 
 **Freeze date:** `2026-09-03 UTC`
 
@@ -93,6 +93,28 @@ UNIFIED_MCP pointer). Documentation/CI packaging only; no new datasets or clinic
 
 No VitalDB download or implementation, and no CapnoBase or PulseDB benchmark, is part
 of `v1.4-path-b-verify` (superseding `v1.3-mcp-dx2` for Path B verify packaging). All entries remain research
+engineering artifacts with
+`clinical_validation=false`; none supports a DS-specific or other clinical claim.
+
+The `v1.5-mcp-verify` bump records Path B / MCP verify hardening after
+`v1.4-path-b-verify` (schema/export/shadow roundtrips, catalog fail-closed,
+CI wires for verify + public PROXY benches + synthetic hospital QC). Documentation/CI
+packaging and regression hooks only; no new datasets or clinical claims.
+
+| Delivery | Shipped verify / CI artifact | Commit |
+| --- | --- | --- |
+| CODEX-059 | Schema pins CI includes shadow/export roundtrip | `af5e869` |
+| CODEX-060 | `export_shadow_summary` fixture roundtrip unit | `8c99037` |
+| CODEX-061 | Catalog drift fail-closed unit | `9d788c1` |
+| CODEX-062 | SKIP — ExportManifest already pinned | — |
+| CODEX-063 | Wire `test_verify_path_b_mcp` into Path B / schema-pins CI | `4cdb61c` |
+| CODEX-064 | Research Node `list_local_shadow_exports` tmp JSONL roundtrip | `048336b` |
+| CODEX-065 | Fantasia `list_records` sha256 fixture assert | `09fa324` |
+| CODEX-066 | Public PROXY bench thin CI (BIDMC + MIT-BIH units) | `f0d661d` |
+| CODEX-067 | Synthetic hospital time-align/QC CI hook | `904cc9e` |
+
+No VitalDB download or implementation, and no CapnoBase or PulseDB benchmark, is part
+of `v1.5-mcp-verify` (superseding `v1.4-path-b-verify` for MCP verify packaging). All entries remain research
 engineering artifacts with
 `clinical_validation=false`; none supports a DS-specific or other clinical claim.
 
