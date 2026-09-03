@@ -313,6 +313,17 @@ Tip freeze after fail-closed partner zip CI and Makefile wrappers.
 
 ## PROXY Analysis Plan v0.1 (HYP-01/03/07)
 
+### METHODS_CRITIQUE (read first)
+
+- **PROXY ≠ DS** · Path B RUO · **`clinical_validation=false`** on all outputs.
+- Thresholds remain **`PI_TO_DEFINE`** (no clinical cutoffs hardcoded).
+- **RQ-004** resting HRV → peri-op stays **HYPOTHESIS/gap** (never FACT).
+- **LF/HF is not primary** (HYP-03 methods stress / negative-control only).
+- **Selection / confounding / leakage:** PhysioNet ambulatory/resting (or synthetic fixture-equivalent) only — not OR/ICU/DS; does not resolve peri-op confounding; local fixture observe-only; no PHI/waveform cloud; Dataset rows are PROXY fixtures, not experiment-approved; do not recycle engineering numbers into clinical lockbox claims.
+- No pooled instability score · no BIDMC / Airway / Driver-map / dosing / closed-loop.
+- HYP Claims with `HUMAN_REVIEW_REQUIRED` are **labels**, not clinical facts.
+- Founder-facing critique pack: [`docs/founder/PROXY_HYP_RESULTS_KR.md`](../founder/PROXY_HYP_RESULTS_KR.md) (METHODS_CRITIQUE at top).
+
 Founder-approved PROXY Analysis Plan benches + one-command runner (CODEX-101–106).
 Method Master: Notion `P2E-METHOD-PROXY-PLAN-V01` (CODEX_READY).
 
