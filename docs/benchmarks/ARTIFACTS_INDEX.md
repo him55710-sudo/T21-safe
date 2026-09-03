@@ -1,6 +1,6 @@
 # Research engineering artifacts index
 
-> **PUBLIC_DATA_REPORT_V1 freeze: `v1.2-mcp-dx` · `2026-09-03 UTC`**
+> **PUBLIC_DATA_REPORT_V1 freeze: `v1.3-mcp-dx2` · `2026-09-03 UTC`**
 >
 > **PROXY / engineering only**  
 > **clinical_validation=false**  
@@ -157,7 +157,7 @@ dosing alerts, clinical decisions, or DS-specific clinical claims.
 
 ## Founder / DX packaging (025–028)
 
-Freeze companion: [`PUBLIC_DATA_REPORT_V1.md`](PUBLIC_DATA_REPORT_V1.md) (`v1.2-mcp-dx`).
+Freeze companion: [`PUBLIC_DATA_REPORT_V1.md`](PUBLIC_DATA_REPORT_V1.md) (`v1.2-mcp-dx` history; tip `v1.3-mcp-dx2`).
 
 | Item | Commit | Pointer |
 | --- | --- | --- |
@@ -165,6 +165,21 @@ Freeze companion: [`PUBLIC_DATA_REPORT_V1.md`](PUBLIC_DATA_REPORT_V1.md) (`v1.2-
 | Shadow JSONL schema + MCP list/export | `ed13e47` | Research Node MCP tools `list_local_shadow_exports` / `export_shadow_summary` |
 | BIDMC/MIT-BIH PROXY MCP tools | `03468f1` | `run_mitbih_beat_bench` / `run_bidmc_align_resp_bench` |
 | Founder KR MCP onboarding | `fa9b152` | `docs/founder/MCP_ONBOARDING_KR.md` |
+
+`clinical_validation=false` · PROXY/RUO only · no DS clinical claims · VitalDB not included.
+
+## MCP DX2 packaging (039–044)
+
+Freeze companion: [`PUBLIC_DATA_REPORT_V1.md`](PUBLIC_DATA_REPORT_V1.md) (`v1.3-mcp-dx2`).
+
+| Item | Commit | Pointer |
+| --- | --- | --- |
+| MCP tool catalog auto-gen | `2b890ac` | `scripts/generate_mcp_tool_catalog.py`, `docs/mcp/TOOL_CATALOG.md` |
+| mcp-stdio-smoke path filters + matrix | `da75ff1` | `.github/workflows/mcp-stdio-smoke.yml` |
+| `list_demo_presets` MCP tool | `0fbaf5d` | Research Node MCP |
+| Shadow JSONL schema pin tests | `79e977b` | `tests/backend/unit/test_shadow_jsonl_schema.py` |
+| Fantasia age `PI_TO_DEFINE` asserts | `43f1859` | `tests/backend/unit/test_fantasia_mcp*.py` |
+| TOOL_CATALOG regen (`list_demo_presets`) | `1acb911` | `docs/mcp/TOOL_CATALOG.md` |
 
 `clinical_validation=false` · PROXY/RUO only · no DS clinical claims · VitalDB not included.
 
