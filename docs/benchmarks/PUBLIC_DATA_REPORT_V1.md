@@ -1,6 +1,6 @@
 # Public Data Report v1 — PROXY engine smoke
 
-**Freeze version:** `v2.3-meeting-onepager`
+**Freeze version:** `v2.4-meeting-demo-links`
 
 **Freeze date:** `2026-09-04 UTC` (prior hospital-demo tip stamped `2026-09-03 UTC`; prior PROXY benches tip `v2.1-proxy-hyp-benches`)
 
@@ -397,3 +397,19 @@ ARTIFACTS pointer, and its inclusion in the PROXY HYP partner pack. No new HYP b
 `clinical_validation=false` · Auditor DUAL-GATE labels retained · no FACT · no BIDMC/Airway expansion · Path B / RUO / Shadow Mode.
 
 Prior tip `v2.2-proxy-hyp-guards` remains the DUAL-GATE guards freeze (111–114); pack body starts at `e57fd2b` and the post-include tip is `360db7d`.
+
+## Meeting / hospital-demo links freeze (CODEX-122–124)
+
+Tip freeze `v2.4-meeting-demo-links` records hospital-demo Founder links to the
+meeting one-pager, the UNIFIED_MCP claim-guard mention, and fail-closed hospital-demo
+pack CI/unit assertions. No new HYP benches.
+
+| Delivery | Artifact | Commit |
+| --- | --- | --- |
+| CODEX-122 | Hospital-demo Founder docs link `MEETING_ONEPAGER_PROXY_v0.1_KR.md` | `eb1f5e5` |
+| CODEX-123 | UNIFIED_MCP meeting one-pager + claim-guard mention | `46a6b62` |
+| CODEX-124 | Hospital-demo pack CI/unit asserts meeting one-pager staging | `c6806e1` |
+
+`clinical_validation=false` · Auditor DUAL-GATE retained · no FACT · no new HYP benches · no BIDMC/Airway · Path B / RUO / Shadow Mode.
+
+Prior tip `v2.3-meeting-onepager` remains the meeting one-pager freeze (116–118); the `v2.4-meeting-demo-links` tip SHA is `c6806e1`.

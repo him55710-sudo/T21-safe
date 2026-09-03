@@ -48,7 +48,7 @@ Path B · RUO · MIT-BIH + Fantasia **로컬 fixture만**.
 
 ## Freeze tip
 
-`v2.3-meeting-onepager` (`2026-09-04 UTC`) — CODEX-116–118 meeting one-pager + ARTIFACTS pointer + partner-pack include (`360db7d`; body `e57fd2b`). Auditor DUAL-GATE guards tip `v2.2-proxy-hyp-guards` and benches tip `v2.1-proxy-hyp-benches` still apply. No new HYP benches.
+`v2.4-meeting-demo-links` (`2026-09-04 UTC`; tip `c6806e1`) — CODEX-122–124 hospital-demo Founder links to `MEETING_ONEPAGER_PROXY_v0.1_KR.md` (`eb1f5e5`), UNIFIED_MCP claim-guard mention (`46a6b62`), and hospital-demo pack CI/unit staging asserts (`c6806e1`). Auditor DUAL-GATE guards remain; `clinical_validation=false`; no FACT, new HYP benches, BIDMC, or Airway. Prior meeting one-pager tip `v2.3-meeting-onepager` still applies.
 
 ## 한 줄 요약
 
