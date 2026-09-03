@@ -66,11 +66,15 @@ fixture has no age metadata, so age-stability is unavailable / `PI_TO_DEFINE`.
 - Guide: [`docs/mcp/FANTASIA_MCP.md`](../mcp/FANTASIA_MCP.md)
 - Module / command: `t21_engine.fantasia_mcp` / `t21-fantasia-mcp`
 - Tools: `list_records`, `load_sample`, `run_hrv_proxy_bench`
-- Verification command: `python -m pytest tests/backend/unit/test_fantasia_mcp.py`
+- Verification command:
+  `python -m pytest tests/backend/unit/test_fantasia_mcp.py tests/backend/unit/test_fantasia_mcp_stdio.py`
 
 The tools are local-only, bounded, and gated to `PROXY_HRV_AGE_STABILITY` with
 `clinical_validation=false`. VERIFIED PROXY references Notion page
 `3d09631d743b81efae8fe2731113b4f6`; this does not create a clinical claim.
+The stdio smoke test starts the real server process and checks MCP initialization and
+tool discovery using the repository's synthetic-fixture setup; no desktop client or
+Fantasia download is required.
 
 ## Baseline 180 / 300
 

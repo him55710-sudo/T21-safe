@@ -29,21 +29,50 @@ be launched without the console script:
 PYTHONPATH=services/engine/src python -m t21_engine.fantasia_mcp.server
 ```
 
-Example client configuration:
+## Cursor and Claude Desktop configuration
+
+Both Cursor and Claude Desktop accept an `mcpServers` entry. If the engine is
+installed into an environment visible to the desktop application, paste this into
+the client's MCP configuration:
 
 ```json
 {
   "mcpServers": {
     "fantasia-proxy": {
-      "command": "python",
-      "args": ["-m", "t21_engine.fantasia_mcp.server"]
+      "command": "t21-fantasia-mcp",
+      "args": []
     }
   }
 }
 ```
 
-The environment running the client must have the engine package installed, or set
-`PYTHONPATH` to `services/engine/src`.
+Install the command first with
+`python -m pip install -e "/absolute/path/to/T21-safe/services/engine"`. Desktop
+applications may not inherit the shell's `PATH`; if `t21-fantasia-mcp` is not found,
+replace `command` with the absolute path to that executable in the Python
+environment's `bin` directory (or `Scripts` directory on Windows).
+
+Alternatively, launch the module directly from a source checkout. Replace both
+absolute paths before pasting; a relative `PYTHONPATH` is unreliable because desktop
+clients do not necessarily start in the repository root.
+
+```json
+{
+  "mcpServers": {
+    "fantasia-proxy": {
+      "command": "/absolute/path/to/python",
+      "args": ["-m", "t21_engine.fantasia_mcp.server"],
+      "env": {
+        "PYTHONPATH": "/absolute/path/to/T21-safe/services/engine/src"
+      }
+    }
+  }
+}
+```
+
+These configurations use the local synthetic fixture by default when no local
+Fantasia dataset is present. They do not download Fantasia or require a live desktop
+client for verification.
 
 ## Tools
 
@@ -61,5 +90,6 @@ Use the fixture for offline CI; it is synthetic and is not a real participant re
 
 ```bash
 python -m pytest tests/backend/unit/test_fantasia_mcp.py \
+  tests/backend/unit/test_fantasia_mcp_stdio.py \
   tests/backend/unit/test_fantasia_hrv_age_bench.py
 ```
