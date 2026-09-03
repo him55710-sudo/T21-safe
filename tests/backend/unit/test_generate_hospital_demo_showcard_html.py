@@ -72,3 +72,7 @@ def test_html_showcard_writes_browser_document(tmp_path: Path) -> None:
     assert "False" in text or "false" in text
     assert "waveform" not in text.lower() or "No waveforms" in text or "Raw waveforms" in text
     assert "<img" not in text.lower()
+    assert "@media print" in text
+    assert "Research Use Only" in text
+    assert "not a clinical device" in text
+    assert "cleared device" not in text.lower()

@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""CODEX-089: Browser-openable PHI-false HTML show-card from hospital-demo-report.json.
+"""CODEX-089/096: Browser-openable PHI-false HTML show-card from hospital-demo-report.json.
 
 RUO / Shadow · clinical_validation=false · synthetic/local only.
 Never embeds waveforms, patient identifiers, or cloud URIs.
+Print-friendly layout with a quiet RUO banner (no clinical claim language).
 Reuses gate checks from the Markdown show-card generator.
 """
 
@@ -62,23 +63,107 @@ def render_showcard_html(report: dict[str, Any]) -> str:
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>T21 Path B Hospital Demo — Show Card</title>
   <style>
-    :root {{ font-family: system-ui, sans-serif; color: #122; background: #f7f8fa; }}
-    body {{ max-width: 44rem; margin: 2rem auto; padding: 0 1rem 3rem; }}
-    .card {{ background: #fff; border: 1px solid #d9dee7; border-radius: 12px; padding: 1.25rem 1.5rem; box-shadow: 0 1px 2px rgba(0,0,0,.04); }}
-    h1 {{ font-size: 1.35rem; margin: 0 0 .35rem; }}
-    .banner {{ color: #334; font-size: .95rem; margin-bottom: 1rem; }}
-    table {{ width: 100%; border-collapse: collapse; margin: .75rem 0 1.25rem; }}
-    th, td {{ text-align: left; padding: .45rem .35rem; border-bottom: 1px solid #e6e9ef; vertical-align: top; }}
-    th {{ width: 42%; color: #445; font-weight: 600; }}
-    code {{ font-size: .92em; }}
-    ul {{ padding-left: 1.2rem; }}
-    .muted {{ color: #566; font-size: .9rem; }}
+    :root {{
+      --ink: #1a1f2b;
+      --muted: #5b6472;
+      --line: #e4e7ee;
+      --paper: #ffffff;
+      --wash: #f5f6f8;
+      --accent: #2f5d8a;
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      color: var(--ink);
+      background: var(--wash);
+    }}
+    * {{ box-sizing: border-box; }}
+    body {{
+      max-width: 48rem;
+      margin: 1.5rem auto 2.5rem;
+      padding: 0 1rem;
+    }}
+    .card {{
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 1.35rem 1.5rem 1.6rem;
+    }}
+    .ruo {{
+      display: inline-block;
+      margin: 0 0 0.85rem;
+      padding: 0.28rem 0.55rem;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--wash);
+      color: var(--muted);
+      font-size: 0.78rem;
+      letter-spacing: 0.02em;
+    }}
+    h1 {{
+      font-size: 1.4rem;
+      font-weight: 650;
+      margin: 0 0 0.25rem;
+      color: var(--ink);
+    }}
+    .sub {{
+      margin: 0 0 1.1rem;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }}
+    h2 {{
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--accent);
+      margin: 1.15rem 0 0.45rem;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 0.25rem;
+    }}
+    table {{
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0.35rem 0 0.5rem;
+    }}
+    th, td {{
+      text-align: left;
+      padding: 0.42rem 0.3rem;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+      font-size: 0.95rem;
+    }}
+    th {{ width: 40%; color: var(--muted); font-weight: 600; }}
+    code {{ font-size: 0.9em; }}
+    ul {{ margin: 0.35rem 0 0.2rem; padding-left: 1.15rem; }}
+    li {{ margin: 0.2rem 0; }}
+    .foot {{
+      margin-top: 1.25rem;
+      color: var(--muted);
+      font-size: 0.8rem;
+    }}
+    @media print {{
+      :root {{ background: #fff; }}
+      body {{ margin: 0; max-width: none; padding: 0; }}
+      .card {{
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+        padding: 0;
+      }}
+      .ruo {{
+        border: 1px solid #bbb;
+        background: #fff;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }}
+      h2 {{ break-after: avoid; }}
+      table, ul {{ break-inside: avoid; }}
+      a {{ color: inherit; text-decoration: none; }}
+    }}
   </style>
 </head>
 <body>
   <article class="card">
-    <h1>T21 Path B Hospital Demo — Show Card</h1>
-    <p class="banner"><strong>RUO / Shadow</strong> · <code>clinical_validation=false</code> · PHI-false · synthetic only</p>
+    <div class="ruo">Research Use Only · observe-only shadow · not a clinical device</div>
+    <h1>T21 Path B Hospital Demo</h1>
+    <p class="sub">Synthetic local run summary · <code>clinical_validation=false</code> · PHI-false</p>
     <h2>Gates</h2>
     <table>
       <tbody>
@@ -101,14 +186,14 @@ def render_showcard_html(report: dict[str, Any]) -> str:
       <li>content_scope: <code>{cell(export.get("content_scope"))}</code></li>
       <li>jsonl_path: <code>{cell(export.get("jsonl_path"))}</code></li>
     </ul>
-    <h2>Not included</h2>
+    <h2>Out of scope</h2>
     <ul>
       <li>VitalDB / CapnoBase / PulseDB / MIMIC</li>
       <li>Raw waveforms or PHI</li>
-      <li>Dosing, alerts, closed-loop, or clinical claims</li>
+      <li>Dosing, alerts, closed-loop actuation, or treatment advice</li>
       <li>PROXY public benches (BIDMC / MIT-BIH / Fantasia) — labeled <strong>PROXY</strong> separately</li>
     </ul>
-    <p class="muted">Generated by <code>scripts/generate_hospital_demo_showcard_html.py</code> · open this file in a browser.</p>
+    <p class="foot">Generated by <code>scripts/generate_hospital_demo_showcard_html.py</code> · open locally in a browser · print via the browser print dialog.</p>
   </article>
 </body>
 </html>
@@ -139,6 +224,12 @@ def main(argv: list[str] | None = None) -> int:
     except ValueError as exc:
         print(json.dumps({"status": "FAIL_CLOSED", "error": str(exc)}), file=sys.stderr)
         return 2
+    # Soft assert: avoid clinical claim phrasing in the template itself.
+    lowered = card.lower()
+    for banned in ("diagnos", "treat patient", "clinical validation=true", "cleared device"):
+        if banned in lowered:
+            print(json.dumps({"status": "FAIL_CLOSED", "error": f"banned phrasing: {banned}"}), file=sys.stderr)
+            return 2
     out = args.output
     if out is None:
         out = args.report_json.resolve().parent / "showcard.html"
