@@ -43,14 +43,17 @@ def _record(sample_count: int = 6000) -> SimpleNamespace:
 
 
 def test_list_records_verifies_fixture_and_includes_gates() -> None:
+    """CODEX-065: fixture records report sha256_verified=True with RUO gates."""
     payload = list_records(FIXTURE)
 
     assert payload["status"] == "PASS"
+    assert payload["clinical_validation"] is False
     assert payload["records"] == [
         {"record": "f1o01", "sha256_verified": True},
         {"record": "synthetic02", "sha256_verified": True},
         {"record": "synthetic03", "sha256_verified": True},
     ]
+    assert all(row["sha256_verified"] is True for row in payload["records"])
     _assert_gates(payload)
 
 
