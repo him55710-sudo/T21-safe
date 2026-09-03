@@ -1,6 +1,6 @@
 # Public Data Report v1 — PROXY engine smoke
 
-**Freeze version:** `v1.6-eng-ci`
+**Freeze version:** `v1.7-hospital-demo`
 
 **Freeze date:** `2026-09-03 UTC`
 
@@ -134,6 +134,28 @@ and fail-closed hardening only; no new datasets or clinical claims.
 
 No VitalDB download or implementation, and no CapnoBase or PulseDB benchmark, is part
 of `v1.6-eng-ci` (superseding `v1.5-mcp-verify` for eng CI packaging). All entries remain research
+engineering artifacts with
+`clinical_validation=false`; none supports a DS-specific or other clinical claim.
+
+The `v1.7-hospital-demo` bump records Founder/partner showable hospital demo
+packaging after `v1.6-eng-ci` (one-command runner, KR onboarding, ExportManifest
+PHI-false partner pack, show-card, multi-seed matrix, partner zip, CI extension).
+Documentation/DX and local demo tooling only; no new datasets or clinical claims.
+
+| Delivery | Shipped hospital-demo artifact | Commit |
+| --- | --- | --- |
+| CODEX-079 | `scripts/run_hospital_demo.sh` | `75fbf65` |
+| CODEX-080 | Hospital demo KR onboarding + ARTIFACTS | `8ace65f` |
+| CODEX-081 | ExportManifest PHI-false partner pack docs | `366811c` |
+| CODEX-082 | Hospital demo CI smoke | `d3d995d` |
+| CODEX-083 | PHI-false Markdown show-card generator | `835706d` |
+| CODEX-084 | Multi-seed hospital demo matrix | `99f9bac` |
+| CODEX-085 | Partner pack zip (no shadow JSONL) | `3a92306` |
+| CODEX-086 | CI extends showcard + partner pack | `73a5cf1` |
+| CODEX-087 | ARTIFACTS_INDEX hospital-demo refresh | `7f01768` |
+
+No VitalDB download or implementation, and no CapnoBase or PulseDB benchmark, is part
+of `v1.7-hospital-demo` (superseding `v1.6-eng-ci` for hospital-demo packaging). All entries remain research
 engineering artifacts with
 `clinical_validation=false`; none supports a DS-specific or other clinical claim.
 

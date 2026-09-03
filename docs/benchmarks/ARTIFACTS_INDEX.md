@@ -1,6 +1,6 @@
 # Research engineering artifacts index
 
-> **PUBLIC_DATA_REPORT_V1 freeze: `v1.6-eng-ci` · `2026-09-03 UTC`**
+> **PUBLIC_DATA_REPORT_V1 freeze: `v1.7-hospital-demo` · `2026-09-03 UTC`**
 >
 > **PROXY / engineering only**  
 > **clinical_validation=false**  
@@ -267,3 +267,11 @@ Founder/partner showable Path B demo track after eng CI packaging (`v1.6-eng-ci`
 | CI extends showcard + partner pack | `73a5cf1` | `.github/workflows/hospital-demo-smoke.yml` |
 
 `clinical_validation=false` · synthetic/local · `includes_phi=false` · no DS clinical claims · VitalDB not included.
+
+## Hospital demo freeze (079–087)
+
+Freeze companion: [`PUBLIC_DATA_REPORT_V1.md`](PUBLIC_DATA_REPORT_V1.md) (`v1.7-hospital-demo`).
+
+See **Hospital demo packaging (079–086)** above for paths/commits. CODEX-087 refreshes this index; tip freeze is `v1.7-hospital-demo`.
+
+`clinical_validation=false` · synthetic/local · PHI-false · no DS clinical claims · VitalDB not included.
