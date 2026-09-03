@@ -1,0 +1,44 @@
+# CODEX-072: CI smoke for baseline-window sensitivity + SQI/missingness impact.
+# Synthetic/PROXY · clinical_validation=false · no VitalDB.
+name: Sensitivity bench smoke
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "services/engine/src/t21_engine/evaluation/baseline_window_sensitivity.py"
+      - "services/engine/src/t21_engine/evaluation/sqi_missingness_impact.py"
+      - "services/engine/src/t21_engine/adapters/synthetic_hospital_case.py"
+      - "tests/backend/unit/test_baseline_window_sensitivity.py"
+      - "tests/backend/unit/test_sqi_missingness_impact.py"
+      - ".github/workflows/sensitivity-bench-smoke.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "services/engine/src/t21_engine/evaluation/baseline_window_sensitivity.py"
+      - "services/engine/src/t21_engine/evaluation/sqi_missingness_impact.py"
+      - "services/engine/src/t21_engine/adapters/synthetic_hospital_case.py"
+      - "tests/backend/unit/test_baseline_window_sensitivity.py"
+      - "tests/backend/unit/test_sqi_missingness_impact.py"
+      - ".github/workflows/sensitivity-bench-smoke.yml"
+
+jobs:
+  sensitivity-bench-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install engine (dev)
+        run: python -m pip install -e "services/engine[dev]"
+      - name: Pytest baseline-window + SQI/missingness units
+        env:
+          PYTHONPATH: services/engine/src
+        run: |
+          set -euo pipefail
+          python -m pytest \
+            tests/backend/unit/test_baseline_window_sensitivity.py \
+            tests/backend/unit/test_sqi_missingness_impact.py \
+            -q --tb=short
