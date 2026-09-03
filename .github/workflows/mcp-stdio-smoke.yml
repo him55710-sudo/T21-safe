@@ -1,3 +1,4 @@
+# CODEX-040: path-filtered dual MCP stdio smoke (fantasia + research-node).
 name: MCP stdio smoke
 
 on:
