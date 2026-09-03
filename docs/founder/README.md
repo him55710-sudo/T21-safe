@@ -1,6 +1,7 @@
 # Founder docs (KR / DX)
 
-Path B · Research Use Only · `clinical_validation=false` · freeze tip `v2.2-proxy-hyp-guards` (111–114 DUAL-GATE; prior benches tip `v2.1-proxy-hyp-benches`; hospital demo pack tip still `v2.0-hospital-demo-ready`)  
+Path B · Research Use Only · Shadow Mode · `clinical_validation=false` · freeze tip `v2.3-meeting-onepager` (116–118; tip `360db7d`, body `e57fd2b`; Auditor DUAL-GATE tip `v2.2-proxy-hyp-guards`; prior benches tip `v2.1-proxy-hyp-benches`; hospital demo pack tip still `v2.0-hospital-demo-ready`)
+
 임상·DS·투약/알림 claim 없음. VitalDB/CapnoBase/PulseDB 미포함.
 
 | Doc | 용도 |

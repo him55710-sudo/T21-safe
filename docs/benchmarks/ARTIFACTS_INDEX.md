@@ -1,6 +1,6 @@
 # Research engineering artifacts index
 
-> **PUBLIC_DATA_REPORT_V1 freeze: `v2.2-proxy-hyp-guards` · `2026-09-04 UTC`**
+> **PUBLIC_DATA_REPORT_V1 freeze: `v2.3-meeting-onepager` · `2026-09-04 UTC`**
 >
 > **PROXY / engineering only**  
 > **clinical_validation=false**  
@@ -339,7 +339,7 @@ Method Master: Notion `P2E-METHOD-PROXY-PLAN-V01` (CODEX_READY).
 | One-command PROXY HYP runner (JSON/MD tables) | `d0b3988` | `scripts/run_proxy_hyp_benches.sh`, `t21_engine.evaluation.proxy_hyp_bench_runner` |
 | CI smoke for PROXY HYP runner | `385b812` | `.github/workflows/proxy-hyp-bench-smoke.yml` |
 | Founder PROXY results pack (KR) | `b710db6` | [`docs/founder/PROXY_HYP_RESULTS_KR.md`](../founder/PROXY_HYP_RESULTS_KR.md) |
-| Founder meeting one-pager — PROXY v0.1 meeting talk track; ECG HR-event/SQI only; `clinical_validation=false`; no FACT; freeze `v2.2-proxy-hyp-guards` | `e374856` (pack tip) | [`docs/founder/MEETING_ONEPAGER_PROXY_v0.1_KR.md`](../founder/MEETING_ONEPAGER_PROXY_v0.1_KR.md) |
+| Founder meeting one-pager — PROXY v0.1 meeting talk track; ECG HR-event/SQI only; `clinical_validation=false`; no FACT; freeze `v2.3-meeting-onepager` | `e57fd2b` (body); `360db7d` (pack include tip) | [`docs/founder/MEETING_ONEPAGER_PROXY_v0.1_KR.md`](../founder/MEETING_ONEPAGER_PROXY_v0.1_KR.md) |
 | METHODS_CRITIQUE prominence | `628911e` | `docs/founder/PROXY_HYP_RESULTS_KR.md`, `ARTIFACTS_INDEX.md` |
 | Auditor DSCS founder-pack wording | `9e7dce8` | `docs/founder/PROXY_HYP_RESULTS_KR.md`, pack README |
 | PROXY HYP partner zip | `3025cca` | `scripts/pack_proxy_hyp_partner.sh` |
@@ -374,3 +374,12 @@ Covers CODEX-111–114 (Auditor DUAL-GATE wording, runner stamps, fail-closed do
 Prior tip `v2.1-proxy-hyp-benches` covers 101–109 benches/runner/pack/MCP.
 
 `clinical_validation=false` · PARTIALLY_SUPPORTED / STRETCH / do-not-run · no FACT · no new HYP benches.
+
+## Meeting one-pager freeze tip
+
+Freeze companion: [`PUBLIC_DATA_REPORT_V1.md`](PUBLIC_DATA_REPORT_V1.md) (`v2.3-meeting-onepager`).
+
+Covers CODEX-116–118 (meeting one-pager body `e57fd2b`, ARTIFACTS pointer, partner-pack include tip `360db7d`).
+Prior tip `v2.2-proxy-hyp-guards` retains the Auditor DUAL-GATE guards.
+
+`clinical_validation=false` · Path B / RUO / Shadow Mode · no FACT · no new HYP benches · no BIDMC/Airway expansion.

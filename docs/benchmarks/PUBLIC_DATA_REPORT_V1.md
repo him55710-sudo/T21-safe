@@ -1,6 +1,6 @@
 # Public Data Report v1 — PROXY engine smoke
 
-**Freeze version:** `v2.2-proxy-hyp-guards`
+**Freeze version:** `v2.3-meeting-onepager`
 
 **Freeze date:** `2026-09-04 UTC` (prior hospital-demo tip stamped `2026-09-03 UTC`; prior PROXY benches tip `v2.1-proxy-hyp-benches`)
 
@@ -383,3 +383,17 @@ fail-closed doc pins + hospital-demo founder cross-links. No new HYP benches.
 
 Prior tip `v2.1-proxy-hyp-benches` remains the benches/runner/pack/MCP packaging freeze (101–109).
 
+## Meeting one-pager freeze (CODEX-116–118)
+
+Tip freeze `v2.3-meeting-onepager` records the Founder meeting one-pager, its
+ARTIFACTS pointer, and its inclusion in the PROXY HYP partner pack. No new HYP benches.
+
+| Delivery | Artifact | Commit |
+| --- | --- | --- |
+| CODEX-116 | Founder meeting one-pager — PROXY v0.1 (KR) | `e57fd2b` |
+| CODEX-117 | ARTIFACTS_INDEX pointer to meeting one-pager | `8ebf510` |
+| CODEX-118 | Partner pack includes meeting one-pager | `360db7d` |
+
+`clinical_validation=false` · Auditor DUAL-GATE labels retained · no FACT · no BIDMC/Airway expansion · Path B / RUO / Shadow Mode.
+
+Prior tip `v2.2-proxy-hyp-guards` remains the DUAL-GATE guards freeze (111–114); pack body starts at `e57fd2b` and the post-include tip is `360db7d`.

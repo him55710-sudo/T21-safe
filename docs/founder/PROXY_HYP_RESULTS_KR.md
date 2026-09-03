@@ -48,7 +48,7 @@ Path B · RUO · MIT-BIH + Fantasia **로컬 fixture만**.
 
 ## Freeze tip
 
-`v2.2-proxy-hyp-guards` (`2026-09-04 UTC`) — CODEX-111–114 DUAL-GATE guards; benches tip `v2.1-proxy-hyp-benches` (101–109) still applies.
+`v2.3-meeting-onepager` (`2026-09-04 UTC`) — CODEX-116–118 meeting one-pager + ARTIFACTS pointer + partner-pack include (`360db7d`; body `e57fd2b`). Auditor DUAL-GATE guards tip `v2.2-proxy-hyp-guards` and benches tip `v2.1-proxy-hyp-benches` still apply. No new HYP benches.
 
 ## 한 줄 요약
 
