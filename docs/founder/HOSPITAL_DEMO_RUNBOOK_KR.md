@@ -12,7 +12,14 @@
 ## 원커맨드 체인 (권장)
 
 ```bash
-bash scripts/run_hospital_demo_chain.sh /tmp/t21-hospital-demo /tmp/t21-hospital-demo-partner-pack
+make hospital-demo
+# 동일: bash scripts/run_hospital_demo_chain.sh /tmp/t21-hospital-demo /tmp/t21-hospital-demo-partner-pack
+```
+
+팩만 다시 만들 때:
+
+```bash
+make hospital-demo-pack
 ```
 
 순서:
