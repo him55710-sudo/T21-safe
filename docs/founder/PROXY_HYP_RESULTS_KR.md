@@ -29,6 +29,10 @@
 
 Path B · RUO · MIT-BIH + Fantasia **로컬 fixture만**.
 
+## Freeze tip
+
+`v2.1-proxy-hyp-benches` (`2026-09-04 UTC`) — CODEX-101–109.
+
 ## 한 줄 요약
 
 Founder 승인 PROXY Analysis Plan v0.1 벤치(HYP-01/03/07)가 `main`에 착륙했고, 원커맨드 러너가 JSON/MD 결과표를 만듭니다. 위 **METHODS_CRITIQUE**를 결과표보다 우선합니다.

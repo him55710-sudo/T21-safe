@@ -1,6 +1,6 @@
 # Research engineering artifacts index
 
-> **PUBLIC_DATA_REPORT_V1 freeze: `v2.0-hospital-demo-ready` · `2026-09-03 UTC`**
+> **PUBLIC_DATA_REPORT_V1 freeze: `v2.1-proxy-hyp-benches` · `2026-09-04 UTC`**
 >
 > **PROXY / engineering only**  
 > **clinical_validation=false**  
@@ -335,6 +335,9 @@ Method Master: Notion `P2E-METHOD-PROXY-PLAN-V01` (CODEX_READY).
 | One-command PROXY HYP runner (JSON/MD tables) | `d0b3988` | `scripts/run_proxy_hyp_benches.sh`, `t21_engine.evaluation.proxy_hyp_bench_runner` |
 | CI smoke for PROXY HYP runner | `385b812` | `.github/workflows/proxy-hyp-bench-smoke.yml` |
 | Founder PROXY results pack (KR) | `b710db6` | [`docs/founder/PROXY_HYP_RESULTS_KR.md`](../founder/PROXY_HYP_RESULTS_KR.md) |
+| METHODS_CRITIQUE prominence | `628911e` | `docs/founder/PROXY_HYP_RESULTS_KR.md`, `ARTIFACTS_INDEX.md` |
+| PROXY HYP partner zip | `3025cca` | `scripts/pack_proxy_hyp_partner.sh` |
+| PROXY HYP MCP list/run | `e2c3d6d` | `t21_engine.proxy_hyp_mcp`, `t21-proxy-hyp-mcp` |
 
 Commands:
 
@@ -346,3 +349,12 @@ make proxy-hyp-benches
 Artifacts emitted: `proxy-hyp-bench-report.json`, `proxy-hyp-bench-results.md`.
 
 `clinical_validation=false` · MIT-BIH+Fantasia local fixtures only · role tags `PROXY_ECG_BENCHMARK` / `PROXY_HRV_AGE_STABILITY` · FACT/INTERPRETATION/HYPOTHESIS layers · thresholds `PI_TO_DEFINE` · no pooled instability score · no BIDMC / Airway / Driver-map / PHI · no dosing/closed-loop · HYP Claims `HUMAN_REVIEW_REQUIRED` remain labels not clinical facts.
+
+## PROXY Analysis Plan freeze tip
+
+Freeze companion: [`PUBLIC_DATA_REPORT_V1.md`](PUBLIC_DATA_REPORT_V1.md) (`v2.1-proxy-hyp-benches`).
+
+Covers CODEX-101–109 (benches, runner, CI, METHODS_CRITIQUE docs, partner zip, MCP).
+Hospital demo tip `v2.0-hospital-demo-ready` remains valid for packaging track.
+
+`clinical_validation=false` · PROXY≠DS · MIT-BIH+Fantasia local only · no BIDMC/Airway/PHI · no dosing/closed-loop.

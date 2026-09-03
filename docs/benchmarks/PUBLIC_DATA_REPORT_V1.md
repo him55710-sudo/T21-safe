@@ -1,8 +1,8 @@
 # Public Data Report v1 — PROXY engine smoke
 
-**Freeze version:** `v2.0-hospital-demo-ready`
+**Freeze version:** `v2.1-proxy-hyp-benches`
 
-**Freeze date:** `2026-09-03 UTC`
+**Freeze date:** `2026-09-04 UTC`
 
 **Status:** Scaffold filled from CODEX-006 family · **PROXY only**  
 **clinical_validation:** `false`  
@@ -344,3 +344,26 @@ Reports include: `schema_version`, `status`, `seed`, dataset name/version/licens
 ## Next
 
 - Fill numeric engineering digests from recorded local public samples when an operator places them under the corresponding `data/public/...` roots
+
+## PROXY Analysis Plan freeze (CODEX-101–109)
+
+Tip freeze `v2.1-proxy-hyp-benches` records Founder-approved PROXY HYP-01/03/07
+benches, one-command runner, partner zip, METHODS_CRITIQUE docs, and read-only MCP.
+
+| Delivery | Artifact | Commit |
+| --- | --- | --- |
+| CODEX-101 | HYP-01 MIT-BIH brady-def sensitivity | `af98247` |
+| CODEX-102 | HYP-03 Fantasia short-window HRV/LF-HF | `6318771` |
+| CODEX-103 | HYP-07 Fantasia age-band HRV stability | `f0f7692` |
+| CODEX-104 | One-command PROXY HYP runner | `d0b3988` |
+| CODEX-105 | PROXY HYP runner CI smoke | `385b812` |
+| CODEX-106 | ARTIFACTS_INDEX + founder KR pack | `b710db6` |
+| CODEX-107 | METHODS_CRITIQUE prominence | `628911e` |
+| CODEX-108 | PROXY HYP partner zip (docs/JSON/MD only) | `3025cca` |
+| CODEX-109 | PROXY HYP MCP list/run + stdio smoke | `e2c3d6d` |
+
+`clinical_validation=false` · PROXY≠DS · PI_TO_DEFINE · RQ-004 HYPOTHESIS · LF/HF not primary · no BIDMC/Airway/PHI waveforms in partner pack · no pooled instability score.
+
+The prior tip `v2.0-hospital-demo-ready` remains the hospital-demo packaging freeze;
+this tip adds the PROXY Analysis Plan engineering track without expanding clinical claims.
+

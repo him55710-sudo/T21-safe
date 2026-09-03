@@ -1,6 +1,6 @@
 # Founder docs (KR / DX)
 
-Path B · Research Use Only · `clinical_validation=false` · freeze tip `v1.7-hospital-demo`  
+Path B · Research Use Only · `clinical_validation=false` · freeze tip `v2.1-proxy-hyp-benches` (hospital demo pack tip still `v2.0-hospital-demo-ready`)  
 임상·DS·투약/알림 claim 없음. VitalDB/CapnoBase/PulseDB 미포함.
 
 | Doc | 용도 |
