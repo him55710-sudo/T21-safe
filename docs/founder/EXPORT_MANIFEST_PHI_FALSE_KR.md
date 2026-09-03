@@ -11,6 +11,8 @@
 영문 1페이지: [`docs/business/export-manifest-phi-false-1p.md`](../business/export-manifest-phi-false-1p.md)  
 데모 온보딩: [`HOSPITAL_DEMO_ONBOARDING_KR.md`](HOSPITAL_DEMO_ONBOARDING_KR.md)
 
+미팅 talk track: [`MEETING_ONEPAGER_PROXY_v0.1_KR.md`](MEETING_ONEPAGER_PROXY_v0.1_KR.md) — freeze `v2.3-meeting-onepager`; PROXY v0.1 · ECG HR-event/SQI only · `clinical_validation=false` · **no FACT**.
+
 ---
 
 ## 한 줄 요약

@@ -8,6 +8,8 @@
 
 관련: [`HOSPITAL_DEMO_ONBOARDING_KR.md`](HOSPITAL_DEMO_ONBOARDING_KR.md) · [`EXPORT_MANIFEST_PHI_FALSE_KR.md`](EXPORT_MANIFEST_PHI_FALSE_KR.md) · [`PROXY_HYP_RESULTS_KR.md`](PROXY_HYP_RESULTS_KR.md) (Auditor: HYP-01 PARTIALLY_SUPPORTED; HYP-03/07 STRETCH/neg-control-QA; **no FACT**)
 
+미팅 talk track: [`MEETING_ONEPAGER_PROXY_v0.1_KR.md`](MEETING_ONEPAGER_PROXY_v0.1_KR.md) — freeze `v2.3-meeting-onepager`; PROXY v0.1 · ECG HR-event/SQI only · `clinical_validation=false` · **no FACT**.
+
 ---
 
 ## 원커맨드 체인 (권장)

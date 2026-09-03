@@ -9,6 +9,8 @@
 영문 상세: [`docs/DEMO.md`](../DEMO.md)  
 체크리스트: [`RESEARCH_NODE_DEMO_CHECKLIST_KR.md`](RESEARCH_NODE_DEMO_CHECKLIST_KR.md)
 
+미팅 talk track: [`MEETING_ONEPAGER_PROXY_v0.1_KR.md`](MEETING_ONEPAGER_PROXY_v0.1_KR.md) — freeze `v2.3-meeting-onepager`; PROXY v0.1 · ECG HR-event/SQI only · `clinical_validation=false` · **no FACT**.
+
 ---
 
 ## 1분 실행
