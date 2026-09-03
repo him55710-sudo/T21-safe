@@ -32,3 +32,5 @@ def test_pack_script_excludes_waveforms_and_includes_docs() -> None:
     assert "includes_waveforms" in text
     assert "clinical_validation" in text
     assert "zipfile" in text
+    assert "generate_hospital_demo_showcard_html.py" in text
+    assert "showcard.html" in text
