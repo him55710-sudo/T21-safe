@@ -46,6 +46,18 @@ bash scripts/run_hospital_demo.sh /tmp/t21-hospital-demo
 
 ---
 
+## Show-card (데모 화면용)
+
+리포트 JSON으로 PHI-false Markdown 카드 생성:
+
+```bash
+python3 scripts/generate_hospital_demo_showcard.py \
+  /tmp/t21-hospital-demo/hospital-demo-report.json \
+  -o /tmp/t21-hospital-demo/showcard.md
+```
+
+예시: [`hospital-demo-showcard.example.md`](hospital-demo-showcard.example.md)
+
 ## 다음에 볼 문서
 
 - ExportManifest PHI-false 파트너 1페이지: [`EXPORT_MANIFEST_PHI_FALSE_KR.md`](EXPORT_MANIFEST_PHI_FALSE_KR.md)
