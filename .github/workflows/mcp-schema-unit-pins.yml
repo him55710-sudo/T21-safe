@@ -16,6 +16,8 @@ on:
       - "tests/backend/unit/test_shadow_jsonl_schema.py"
       - "tests/backend/unit/test_shadow_jsonl_roundtrip.py"
       - "tests/backend/unit/test_mcp_tool_catalog.py"
+      - "tests/backend/unit/test_verify_path_b_mcp.py"
+      - "scripts/verify_path_b_mcp.sh"
       - "tests/backend/fixtures/shadow_capture.synthetic.json"
       - ".github/workflows/mcp-schema-unit-pins.yml"
   pull_request:
@@ -32,6 +34,8 @@ on:
       - "tests/backend/unit/test_shadow_jsonl_schema.py"
       - "tests/backend/unit/test_shadow_jsonl_roundtrip.py"
       - "tests/backend/unit/test_mcp_tool_catalog.py"
+      - "tests/backend/unit/test_verify_path_b_mcp.py"
+      - "scripts/verify_path_b_mcp.sh"
       - "tests/backend/fixtures/shadow_capture.synthetic.json"
       - ".github/workflows/mcp-schema-unit-pins.yml"
 
@@ -56,4 +60,5 @@ jobs:
             tests/backend/unit/test_shadow_jsonl_schema.py \
             tests/backend/unit/test_shadow_jsonl_roundtrip.py \
             tests/backend/unit/test_mcp_tool_catalog.py \
+            tests/backend/unit/test_verify_path_b_mcp.py \
             -q --tb=short
