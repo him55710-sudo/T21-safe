@@ -30,6 +30,7 @@ PROXY_PUBLIC_BENCH_TOOLS = frozenset(
                 "run_time_align_qc",
                 "run_sqi_missingness_impact",
                 "run_baseline_window_sensitivity",
+                "list_demo_presets",
                 "list_local_shadow_exports",
                 "export_shadow_summary",
                 "run_mitbih_beat_bench",

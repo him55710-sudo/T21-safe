@@ -8,6 +8,7 @@ import pytest
 from t21_engine.research_node_mcp import handlers
 from t21_engine.research_node_mcp.handlers import (
     export_shadow_summary,
+    list_demo_presets,
     list_local_shadow_exports,
     run_bidmc_align_resp_bench,
     run_mitbih_beat_bench,
@@ -262,4 +263,21 @@ def test_evaluation_tools_fail_closed_on_invalid_parameters(
     assert payload["failure_reason_code"] == "INVALID_PARAMETERS"
     assert payload["rows"] == []
     assert "PI_TO_DEFINE" in payload["pi_to_define_banner"]
+    _assert_gates(payload)
+
+
+def test_list_demo_presets_read_only_defaults() -> None:
+    payload = list_demo_presets()
+    assert payload["status"] == "PASS"
+    assert payload["mission"] == "CODEX-042"
+    assert payload["schema_version"] == "demo-presets/1.0"
+    assert payload["clinical_validation"] is False
+    presets = payload["presets"]
+    assert isinstance(presets, list) and presets
+    default = presets[0]
+    assert default["id"] == "default"
+    assert default["duration_seconds"] == 12.0
+    assert default["baseline_seconds"] == 3
+    assert default["seed"] == 20250321
+    assert default["clinical_validation"] is False
     _assert_gates(payload)

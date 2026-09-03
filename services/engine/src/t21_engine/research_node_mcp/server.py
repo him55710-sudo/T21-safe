@@ -9,6 +9,7 @@ from typing import Any, TextIO
 
 from t21_engine.research_node_mcp.handlers import (
     export_shadow_summary,
+    list_demo_presets,
     list_local_shadow_exports,
     run_baseline_window_sensitivity,
     run_bidmc_align_resp_bench,
@@ -24,6 +25,15 @@ _COMMON_PROPERTIES = {
     "seed": {"type": "integer", "default": 20250321},
 }
 TOOLS = [
+    {
+        "name": "list_demo_presets",
+        "description": "List read-only synthetic Research Node demo CLI presets (no I/O).",
+        "inputSchema": {
+            "type": "object",
+            "properties": {},
+            "additionalProperties": False,
+        },
+    },
     {
         "name": "list_local_shadow_exports",
         "description": "List local shadow JSONL exports without returning record content.",
@@ -142,6 +152,7 @@ TOOLS = [
     },
 ]
 HANDLERS: dict[str, Callable[..., dict[str, Any]]] = {
+    "list_demo_presets": list_demo_presets,
     "list_local_shadow_exports": list_local_shadow_exports,
     "export_shadow_summary": export_shadow_summary,
     "run_synthetic_demo": run_synthetic_demo,

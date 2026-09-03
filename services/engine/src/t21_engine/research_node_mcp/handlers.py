@@ -12,7 +12,13 @@ from typing import Any
 from urllib.parse import urlsplit
 
 from t21_engine.adapters.synthetic_hospital_case import build_synthetic_hospital_case
-from t21_engine.demo import run_demo
+from t21_engine.demo import (
+    DEFAULT_BASELINE_SECONDS,
+    DEFAULT_DURATION_SECONDS,
+    DEFAULT_SEED,
+    DEFAULT_SESSION_ID,
+    run_demo,
+)
 from t21_engine.evaluation.baseline_window_sensitivity import (
     run_baseline_window_sensitivity as evaluate_baseline_window_sensitivity,
 )
@@ -404,3 +410,24 @@ __all__ = [
     "run_synthetic_demo",
     "run_time_align_qc",
 ]
+
+
+def list_demo_presets() -> dict[str, Any]:
+    """Return read-only synthetic demo CLI presets (no waveforms, no I/O)."""
+    return _result(
+        "PASS",
+        schema_version="demo-presets/1.0",
+        mission="CODEX-042",
+        presets=[
+            {
+                "id": "default",
+                "label": "synthetic-research-node-demo",
+                "duration_seconds": DEFAULT_DURATION_SECONDS,
+                "baseline_seconds": DEFAULT_BASELINE_SECONDS,
+                "seed": DEFAULT_SEED,
+                "session_id": DEFAULT_SESSION_ID,
+                "synthetic_only": True,
+                "clinical_validation": False,
+            }
+        ],
+    )

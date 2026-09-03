@@ -46,6 +46,7 @@ def test_stdio_server_initialize_and_lists_tools() -> None:
     assert len(responses) == 2
     assert responses[0]["result"]["serverInfo"]["name"] == "t21-research-node-mcp"
     assert {tool["name"] for tool in responses[1]["result"]["tools"]} == {
+        "list_demo_presets",
         "list_local_shadow_exports",
         "export_shadow_summary",
         "run_synthetic_demo",
