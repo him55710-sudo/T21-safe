@@ -1,0 +1,47 @@
+# CODEX-067: CI hook for synthetic hospital time-align / QC regression.
+# Synthetic-only · clinical_validation=false · no VitalDB / CapnoBase / PulseDB.
+name: Synthetic hospital QC smoke
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "services/engine/src/t21_engine/adapters/synthetic_hospital_case.py"
+      - "services/engine/src/t21_engine/demo.py"
+      - "services/engine/src/t21_engine/research_node_mcp/handlers.py"
+      - "tests/backend/unit/test_synthetic_hospital_case.py"
+      - "tests/backend/integration/test_synthetic_hospital_smoke.py"
+      - "tests/backend/unit/test_research_node_mcp.py"
+      - ".github/workflows/synthetic-hospital-qc-smoke.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "services/engine/src/t21_engine/adapters/synthetic_hospital_case.py"
+      - "services/engine/src/t21_engine/demo.py"
+      - "services/engine/src/t21_engine/research_node_mcp/handlers.py"
+      - "tests/backend/unit/test_synthetic_hospital_case.py"
+      - "tests/backend/integration/test_synthetic_hospital_smoke.py"
+      - "tests/backend/unit/test_research_node_mcp.py"
+      - ".github/workflows/synthetic-hospital-qc-smoke.yml"
+
+jobs:
+  synthetic-hospital-qc-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install engine (dev)
+        run: python -m pip install -e "services/engine[dev]"
+      - name: Pytest synthetic hospital time-align / QC
+        env:
+          PYTHONPATH: services/engine/src
+        run: |
+          set -euo pipefail
+          python -m pytest \
+            tests/backend/unit/test_synthetic_hospital_case.py \
+            tests/backend/integration/test_synthetic_hospital_smoke.py \
+            tests/backend/unit/test_research_node_mcp.py::test_time_align_qc_happy_path_includes_safety_gates \
+            -q --tb=short
