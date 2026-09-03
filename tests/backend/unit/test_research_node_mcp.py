@@ -4,7 +4,13 @@ import json
 from pathlib import Path
 
 import pytest
-from t21_engine.research_node_mcp.handlers import run_synthetic_demo, run_time_align_qc
+from t21_engine.research_node_mcp import handlers
+from t21_engine.research_node_mcp.handlers import (
+    run_baseline_window_sensitivity,
+    run_sqi_missingness_impact,
+    run_synthetic_demo,
+    run_time_align_qc,
+)
 from t21_engine.research_node_mcp.server import handle_request
 
 
@@ -81,3 +87,77 @@ def test_stdio_handler_wraps_happy_payload() -> None:
     result = response["result"]
     assert result["isError"] is False
     _assert_gates(json.loads(result["content"][0]["text"]))
+
+
+@pytest.mark.parametrize(
+    ("runner_name", "evaluation_name", "schema_version", "extra"),
+    [
+        (
+            "run_sqi_missingness_impact",
+            "evaluate_sqi_missingness_impact",
+            "sqi-missingness-impact/1.0",
+            {"clinical_threshold_interpretation": "PI_TO_DEFINE"},
+        ),
+        (
+            "run_baseline_window_sensitivity",
+            "evaluate_baseline_window_sensitivity",
+            "baseline-window-sensitivity/1.0",
+            {"clinical_window_choice": "PI_TO_DEFINE", "windows_seconds": [180, 300]},
+        ),
+    ],
+)
+def test_evaluation_handlers_reuse_modules_and_add_gates(
+    monkeypatch: pytest.MonkeyPatch,
+    runner_name: str,
+    evaluation_name: str,
+    schema_version: str,
+    extra: dict[str, object],
+) -> None:
+    expected = {
+        "schema_version": schema_version,
+        "status": "PASS",
+        "synthetic_only": True,
+        "clinical_validation": False,
+        "rows": [{"engineering_value": 1.0}],
+        **extra,
+    }
+    monkeypatch.setattr(handlers, evaluation_name, lambda **_kwargs: expected)
+
+    payload = globals()[runner_name]()
+
+    assert payload["rows"] == expected["rows"]
+    assert payload["mission"] == "CODEX-023"
+    assert "PI_TO_DEFINE" in payload["pi_to_define_banner"]
+    _assert_gates(payload)
+
+
+@pytest.mark.parametrize(
+    ("name", "arguments"),
+    [
+        ("run_sqi_missingness_impact", {"gap_fractions": ["invalid"]}),
+        ("run_sqi_missingness_impact", {"noise_std": []}),
+        ("run_baseline_window_sensitivity", {"sample_rate_hz": 0}),
+        ("run_baseline_window_sensitivity", {"seed": True}),
+    ],
+)
+def test_evaluation_tools_fail_closed_on_invalid_parameters(
+    name: str, arguments: dict[str, object]
+) -> None:
+    response = handle_request(
+        {
+            "jsonrpc": "2.0",
+            "id": 23,
+            "method": "tools/call",
+            "params": {"name": name, "arguments": arguments},
+        }
+    )
+
+    assert response is not None
+    result = response["result"]
+    payload = json.loads(result["content"][0]["text"])
+    assert result["isError"] is True
+    assert payload["status"] in {"FAIL", "FAIL_CLOSED"}
+    assert payload["failure_reason_code"] == "INVALID_PARAMETERS"
+    assert payload["rows"] == []
+    assert "PI_TO_DEFINE" in payload["pi_to_define_banner"]
+    _assert_gates(payload)

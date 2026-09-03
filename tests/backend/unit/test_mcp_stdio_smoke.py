@@ -20,7 +20,12 @@ import pytest
         (
             "t21_engine.research_node_mcp.server",
             "t21-research-node-mcp",
-            {"run_synthetic_demo", "run_time_align_qc"},
+            {
+                "run_synthetic_demo",
+                "run_time_align_qc",
+                "run_sqi_missingness_impact",
+                "run_baseline_window_sensitivity",
+            },
         ),
     ],
     ids=("fantasia-proxy", "research-node"),
@@ -70,4 +75,3 @@ def test_mcp_stdio_initialize_and_tools_list(
     assert responses[0]["result"]["capabilities"] == {"tools": {}}
     assert responses[1]["id"] == 2
     assert {tool["name"] for tool in responses[1]["result"]["tools"]} == expected_tools
-

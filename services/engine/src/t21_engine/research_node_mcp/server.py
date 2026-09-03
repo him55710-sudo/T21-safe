@@ -7,7 +7,12 @@ import sys
 from collections.abc import Callable
 from typing import Any, TextIO
 
-from t21_engine.research_node_mcp.handlers import run_synthetic_demo, run_time_align_qc
+from t21_engine.research_node_mcp.handlers import (
+    run_baseline_window_sensitivity,
+    run_sqi_missingness_impact,
+    run_synthetic_demo,
+    run_time_align_qc,
+)
 
 SERVER_INFO = {"name": "t21-research-node-mcp", "version": "0.1.0"}
 _COMMON_PROPERTIES = {
@@ -42,10 +47,53 @@ TOOLS = [
             "additionalProperties": False,
         },
     },
+    {
+        "name": "run_sqi_missingness_impact",
+        "description": (
+            "Run synthetic-only SQI/missingness engineering sensitivity; PI_TO_DEFINE."
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "sample_rate_hz": {"type": "number", "exclusiveMinimum": 0, "default": 100},
+                "window_seconds": {"type": "number", "exclusiveMinimum": 0, "default": 30},
+                "gap_fractions": {
+                    "type": "array",
+                    "items": {"type": "number", "minimum": 0, "maximum": 1},
+                    "minItems": 1,
+                    "default": [0, 0.1, 0.25],
+                },
+                "noise_std": {
+                    "type": "array",
+                    "items": {"type": "number", "minimum": 0},
+                    "minItems": 1,
+                    "default": [0, 0.2],
+                },
+                "seed": {"type": "integer", "default": 20250321},
+            },
+            "additionalProperties": False,
+        },
+    },
+    {
+        "name": "run_baseline_window_sensitivity",
+        "description": (
+            "Compare fixed 180/300-second synthetic baseline summaries; PI_TO_DEFINE."
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "sample_rate_hz": {"type": "number", "exclusiveMinimum": 0, "default": 25},
+                "seed": {"type": "integer", "default": 20250321},
+            },
+            "additionalProperties": False,
+        },
+    },
 ]
 HANDLERS: dict[str, Callable[..., dict[str, Any]]] = {
     "run_synthetic_demo": run_synthetic_demo,
     "run_time_align_qc": run_time_align_qc,
+    "run_sqi_missingness_impact": run_sqi_missingness_impact,
+    "run_baseline_window_sensitivity": run_baseline_window_sensitivity,
 }
 
 

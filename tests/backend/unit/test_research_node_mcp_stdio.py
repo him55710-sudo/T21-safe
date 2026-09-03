@@ -48,4 +48,6 @@ def test_stdio_server_initialize_and_lists_tools() -> None:
     assert {tool["name"] for tool in responses[1]["result"]["tools"]} == {
         "run_synthetic_demo",
         "run_time_align_qc",
+        "run_sqi_missingness_impact",
+        "run_baseline_window_sensitivity",
     }

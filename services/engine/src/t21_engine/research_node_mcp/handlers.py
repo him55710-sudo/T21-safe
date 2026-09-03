@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import math
 import os
 import re
 from pathlib import Path
@@ -11,6 +12,12 @@ from urllib.parse import urlsplit
 
 from t21_engine.adapters.synthetic_hospital_case import build_synthetic_hospital_case
 from t21_engine.demo import run_demo
+from t21_engine.evaluation.baseline_window_sensitivity import (
+    run_baseline_window_sensitivity as evaluate_baseline_window_sensitivity,
+)
+from t21_engine.evaluation.sqi_missingness_impact import (
+    run_sqi_missingness_impact as evaluate_sqi_missingness_impact,
+)
 
 _PHI_PATH_COMPONENT = re.compile(
     r"(?:^|[-_.])(phi|patient(?:[-_]?data)?|mrn|protected[-_]?health[-_]?information)(?:$|[-_.])",
@@ -41,6 +48,27 @@ def _gates() -> dict[str, Any]:
 
 def _result(status: str, **payload: Any) -> dict[str, Any]:
     return {"status": status, **_gates(), **payload}
+
+
+def _evaluation_result(payload: dict[str, Any]) -> dict[str, Any]:
+    """Attach MCP safety gates without changing the evaluation result."""
+    return {
+        **payload,
+        **_gates(),
+        "mission": "CODEX-023",
+        "pi_to_define_banner": "PI_TO_DEFINE — engineering output; no clinical interpretation",
+    }
+
+
+def _evaluation_failure(schema_version: str, reason: str = "INVALID_PARAMETERS") -> dict[str, Any]:
+    return _evaluation_result(
+        {
+            "schema_version": schema_version,
+            "status": "FAIL_CLOSED",
+            "failure_reason_code": reason,
+            "rows": [],
+        }
+    )
 
 
 def _local_output_dir(
@@ -115,4 +143,81 @@ def run_synthetic_demo(
     return {**report, **_gates(), "mission": "CODEX-021"}
 
 
-__all__ = ["run_synthetic_demo", "run_time_align_qc"]
+def run_sqi_missingness_impact(
+    *,
+    sample_rate_hz: float = 100.0,
+    window_seconds: float = 30.0,
+    gap_fractions: list[float] | tuple[float, ...] = (0.0, 0.10, 0.25),
+    noise_std: list[float] | tuple[float, ...] = (0.0, 0.20),
+    seed: int = 20250321,
+) -> dict[str, Any]:
+    """Run the existing synthetic-only SQI/missingness evaluation."""
+    valid_sequences = isinstance(gap_fractions, (list, tuple)) and isinstance(
+        noise_std, (list, tuple)
+    )
+    numeric_levels = (*gap_fractions, *noise_std) if valid_sequences else ()
+    if (
+        isinstance(sample_rate_hz, bool)
+        or not isinstance(sample_rate_hz, (int, float))
+        or not math.isfinite(sample_rate_hz)
+        or sample_rate_hz <= 0
+        or isinstance(window_seconds, bool)
+        or not isinstance(window_seconds, (int, float))
+        or not math.isfinite(window_seconds)
+        or window_seconds <= 0
+        or not valid_sequences
+        or not gap_fractions
+        or not noise_std
+        or len(numeric_levels) != len(gap_fractions) + len(noise_std)
+        or any(
+            isinstance(value, bool)
+            or not isinstance(value, (int, float))
+            or not math.isfinite(value)
+            for value in numeric_levels
+        )
+        or isinstance(seed, bool)
+        or not isinstance(seed, int)
+    ):
+        return _evaluation_failure("sqi-missingness-impact/1.0")
+    try:
+        payload = evaluate_sqi_missingness_impact(
+            sample_rate_hz=sample_rate_hz,
+            window_seconds=window_seconds,
+            gap_fractions=gap_fractions,
+            noise_std=noise_std,
+            seed=seed,
+        )
+    except (OverflowError, TypeError, ValueError):
+        return _evaluation_failure("sqi-missingness-impact/1.0")
+    return _evaluation_result(payload)
+
+
+def run_baseline_window_sensitivity(
+    *, sample_rate_hz: float = 25.0, seed: int = 20250321
+) -> dict[str, Any]:
+    """Run the existing synthetic-only fixed 180/300-second comparison."""
+    if (
+        isinstance(sample_rate_hz, bool)
+        or not isinstance(sample_rate_hz, (int, float))
+        or not math.isfinite(sample_rate_hz)
+        or sample_rate_hz <= 0
+        or isinstance(seed, bool)
+        or not isinstance(seed, int)
+    ):
+        return _evaluation_failure("baseline-window-sensitivity/1.0")
+    try:
+        payload = evaluate_baseline_window_sensitivity(
+            sample_rate_hz=sample_rate_hz,
+            seed=seed,
+        )
+    except (OverflowError, TypeError, ValueError):
+        return _evaluation_failure("baseline-window-sensitivity/1.0")
+    return _evaluation_result(payload)
+
+
+__all__ = [
+    "run_baseline_window_sensitivity",
+    "run_sqi_missingness_impact",
+    "run_synthetic_demo",
+    "run_time_align_qc",
+]

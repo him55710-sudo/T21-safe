@@ -62,5 +62,9 @@ The matrix starts each server, completes MCP `initialize`, and asserts its
 checks: [Fantasia MCP](FANTASIA_MCP.md) and
 [Research Node MCP](RESEARCH_NODE_MCP.md).
 
-> **Research Use Only / Shadow Mode · clinical_validation=false**
+The Research Node advertises `run_synthetic_demo`, `run_time_align_qc`,
+`run_sqi_missingness_impact`, and `run_baseline_window_sensitivity`. The latter two
+are read-only, synthetic-only engineering evaluations with `PI_TO_DEFINE` output
+and `clinical_validation=false`.
 
+> **Research Use Only / Shadow Mode · clinical_validation=false**

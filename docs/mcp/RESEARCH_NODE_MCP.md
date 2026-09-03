@@ -67,6 +67,16 @@ absolute paths for Python and `PYTHONPATH`:
 - `run_synthetic_demo` calls the existing `run_demo` replay path. With no
   `output_dir`, it writes nothing. With a local `output_dir`, it appends validated
   metadata records and an `ExportManifest` to `shadow-capture.jsonl`.
+- `run_sqi_missingness_impact` calls the existing deterministic synthetic SQI and
+  missingness evaluation. Optional parameters only control engineering sampling,
+  injected gap fractions, injected noise levels, and the deterministic seed.
+- `run_baseline_window_sensitivity` calls the existing fixed 180-second versus
+  300-second synthetic baseline comparison. It does not accept alternate windows.
+
+Both evaluation tools are read-only and return `PI_TO_DEFINE` in every response,
+including failures. Their outputs are engineering sensitivity summaries only;
+`clinical_validation=false` and `synthetic_only=true` remain explicit. They neither
+choose clinical cutoffs nor select a clinical baseline window.
 
 URI schemes (`s3://`, `gs://`, `http://`, `https://`, `file://`), network shares, and
 paths marked as PHI or patient data are rejected before any directory is created.
