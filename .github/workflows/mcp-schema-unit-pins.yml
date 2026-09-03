@@ -1,4 +1,4 @@
-# CODEX-051: CI coverage for schema/unit pins (export manifest, shadow JSONL, tool catalog).
+# CODEX-051/059: CI coverage for schema/unit pins (export, shadow JSONL + roundtrip, tool catalog).
 name: MCP schema unit pins
 
 on:
@@ -14,6 +14,7 @@ on:
       - "services/engine/src/t21_engine/research_node_mcp/**"
       - "tests/backend/unit/test_export_manifest_schema.py"
       - "tests/backend/unit/test_shadow_jsonl_schema.py"
+      - "tests/backend/unit/test_shadow_jsonl_roundtrip.py"
       - "tests/backend/unit/test_mcp_tool_catalog.py"
       - "tests/backend/fixtures/shadow_capture.synthetic.json"
       - ".github/workflows/mcp-schema-unit-pins.yml"
@@ -29,6 +30,7 @@ on:
       - "services/engine/src/t21_engine/research_node_mcp/**"
       - "tests/backend/unit/test_export_manifest_schema.py"
       - "tests/backend/unit/test_shadow_jsonl_schema.py"
+      - "tests/backend/unit/test_shadow_jsonl_roundtrip.py"
       - "tests/backend/unit/test_mcp_tool_catalog.py"
       - "tests/backend/fixtures/shadow_capture.synthetic.json"
       - ".github/workflows/mcp-schema-unit-pins.yml"
@@ -52,5 +54,6 @@ jobs:
           python -m pytest \
             tests/backend/unit/test_export_manifest_schema.py \
             tests/backend/unit/test_shadow_jsonl_schema.py \
+            tests/backend/unit/test_shadow_jsonl_roundtrip.py \
             tests/backend/unit/test_mcp_tool_catalog.py \
             -q --tb=short
