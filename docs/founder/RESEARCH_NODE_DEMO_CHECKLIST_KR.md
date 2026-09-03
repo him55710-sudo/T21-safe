@@ -16,7 +16,11 @@
    ```bash
    python -m pip install -e "services/engine[dev]"
    ```
-3. 원커맨드 데모 실행
+3. 원커맨드 데모 실행 (권장: hospital runner)
+   ```bash
+   bash scripts/run_hospital_demo.sh /tmp/t21-hospital-demo
+   ```
+   또는 모듈 직접:
    ```bash
    python -m t21_engine.demo
    ```
@@ -46,5 +50,5 @@
 ## 범위
 
 - synthetic only · observe-only · no PHI cloud  
-- freeze 참고: `v1.2-mcp-dx` (`docs/benchmarks/PUBLIC_DATA_REPORT_V1.md`)  
+- freeze 참고: tip `v1.6-eng-ci` · onboarding [`HOSPITAL_DEMO_ONBOARDING_KR.md`](HOSPITAL_DEMO_ONBOARDING_KR.md) (`docs/benchmarks/PUBLIC_DATA_REPORT_V1.md`)  
 - VitalDB/CapnoBase/PulseDB 미포함

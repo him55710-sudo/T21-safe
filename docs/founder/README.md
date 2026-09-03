@@ -1,11 +1,13 @@
 # Founder docs (KR / DX)
 
-Path B · Research Use Only · `clinical_validation=false` · freeze `v1.2-mcp-dx`  
+Path B · Research Use Only · `clinical_validation=false` · freeze tip `v1.6-eng-ci`  
 임상·DS·투약/알림 claim 없음. VitalDB/CapnoBase/PulseDB 미포함.
 
 | Doc | 용도 |
 | --- | --- |
 | [`MCP_ONBOARDING_KR.md`](MCP_ONBOARDING_KR.md) | Cursor dual-MCP 온보딩 1페이지 |
+| [`HOSPITAL_DEMO_ONBOARDING_KR.md`](HOSPITAL_DEMO_ONBOARDING_KR.md) | Hospital demo 원커맨드 온보딩·리포트 읽기 |
+| [`EXPORT_MANIFEST_PHI_FALSE_KR.md`](EXPORT_MANIFEST_PHI_FALSE_KR.md) | ExportManifest PHI-false 파트너 스토리 (KR) |
 | [`RESEARCH_NODE_DEMO_CHECKLIST_KR.md`](RESEARCH_NODE_DEMO_CHECKLIST_KR.md) | Research Node demo 실행 체크리스트 |
 | [`DUAL_MCP_TROUBLESHOOTING_KR.md`](DUAL_MCP_TROUBLESHOOTING_KR.md) | dual-MCP 안 보일 때 진단 |
 

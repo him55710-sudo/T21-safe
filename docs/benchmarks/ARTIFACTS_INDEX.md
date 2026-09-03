@@ -250,3 +250,15 @@ CODEX-078 checklist of Path B eng smoke workflows landed after MCP verify packag
 | 077 | SKIP (RingBuffer already fail-closed / empty append no-op) | — | `services/engine/src/t21_engine/streaming/ring_buffer.py` |
 
 `clinical_validation=false` · PROXY/RUO only · no DS clinical claims · VitalDB not included.
+
+## Hospital demo packaging (079+)
+
+Founder/partner showable Path B demo track after eng CI packaging (`v1.6-eng-ci`).
+
+| Item | Commit | Pointer |
+| --- | --- | --- |
+| One-command hospital demo runner | `75fbf65` | `scripts/run_hospital_demo.sh` |
+| Hospital demo KR onboarding | `25bc0f1` | `docs/founder/HOSPITAL_DEMO_ONBOARDING_KR.md` |
+| ExportManifest PHI-false partner pack | *(CODEX-081)* | `docs/business/export-manifest-phi-false-1p.md`, `docs/founder/EXPORT_MANIFEST_PHI_FALSE_KR.md` |
+
+`clinical_validation=false` · synthetic/local · `includes_phi=false` · no DS clinical claims · VitalDB not included.
