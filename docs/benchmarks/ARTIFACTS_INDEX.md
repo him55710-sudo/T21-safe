@@ -310,3 +310,28 @@ Freeze companion: [`PUBLIC_DATA_REPORT_V1.md`](PUBLIC_DATA_REPORT_V1.md) (`v2.0-
 Tip freeze after fail-closed partner zip CI and Makefile wrappers.
 
 `clinical_validation=false` · synthetic/local · PHI-false · no DS clinical claims · VitalDB not included.
+
+## PROXY Analysis Plan v0.1 (HYP-01/03/07)
+
+Founder-approved PROXY Analysis Plan benches + one-command runner (CODEX-101–106).
+Method Master: Notion `P2E-METHOD-PROXY-PLAN-V01` (CODEX_READY).
+
+| Item | Commit | Pointer |
+| --- | --- | --- |
+| HYP-01 MIT-BIH abs/rel brady-def sensitivity | `af98247` | `t21_engine.evaluation.mitbih_brady_def_sensitivity` |
+| HYP-03 Fantasia short-window HRV/LF-HF negative-control | `6318771` | `t21_engine.evaluation.fantasia_short_window_hrv_lfhf` |
+| HYP-07 Fantasia age-band HRV stability engine QA | `f0f7692` | `t21_engine.evaluation.fantasia_age_band_hrv_stability` |
+| One-command PROXY HYP runner (JSON/MD tables) | `d0b3988` | `scripts/run_proxy_hyp_benches.sh`, `t21_engine.evaluation.proxy_hyp_bench_runner` |
+| CI smoke for PROXY HYP runner | `385b812` | `.github/workflows/proxy-hyp-bench-smoke.yml` |
+| Founder PROXY results pack (KR) | see tip | [`docs/founder/PROXY_HYP_RESULTS_KR.md`](../founder/PROXY_HYP_RESULTS_KR.md) |
+
+Commands:
+
+```bash
+make proxy-hyp-benches
+# or: bash scripts/run_proxy_hyp_benches.sh /tmp/t21-proxy-hyp-benches
+```
+
+Artifacts emitted: `proxy-hyp-bench-report.json`, `proxy-hyp-bench-results.md`.
+
+`clinical_validation=false` · MIT-BIH+Fantasia local fixtures only · role tags `PROXY_ECG_BENCHMARK` / `PROXY_HRV_AGE_STABILITY` · FACT/INTERPRETATION/HYPOTHESIS layers · thresholds `PI_TO_DEFINE` · no pooled instability score · no BIDMC / Airway / Driver-map / PHI · no dosing/closed-loop · HYP Claims `HUMAN_REVIEW_REQUIRED` remain labels not clinical facts.
