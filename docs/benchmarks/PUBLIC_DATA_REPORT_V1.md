@@ -2,7 +2,7 @@
 
 **Freeze version:** `v2.1-proxy-hyp-benches`
 
-**Freeze date:** `2026-09-04 UTC`
+**Freeze date:** `2026-09-04 UTC` (prior hospital-demo tip stamped `2026-09-03 UTC`)
 
 **Status:** Scaffold filled from CODEX-006 family · **PROXY only**  
 **clinical_validation:** `false`  
