@@ -323,7 +323,7 @@ Method Master: Notion `P2E-METHOD-PROXY-PLAN-V01` (CODEX_READY).
 | HYP-07 Fantasia age-band HRV stability engine QA | `f0f7692` | `t21_engine.evaluation.fantasia_age_band_hrv_stability` |
 | One-command PROXY HYP runner (JSON/MD tables) | `d0b3988` | `scripts/run_proxy_hyp_benches.sh`, `t21_engine.evaluation.proxy_hyp_bench_runner` |
 | CI smoke for PROXY HYP runner | `385b812` | `.github/workflows/proxy-hyp-bench-smoke.yml` |
-| Founder PROXY results pack (KR) |  | [`docs/founder/PROXY_HYP_RESULTS_KR.md`](../founder/PROXY_HYP_RESULTS_KR.md) |
+| Founder PROXY results pack (KR) | `b710db6` | [`docs/founder/PROXY_HYP_RESULTS_KR.md`](../founder/PROXY_HYP_RESULTS_KR.md) |
 
 Commands:
 

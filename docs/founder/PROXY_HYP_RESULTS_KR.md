@@ -16,6 +16,7 @@ Founder 승인 PROXY Analysis Plan v0.1 벤치(HYP-01/03/07)가 `main`에 착륙
 | 103 | HYP-07 Fantasia age-band HRV engine QA | `f0f7692` | `PROXY_HRV_AGE_STABILITY` |
 | 104 | 원커맨드 러너 + JSON/MD 테이블 | `d0b3988` | — |
 | 105 | CI smoke (fixture-only, no BIDMC) | `385b812` | — |
+| 106 | ARTIFACTS_INDEX + founder KR results pack | `b710db6` (+ tip pin) | — |
 
 ## 실행
 
