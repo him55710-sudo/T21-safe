@@ -12,6 +12,7 @@ Path B · Research Use Only · `clinical_validation=false` · freeze tip `v2.2-p
 | [`RESEARCH_NODE_DEMO_CHECKLIST_KR.md`](RESEARCH_NODE_DEMO_CHECKLIST_KR.md) | Research Node demo 실행 체크리스트 |
 | [`DUAL_MCP_TROUBLESHOOTING_KR.md`](DUAL_MCP_TROUBLESHOOTING_KR.md) | dual-MCP 안 보일 때 진단 |
 | [`PROXY_HYP_RESULTS_KR.md`](PROXY_HYP_RESULTS_KR.md) | PROXY HYP-01/03/07 결과 팩·원커맨드 러너 포인터 |
+| [`MEETING_ONEPAGER_PROXY_v0.1_KR.md`](MEETING_ONEPAGER_PROXY_v0.1_KR.md) | 미팅용 PROXY v0.1 한 장 (허용/금지 문장) |
 
 영문/상세:
 
