@@ -43,6 +43,19 @@ if [[ -f docs/founder/hospital-demo-showcard.example.html ]]; then
   cp docs/founder/hospital-demo-showcard.example.html "${STAGING}/docs/"
 fi
 
+# CODEX-095: partner business 1-pagers (copy only if present; PHI-false / RUO docs)
+for biz in \
+  docs/business/research-node-one-pager.md \
+  docs/business/research-overview-2p.md \
+  docs/business/safety-local-first-1p.md \
+  docs/business/export-manifest-phi-false-1p.md \
+  docs/business/HOSPITAL_POC_ONEPAGER.md
+do
+  if [[ -f "${biz}" ]]; then
+    cp "${biz}" "${STAGING}/docs/"
+  fi
+done
+
 cat > "${STAGING}/README.md" << 'README'
 # T21 Path B Hospital Demo — Partner Pack
 

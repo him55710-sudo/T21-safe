@@ -34,3 +34,6 @@ def test_pack_script_excludes_waveforms_and_includes_docs() -> None:
     assert "zipfile" in text
     assert "generate_hospital_demo_showcard_html.py" in text
     assert "showcard.html" in text
+    assert "research-node-one-pager.md" in text
+    assert "safety-local-first-1p.md" in text
+    assert "research-overview-2p.md" in text
