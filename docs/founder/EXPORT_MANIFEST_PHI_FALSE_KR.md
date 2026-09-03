@@ -1,5 +1,8 @@
 # ExportManifest PHI-false 파트너 스토리 (KR)
 
+> Freeze cross-link: hospital-demo `v2.0-hospital-demo-ready` · PROXY Analysis Plan `v2.1-proxy-hyp-benches` ([`PROXY_HYP_RESULTS_KR.md`](PROXY_HYP_RESULTS_KR.md); Auditor DUAL-GATE / CODEX-111; `clinical_validation=false`; **no FACT**).
+
+
 **Status:** Path B / RUO / Shadow  
 **clinical_validation:** `false`  
 **대상:** 병원 IT·연구 파트너에게 “로컬 export에 PHI가 없다”를 한 장으로 설명  

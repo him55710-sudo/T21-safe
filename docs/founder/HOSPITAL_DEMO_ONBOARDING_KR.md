@@ -1,9 +1,10 @@
 # Founder용 Hospital Demo 온보딩 (KR)
 
-**Status:** Path B / RUO / Shadow  
+**Status:** Path B / RUO / Shadow · hospital-demo tip `v2.0-hospital-demo-ready`  
+**PROXY tip:** `v2.1-proxy-hyp-benches` — [`PROXY_HYP_RESULTS_KR.md`](PROXY_HYP_RESULTS_KR.md) (Auditor DUAL-GATE / CODEX-111; **no FACT**)  
 **clinical_validation:** `false`  
 **목적:** 파트너·내부 데모용 **원커맨드 synthetic hospital** 실행과 리포트 읽기  
-**금지:** 환자 PHI · VitalDB/CapnoBase/PulseDB · 투약/알림/closed-loop · 임상 claim
+**금지:** 환자 PHI · VitalDB/CapnoBase/PulseDB · 투약/알림/closed-loop · 임상 claim · Airway/BIDMC do-not-run on PROXY track
 
 영문 상세: [`docs/DEMO.md`](../DEMO.md)  
 체크리스트: [`RESEARCH_NODE_DEMO_CHECKLIST_KR.md`](RESEARCH_NODE_DEMO_CHECKLIST_KR.md)

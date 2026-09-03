@@ -61,6 +61,8 @@ cat > "${STAGING}/README.md" << 'README'
 
 RUO / Shadow · `clinical_validation=false` · PHI-false · synthetic only.
 
+Hospital-demo freeze tip: `v2.0-hospital-demo-ready`. Related PROXY Analysis Plan tip: `v2.1-proxy-hyp-benches` (Auditor DUAL-GATE labels in `PROXY_HYP_RESULTS_KR.md`; **no FACT**; Airway/BIDMC do-not-run on PROXY track).
+
 ## Contents
 
 - `reports/hospital-demo-report.json` — demo gates + QC summary

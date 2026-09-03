@@ -1,11 +1,12 @@
 # Hospital Demo 런북 (KR)
 
-**Status:** Path B / RUO / Shadow · freeze tip `v2.0-hospital-demo-ready`  
+**Status:** Path B / RUO / Shadow · hospital-demo freeze tip `v2.0-hospital-demo-ready`  
+**Also see:** PROXY Analysis Plan freeze tip `v2.1-proxy-hyp-benches` + Auditor DUAL-GATE wording (CODEX-111)  
 **clinical_validation:** `false`  
 **목적:** Founder/파트너 앞에서 **브라우저 카드까지** 한 번에 보여 주는 실행 순서  
-**금지:** PHI · 파형 · VitalDB/CapnoBase/PulseDB · 투약/알림/closed-loop · 임상 claim · Kim/PI 메일 대행
+**금지:** PHI · 파형 · VitalDB/CapnoBase/PulseDB · 투약/알림/closed-loop · 임상 claim · Kim/PI 메일 대행 · Airway/BIDMC를 hospital-demo에 끼워 넣기
 
-관련: [`HOSPITAL_DEMO_ONBOARDING_KR.md`](HOSPITAL_DEMO_ONBOARDING_KR.md) · [`EXPORT_MANIFEST_PHI_FALSE_KR.md`](EXPORT_MANIFEST_PHI_FALSE_KR.md)
+관련: [`HOSPITAL_DEMO_ONBOARDING_KR.md`](HOSPITAL_DEMO_ONBOARDING_KR.md) · [`EXPORT_MANIFEST_PHI_FALSE_KR.md`](EXPORT_MANIFEST_PHI_FALSE_KR.md) · [`PROXY_HYP_RESULTS_KR.md`](PROXY_HYP_RESULTS_KR.md) (Auditor: HYP-01 PARTIALLY_SUPPORTED; HYP-03/07 STRETCH/neg-control-QA; **no FACT**)
 
 ---
 
