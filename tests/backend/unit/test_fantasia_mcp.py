@@ -158,3 +158,50 @@ def test_stdio_tool_call_wraps_json_payload() -> None:
     assert result["isError"] is False
     decoded = json.loads(result["content"][0]["text"])
     _assert_gates(decoded)
+
+
+def test_hrv_proxy_bench_age_fields_stay_pi_to_define(monkeypatch: pytest.MonkeyPatch) -> None:
+    """CODEX-043: age stays PI_TO_DEFINE; no clinical age claim in MCP payload."""
+    monkeypatch.setitem(
+        sys.modules, "wfdb", SimpleNamespace(rdrecord=lambda _name: _record())
+    )
+
+    payload = run_hrv_proxy_bench(FIXTURE)
+    assert payload["status"] == "PASS"
+    assert payload["clinical_validation"] is False
+    assert "clinical_age_effect" in payload["prohibited_claims"]
+    assert payload["aggregate"]["age_stability_status"] == "UNAVAILABLE"
+    records = payload["records"]
+    assert isinstance(records, list) and records
+    age = records[0]["age_stability"]
+    assert age["reason"] == "PI_TO_DEFINE"
+    assert age["age_metadata_available"] is False
+    assert age["age_stability_metrics"] is None
+    blob = json.dumps(payload).lower()
+    assert "years old" not in blob
+    assert "clinical age" not in blob
+    _assert_gates(payload)
+
+
+def test_stdio_hrv_proxy_bench_age_pi_to_define(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setitem(
+        sys.modules, "wfdb", SimpleNamespace(rdrecord=lambda _name: _record())
+    )
+    response = handle_request(
+        {
+            "jsonrpc": "2.0",
+            "id": 43,
+            "method": "tools/call",
+            "params": {
+                "name": "run_hrv_proxy_bench",
+                "arguments": {"sample_root": str(FIXTURE)},
+            },
+        }
+    )
+    assert response is not None
+    decoded = json.loads(response["result"]["content"][0]["text"])
+    assert decoded["clinical_validation"] is False
+    assert decoded["records"][0]["age_stability"]["reason"] == "PI_TO_DEFINE"
+    assert decoded["records"][0]["age_stability"]["age_metadata_available"] is False
+    assert decoded["aggregate"]["age_stability_status"] == "UNAVAILABLE"
+    _assert_gates(decoded)
