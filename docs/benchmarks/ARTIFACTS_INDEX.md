@@ -251,14 +251,19 @@ CODEX-078 checklist of Path B eng smoke workflows landed after MCP verify packag
 
 `clinical_validation=false` · PROXY/RUO only · no DS clinical claims · VitalDB not included.
 
-## Hospital demo packaging (079+)
+## Hospital demo packaging (079–086)
 
-Founder/partner showable Path B demo track after eng CI packaging (`v1.6-eng-ci`).
+Founder/partner showable Path B demo track after eng CI packaging (`v1.6-eng-ci` tip moves to `v1.7-hospital-demo` in CODEX-088).
 
 | Item | Commit | Pointer |
 | --- | --- | --- |
 | One-command hospital demo runner | `75fbf65` | `scripts/run_hospital_demo.sh` |
-| Hospital demo KR onboarding | `25bc0f1` | `docs/founder/HOSPITAL_DEMO_ONBOARDING_KR.md` |
-| ExportManifest PHI-false partner pack | `d83e369` | `docs/business/export-manifest-phi-false-1p.md`, `docs/founder/EXPORT_MANIFEST_PHI_FALSE_KR.md` |
+| Hospital demo KR onboarding | `8ace65f` | `docs/founder/HOSPITAL_DEMO_ONBOARDING_KR.md` |
+| ExportManifest PHI-false partner pack | `366811c` | `docs/business/export-manifest-phi-false-1p.md`, `docs/founder/EXPORT_MANIFEST_PHI_FALSE_KR.md` |
+| Hospital demo CI smoke | `d3d995d` | `.github/workflows/hospital-demo-smoke.yml` |
+| PHI-false Markdown show-card | `835706d` | `scripts/generate_hospital_demo_showcard.py` |
+| Multi-seed demo matrix (`--seeds`) | `99f9bac` | `scripts/run_hospital_demo.sh` |
+| Partner pack zip (no shadow JSONL) | `3a92306` | `scripts/pack_hospital_demo_partner.sh` |
+| CI extends showcard + partner pack | `73a5cf1` | `.github/workflows/hospital-demo-smoke.yml` |
 
 `clinical_validation=false` · synthetic/local · `includes_phi=false` · no DS clinical claims · VitalDB not included.
