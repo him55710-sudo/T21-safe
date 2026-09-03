@@ -10,7 +10,6 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
-
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 ENGINE_SOURCE = REPOSITORY_ROOT / "services" / "engine" / "src"
 
@@ -42,6 +41,8 @@ SERVERS = (
                 "run_time_align_qc",
                 "run_sqi_missingness_impact",
                 "run_baseline_window_sensitivity",
+                "list_local_shadow_exports",
+                "export_shadow_summary",
             }
         ),
     ),

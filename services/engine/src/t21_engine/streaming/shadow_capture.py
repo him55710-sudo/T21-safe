@@ -17,6 +17,7 @@ SHORT_WINDOW_HRV_LIMITATION = (
     "RESEARCH_HYPOTHESIS: short-window HRV and LF/HF have limited utility; LF/HF may be "
     "confounded by respiration and is not established for perioperative use."
 )
+SHADOW_CAPTURE_SCHEMA_VERSION = "shadow-capture/1.0"
 
 
 def _feature_window(
@@ -102,6 +103,9 @@ def build_shadow_capture(
             "Baseline is not calibrated; baseline-relative changes are withheld."
         )
     return {
+        "schema_version": SHADOW_CAPTURE_SCHEMA_VERSION,
+        "clinical_validation": False,
+        "synthetic_only": True,
         "session": {
             "session_id": session_id,
             "subject_id": subject_id,
@@ -152,4 +156,8 @@ def build_shadow_capture(
     }
 
 
-__all__ = ["SHORT_WINDOW_HRV_LIMITATION", "build_shadow_capture"]
+__all__ = [
+    "SHADOW_CAPTURE_SCHEMA_VERSION",
+    "SHORT_WINDOW_HRV_LIMITATION",
+    "build_shadow_capture",
+]

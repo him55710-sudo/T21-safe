@@ -28,7 +28,9 @@ def _validator() -> Draft202012Validator:
 
 
 def test_synthetic_shadow_capture_fixture_matches_draft_2020_12_schema() -> None:
-    _validator().validate(_load_json(FIXTURE_PATH))
+    capture = _load_json(FIXTURE_PATH)
+    _validator().validate(capture)
+    assert capture["schema_version"] == "shadow-capture/1.0"
 
 
 @pytest.mark.parametrize(

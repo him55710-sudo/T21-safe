@@ -3,6 +3,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "properties": {
+    "schema_version": { "const": "export-manifest/1.0" },
+    "clinical_validation": { "const": false },
+    "synthetic_only": { "const": true },
     "export_id": { "minLength": 1, "type": "string" },
     "session_id": { "minLength": 1, "type": "string" },
     "event_ids": {
@@ -30,6 +33,9 @@
     }
   },
   "required": [
+    "schema_version",
+    "clinical_validation",
+    "synthetic_only",
     "export_id",
     "session_id",
     "event_ids",

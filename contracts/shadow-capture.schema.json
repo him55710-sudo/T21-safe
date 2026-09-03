@@ -3,6 +3,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "properties": {
+    "schema_version": { "const": "shadow-capture/1.0" },
+    "clinical_validation": { "const": false },
+    "synthetic_only": { "const": true },
     "controls": {
       "additionalProperties": false,
       "properties": {
@@ -110,6 +113,9 @@
     "waveform_persistence": { "const": "NONE" }
   },
   "required": [
+    "schema_version",
+    "clinical_validation",
+    "synthetic_only",
     "session",
     "event_id",
     "mode",

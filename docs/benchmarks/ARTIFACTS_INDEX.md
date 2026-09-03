@@ -91,7 +91,8 @@ Fantasia download is required.
 - Guide: [`docs/mcp/RESEARCH_NODE_MCP.md`](../mcp/RESEARCH_NODE_MCP.md)
 - Module / command: `t21_engine.research_node_mcp` / `t21-research-node-mcp`
 - Tools: `run_synthetic_demo`, `run_time_align_qc`, `run_sqi_missingness_impact`,
-  `run_baseline_window_sensitivity`
+  `run_baseline_window_sensitivity`, `list_local_shadow_exports`,
+  `export_shadow_summary`
 - Verification command:
   `python -m pytest tests/backend/unit/test_research_node_mcp.py tests/backend/unit/test_research_node_mcp_stdio.py tests/backend/integration/test_research_node_demo.py`
 
@@ -100,6 +101,8 @@ replay, shadow JSONL writer, and `ExportManifest`. It requires neither Fantasia 
 public clinical dataset and provides no VitalDB, CapnoBase, PulseDB, MIMIC, PHI,
 dosing, alerting, or actuation path. Every tool payload preserves
 `clinical_validation=false`, `synthetic_only=true`, and observe-only gates.
+Shadow JSONL records expose `shadow-capture/1.0` and `export-manifest/1.0`; the
+read-only MCP tools list local files or return validated aggregate counts only.
 The two sensitivity tools reuse the indexed evaluation modules as read-only MCP
 operations and return a `PI_TO_DEFINE` banner on both success and failure.
 

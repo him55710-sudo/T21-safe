@@ -1,4 +1,7 @@
 {
+  "schema_version": "shadow-capture/1.0",
+  "clinical_validation": false,
+  "synthetic_only": true,
   "session": {
     "session_id": "shadow-synthetic-validation-001",
     "subject_id": "synthetic-subject-001",

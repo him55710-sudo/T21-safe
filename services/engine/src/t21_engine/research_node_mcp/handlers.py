@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import json
 import math
 import os
 import re
@@ -18,6 +19,14 @@ from t21_engine.evaluation.baseline_window_sensitivity import (
 from t21_engine.evaluation.sqi_missingness_impact import (
     run_sqi_missingness_impact as evaluate_sqi_missingness_impact,
 )
+from t21_engine.streaming.local_capture_writer import (
+    EXPORT_MANIFEST_SCHEMA_VERSION,
+    SHADOW_CAPTURE_SCHEMA_VERSION,
+    _validate_capture,
+    _validate_manifest,
+)
+
+_MAX_SHADOW_EXPORT_BYTES = 10 * 1024 * 1024
 
 _PHI_PATH_COMPONENT = re.compile(
     r"(?:^|[-_.])(phi|patient(?:[-_]?data)?|mrn|protected[-_]?health[-_]?information)(?:$|[-_.])",
@@ -93,6 +102,91 @@ def _local_output_dir(
         return Path(raw).expanduser().resolve(), None
     except (OSError, RuntimeError):
         return None, _result("REJECTED", failure_reason_code="INVALID_LOCAL_PATH")
+
+
+def _local_input_path(
+    raw_path: str | os.PathLike[str],
+) -> tuple[Path | None, dict[str, Any] | None]:
+    raw = os.fspath(raw_path)
+    if urlsplit(raw).scheme or raw.startswith(("//", "\\\\")):
+        return None, _result("REJECTED", failure_reason_code="NON_LOCAL_URI_REJECTED")
+    if any(_PHI_PATH_COMPONENT.search(part) for part in Path(raw).parts):
+        return None, _result("REJECTED", failure_reason_code="PHI_PATH_REJECTED")
+    try:
+        unresolved = Path(raw).expanduser()
+        if unresolved.is_symlink():
+            return None, _result("REJECTED", failure_reason_code="SYMLINK_REJECTED")
+        path = unresolved.resolve(strict=True)
+    except (OSError, RuntimeError):
+        return None, _result("REJECTED", failure_reason_code="LOCAL_PATH_NOT_FOUND")
+    return path, None
+
+
+def list_local_shadow_exports(*, directory: str) -> dict[str, Any]:
+    """List bounded local JSONL files without reading or returning record content."""
+    local_dir, failure = _local_input_path(directory)
+    if failure is not None:
+        return failure
+    if local_dir is None or not local_dir.is_dir():
+        return _result("REJECTED", failure_reason_code="LOCAL_DIRECTORY_REQUIRED")
+    exports = []
+    try:
+        for path in sorted(local_dir.glob("*.jsonl")):
+            if path.is_file() and not path.is_symlink():
+                size = path.stat().st_size
+                exports.append(
+                    {
+                        "filename": path.name,
+                        "size_bytes": size,
+                        "summarizable": size <= _MAX_SHADOW_EXPORT_BYTES,
+                    }
+                )
+    except OSError:
+        return _result("FAIL_CLOSED", failure_reason_code="LOCAL_EXPORT_LIST_FAILED")
+    return _result("PASS", schema_version="shadow-export-list/1.0", exports=exports)
+
+
+def export_shadow_summary(*, path: str) -> dict[str, Any]:
+    """Validate one local JSONL export and return metadata-only aggregate counts."""
+    local_path, failure = _local_input_path(path)
+    if failure is not None:
+        return failure
+    if (
+        local_path is None
+        or not local_path.is_file()
+        or local_path.suffix != ".jsonl"
+        or local_path.is_symlink()
+    ):
+        return _result("REJECTED", failure_reason_code="LOCAL_JSONL_FILE_REQUIRED")
+    try:
+        if local_path.stat().st_size > _MAX_SHADOW_EXPORT_BYTES:
+            return _result("REJECTED", failure_reason_code="LOCAL_EXPORT_TOO_LARGE")
+        capture_count = manifest_count = 0
+        with local_path.open(encoding="utf-8") as handle:
+            for line in handle:
+                value = json.loads(line)
+                if not isinstance(value, dict):
+                    raise ValueError
+                version = value.get("schema_version")
+                if version == SHADOW_CAPTURE_SCHEMA_VERSION:
+                    _validate_capture(value)
+                    capture_count += 1
+                elif version == EXPORT_MANIFEST_SCHEMA_VERSION:
+                    _validate_manifest(value)
+                    manifest_count += 1
+                else:
+                    raise ValueError
+    except (OSError, UnicodeError, json.JSONDecodeError, ValueError):
+        return _result("FAIL_CLOSED", failure_reason_code="INVALID_SHADOW_JSONL")
+    return _result(
+        "PASS",
+        schema_version="shadow-export-summary/1.0",
+        capture_schema_version=SHADOW_CAPTURE_SCHEMA_VERSION,
+        manifest_schema_version=EXPORT_MANIFEST_SCHEMA_VERSION,
+        capture_count=capture_count,
+        manifest_count=manifest_count,
+        record_count=capture_count + manifest_count,
+    )
 
 
 def run_time_align_qc(
@@ -216,6 +310,8 @@ def run_baseline_window_sensitivity(
 
 
 __all__ = [
+    "export_shadow_summary",
+    "list_local_shadow_exports",
     "run_baseline_window_sensitivity",
     "run_sqi_missingness_impact",
     "run_synthetic_demo",

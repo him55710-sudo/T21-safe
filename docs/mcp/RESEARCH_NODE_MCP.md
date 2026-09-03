@@ -10,6 +10,8 @@ It does not require Fantasia and does not accept or load VitalDB, CapnoBase, Pul
 MIMIC, patient, or PHI inputs. It has no dosing, alerting, actuation, closed-loop,
 drug-advice, or EMR-write capability. Output is optional and limited to local
 shadow-capture metadata JSONL; waveform and PHI persistence are disabled.
+Each JSONL record declares its contract explicitly: `shadow-capture/1.0` for capture
+events and `export-manifest/1.0` for manifests.
 
 ## Install and run
 
@@ -72,6 +74,11 @@ absolute paths for Python and `PYTHONPATH`:
   injected gap fractions, injected noise levels, and the deterministic seed.
 - `run_baseline_window_sensitivity` calls the existing fixed 180-second versus
   300-second synthetic baseline comparison. It does not accept alternate windows.
+- `list_local_shadow_exports` lists local `*.jsonl` filenames and sizes only; it does
+  not return record contents.
+- `export_shadow_summary` validates one local, bounded JSONL file and returns only
+  schema versions and aggregate capture/manifest counts. Despite its name, it is
+  read-only and does not create or upload an export.
 
 Both evaluation tools are read-only and return `PI_TO_DEFINE` in every response,
 including failures. Their outputs are engineering sensitivity summaries only;
@@ -80,6 +87,9 @@ choose clinical cutoffs nor select a clinical baseline window.
 
 URI schemes (`s3://`, `gs://`, `http://`, `https://`, `file://`), network shares, and
 paths marked as PHI or patient data are rejected before any directory is created.
+The read tools apply the same URI/network-share/PHI-path rejection and fail closed on
+unknown schema versions, malformed records, symlinks, non-JSONL files, or files over
+10 MiB. No tool has a cloud transport or returns waveforms.
 Every PASS, rejection, or fail-closed tool payload repeats the non-clinical safety
 gates.
 

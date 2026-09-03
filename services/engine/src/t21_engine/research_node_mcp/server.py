@@ -8,6 +8,8 @@ from collections.abc import Callable
 from typing import Any, TextIO
 
 from t21_engine.research_node_mcp.handlers import (
+    export_shadow_summary,
+    list_local_shadow_exports,
     run_baseline_window_sensitivity,
     run_sqi_missingness_impact,
     run_synthetic_demo,
@@ -20,6 +22,26 @@ _COMMON_PROPERTIES = {
     "seed": {"type": "integer", "default": 20250321},
 }
 TOOLS = [
+    {
+        "name": "list_local_shadow_exports",
+        "description": "List local shadow JSONL exports without returning record content.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {"directory": {"type": "string"}},
+            "required": ["directory"],
+            "additionalProperties": False,
+        },
+    },
+    {
+        "name": "export_shadow_summary",
+        "description": "Validate a local shadow JSONL file and return aggregate counts only.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {"path": {"type": "string"}},
+            "required": ["path"],
+            "additionalProperties": False,
+        },
+    },
     {
         "name": "run_synthetic_demo",
         "description": "Run deterministic synthetic alignment QC and observe-only replay.",
@@ -90,6 +112,8 @@ TOOLS = [
     },
 ]
 HANDLERS: dict[str, Callable[..., dict[str, Any]]] = {
+    "list_local_shadow_exports": list_local_shadow_exports,
+    "export_shadow_summary": export_shadow_summary,
     "run_synthetic_demo": run_synthetic_demo,
     "run_time_align_qc": run_time_align_qc,
     "run_sqi_missingness_impact": run_sqi_missingness_impact,

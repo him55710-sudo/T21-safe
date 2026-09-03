@@ -37,6 +37,7 @@ def test_local_shadow_metadata_manifest_matches_schema() -> None:
     assert manifest["includes_waveforms"] is False
     assert manifest["includes_phi"] is False
     assert manifest["storage_scope"] == "LOCAL_ONLY"
+    assert manifest["schema_version"] == "export-manifest/1.0"
 
 
 @pytest.mark.parametrize("unsafe_field", ["includes_waveforms", "includes_phi"])

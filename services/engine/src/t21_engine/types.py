@@ -168,6 +168,9 @@ class ExportManifest:
     export_id: str
     session_id: str
     event_ids: tuple[str, ...]
+    schema_version: str = "export-manifest/1.0"
+    clinical_validation: bool = False
+    synthetic_only: bool = True
     includes_waveforms: bool = False
     includes_phi: bool = False
     storage_scope: str = "LOCAL_ONLY"
@@ -179,6 +182,10 @@ class ExportManifest:
     def __post_init__(self) -> None:
         if not self.export_id or not self.session_id or not self.event_ids:
             raise ValueError("export_id, session_id, and event_ids must be non-empty")
+        if self.schema_version != "export-manifest/1.0":
+            raise ValueError("unsupported export manifest schema version")
+        if self.clinical_validation or not self.synthetic_only:
+            raise ValueError("research exports are non-clinical and synthetic-only")
         if any(not event_id for event_id in self.event_ids):
             raise ValueError("event_ids must not contain empty values")
         if self.includes_waveforms or self.includes_phi:

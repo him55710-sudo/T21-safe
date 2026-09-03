@@ -1,13 +1,14 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Callable
 from pathlib import Path
 
 import pytest
 from t21_engine.research_node_mcp import handlers
 from t21_engine.research_node_mcp.handlers import (
-    run_baseline_window_sensitivity,
-    run_sqi_missingness_impact,
+    export_shadow_summary,
+    list_local_shadow_exports,
     run_synthetic_demo,
     run_time_align_qc,
 )
@@ -71,6 +72,47 @@ def test_demo_reuses_local_shadow_jsonl_and_export_manifest(tmp_path: Path) -> N
     assert records[-1]["includes_waveforms"] is False
     _assert_gates(payload)
 
+    listed = list_local_shadow_exports(directory=str(tmp_path))
+    assert listed["status"] == "PASS"
+    assert listed["exports"] == [
+        {
+            "filename": "shadow-capture.jsonl",
+            "size_bytes": (tmp_path / "shadow-capture.jsonl").stat().st_size,
+            "summarizable": True,
+        }
+    ]
+    summary = export_shadow_summary(path=str(tmp_path / "shadow-capture.jsonl"))
+    assert summary["status"] == "PASS"
+    assert summary["record_count"] == summary["capture_count"] + 1
+    assert summary["manifest_count"] == 1
+    assert summary["capture_schema_version"] == "shadow-capture/1.0"
+    _assert_gates(summary)
+
+
+@pytest.mark.parametrize(
+    ("tool", "argument"),
+    [
+        (list_local_shadow_exports, {"directory": "s3://bucket/exports"}),
+        (export_shadow_summary, {"path": "https://example.invalid/export.jsonl"}),
+    ],
+)
+def test_shadow_export_read_tools_reject_cloud_uris(
+    tool: Callable[..., dict[str, object]], argument: dict[str, str]
+) -> None:
+    payload = tool(**argument)
+    assert payload["status"] == "REJECTED"
+    assert payload["failure_reason_code"] == "NON_LOCAL_URI_REJECTED"
+    _assert_gates(payload)
+
+
+def test_shadow_summary_fails_closed_on_unversioned_jsonl(tmp_path: Path) -> None:
+    path = tmp_path / "legacy.jsonl"
+    path.write_text('{"mode":"OBSERVE_ONLY_SHADOW"}\n', encoding="utf-8")
+    payload = export_shadow_summary(path=str(path))
+    assert payload["status"] == "FAIL_CLOSED"
+    assert payload["failure_reason_code"] == "INVALID_SHADOW_JSONL"
+    _assert_gates(payload)
+
 
 def test_stdio_handler_wraps_happy_payload() -> None:
     response = handle_request(
@@ -123,7 +165,7 @@ def test_evaluation_handlers_reuse_modules_and_add_gates(
     }
     monkeypatch.setattr(handlers, evaluation_name, lambda **_kwargs: expected)
 
-    payload = globals()[runner_name]()
+    payload = getattr(handlers, runner_name)()
 
     assert payload["rows"] == expected["rows"]
     assert payload["mission"] == "CODEX-023"

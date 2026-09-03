@@ -25,6 +25,8 @@ import pytest
                 "run_time_align_qc",
                 "run_sqi_missingness_impact",
                 "run_baseline_window_sensitivity",
+                "list_local_shadow_exports",
+                "export_shadow_summary",
             },
         ),
     ],

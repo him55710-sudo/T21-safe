@@ -11,6 +11,8 @@ from urllib.parse import urlsplit
 _DISABLED_CONTROLS = ("actuation", "dosing", "closed_loop", "drug_advice", "emr_write")
 _WAVEFORM_KEYS = {"signals", "waveforms", "raw_waveforms", "raw_signals"}
 _DEFAULT_MAX_FILE_BYTES = 10 * 1024 * 1024
+SHADOW_CAPTURE_SCHEMA_VERSION = "shadow-capture/1.0"
+EXPORT_MANIFEST_SCHEMA_VERSION = "export-manifest/1.0"
 
 
 def _require_disabled_controls(value: object) -> None:
@@ -32,6 +34,13 @@ def _contains_waveform_field(value: object) -> bool:
 
 
 def _validate_capture(capture: Mapping[str, object]) -> None:
+    if capture.get("schema_version") != SHADOW_CAPTURE_SCHEMA_VERSION:
+        raise ValueError("unsupported shadow capture schema version")
+    if (
+        capture.get("clinical_validation") is not False
+        or capture.get("synthetic_only") is not True
+    ):
+        raise ValueError("shadow capture must be non-clinical and synthetic-only")
     session = capture.get("session")
     if not isinstance(session, Mapping):
         raise ValueError("shadow capture requires session metadata")
@@ -52,6 +61,13 @@ def _validate_capture(capture: Mapping[str, object]) -> None:
 
 
 def _validate_manifest(manifest: Mapping[str, object]) -> None:
+    if manifest.get("schema_version") != EXPORT_MANIFEST_SCHEMA_VERSION:
+        raise ValueError("unsupported export manifest schema version")
+    if (
+        manifest.get("clinical_validation") is not False
+        or manifest.get("synthetic_only") is not True
+    ):
+        raise ValueError("export manifest must be non-clinical and synthetic-only")
     if manifest.get("storage_scope") != "LOCAL_ONLY":
         raise ValueError("export manifest storage must be local-only")
     if manifest.get("content_scope") != "SHADOW_CAPTURE_METADATA_ONLY":

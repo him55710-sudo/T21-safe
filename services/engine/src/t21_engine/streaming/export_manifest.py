@@ -25,6 +25,9 @@ def build_export_manifest(
     )
     controls = manifest.controls
     return {
+        "schema_version": manifest.schema_version,
+        "clinical_validation": manifest.clinical_validation,
+        "synthetic_only": manifest.synthetic_only,
         "export_id": manifest.export_id,
         "session_id": manifest.session_id,
         "event_ids": list(manifest.event_ids),
