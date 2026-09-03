@@ -4,6 +4,18 @@ This is a synthetic-only, local demonstration of the Path B research workflow. I
 Research Use Only (RUO), runs in observe-only shadow mode, contains no patient data,
 and always reports `clinical_validation=false`. It is not a clinical monitor.
 
+
+## Cursor dual-MCP (Founder)
+
+After the demo entrypoints work, optional Path B MCP tooling can be enabled in Cursor:
+
+- Korean onboarding one-pager: [`docs/founder/MCP_ONBOARDING_KR.md`](founder/MCP_ONBOARDING_KR.md)
+- English dual-MCP checklist: [`docs/mcp/FOUNDER_DUAL_MCP_SETUP.md`](mcp/FOUNDER_DUAL_MCP_SETUP.md)
+- Unified `mcpServers` JSON: [`docs/mcp/UNIFIED_MCP.md`](mcp/UNIFIED_MCP.md)
+
+These MCP servers remain Research Use Only with `clinical_validation=false`. They are not
+a clinical monitor and do not add dosing, alerts, or DS clinical claims.
+
 ## Run in under six minutes
 
 From the repository root, use Python 3.11 or newer:
