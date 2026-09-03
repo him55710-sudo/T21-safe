@@ -1,0 +1,38 @@
+# CODEX-053: path-filtered CI for scripts/verify_path_b_mcp.sh
+name: Path B MCP verify
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/verify_path_b_mcp.sh"
+      - "scripts/smoke_dual_mcp.py"
+      - "scripts/generate_mcp_tool_catalog.py"
+      - "docs/mcp/TOOL_CATALOG.md"
+      - "services/engine/src/t21_engine/demo.py"
+      - "services/engine/src/t21_engine/fantasia_mcp/**"
+      - "services/engine/src/t21_engine/research_node_mcp/**"
+      - ".github/workflows/path-b-mcp-verify.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "scripts/verify_path_b_mcp.sh"
+      - "scripts/smoke_dual_mcp.py"
+      - "scripts/generate_mcp_tool_catalog.py"
+      - "docs/mcp/TOOL_CATALOG.md"
+      - "services/engine/src/t21_engine/demo.py"
+      - "services/engine/src/t21_engine/fantasia_mcp/**"
+      - "services/engine/src/t21_engine/research_node_mcp/**"
+      - ".github/workflows/path-b-mcp-verify.yml"
+
+jobs:
+  verify-path-b-mcp:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run Founder DX Path B verify script
+        run: bash scripts/verify_path_b_mcp.sh
