@@ -31,6 +31,7 @@ cp "${BENCH_DIR}/proxy-hyp-bench-report.json" "${STAGING}/reports/"
 cp "${BENCH_DIR}/proxy-hyp-bench-results.md" "${STAGING}/reports/"
 
 cp docs/founder/PROXY_HYP_RESULTS_KR.md "${STAGING}/docs/"
+cp docs/founder/MEETING_ONEPAGER_PROXY_v0.1_KR.md "${STAGING}/docs/"
 cp docs/benchmarks/ARTIFACTS_INDEX.md "${STAGING}/docs/"
 # Optional safety one-pager if present (RUO); never waveforms.
 if [[ -f docs/business/safety-local-first-1p.md ]]; then
