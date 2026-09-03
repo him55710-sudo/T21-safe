@@ -1,6 +1,6 @@
 # Research engineering artifacts index
 
-> **PUBLIC_DATA_REPORT_V1 freeze: `v1.3-mcp-dx2` · `2026-09-03 UTC`**
+> **PUBLIC_DATA_REPORT_V1 freeze: `v1.4-path-b-verify` · `2026-09-03 UTC`**
 >
 > **PROXY / engineering only**  
 > **clinical_validation=false**  
@@ -180,6 +180,20 @@ Freeze companion: [`PUBLIC_DATA_REPORT_V1.md`](PUBLIC_DATA_REPORT_V1.md) (`v1.3-
 | Shadow JSONL schema pin tests | `79e977b` | `tests/backend/unit/test_shadow_jsonl_schema.py` |
 | Fantasia age `PI_TO_DEFINE` asserts | `43f1859` | `tests/backend/unit/test_fantasia_mcp*.py` |
 | TOOL_CATALOG regen (`list_demo_presets`) | `1acb911` | `docs/mcp/TOOL_CATALOG.md` |
+
+`clinical_validation=false` · PROXY/RUO only · no DS clinical claims · VitalDB not included.
+
+## Path B verify packaging (051–055)
+
+Freeze companion: [`PUBLIC_DATA_REPORT_V1.md`](PUBLIC_DATA_REPORT_V1.md) (`v1.4-path-b-verify`).
+
+| Item | Commit | Pointer |
+| --- | --- | --- |
+| Schema/unit pins CI | `d599f68` | `.github/workflows/mcp-schema-unit-pins.yml` |
+| Founder DX verify script | `3701b2e` | `scripts/verify_path_b_mcp.sh` |
+| Verify script CI | `87680a1` | `.github/workflows/path-b-mcp-verify.yml` |
+| Verify script thin unit | `e498967` | `tests/backend/unit/test_verify_path_b_mcp.py` |
+| UNIFIED_MCP verify pointer | `9dd49cd` | `docs/mcp/UNIFIED_MCP.md` |
 
 `clinical_validation=false` · PROXY/RUO only · no DS clinical claims · VitalDB not included.
 

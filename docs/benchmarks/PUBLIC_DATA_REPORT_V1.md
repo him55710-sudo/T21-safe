@@ -1,6 +1,6 @@
 # Public Data Report v1 — PROXY engine smoke
 
-**Freeze version:** `v1.3-mcp-dx2`
+**Freeze version:** `v1.4-path-b-verify`
 
 **Freeze date:** `2026-09-03 UTC`
 
@@ -76,6 +76,23 @@ catalog regen). Documentation/test packaging only; no new datasets or clinical c
 
 No VitalDB download or implementation, and no CapnoBase or PulseDB benchmark, is part
 of `v1.3-mcp-dx2` (superseding `v1.2-mcp-dx` for MCP DX2 packaging). All entries remain research
+engineering artifacts with
+`clinical_validation=false`; none supports a DS-specific or other clinical claim.
+
+The `v1.4-path-b-verify` bump records Path B Founder DX verify packaging after
+`v1.3-mcp-dx2` (schema/unit pin CI, local verify script, CI wire-up, thin unit,
+UNIFIED_MCP pointer). Documentation/CI packaging only; no new datasets or clinical claims.
+
+| Delivery | Shipped Path B verify artifact | Commit |
+| --- | --- | --- |
+| CODEX-051 | MCP schema/unit pins CI workflow | `d599f68` |
+| CODEX-052 | `scripts/verify_path_b_mcp.sh` one-command DX verify | `3701b2e` |
+| CODEX-053 | Path-filtered CI for verify script | `87680a1` |
+| CODEX-054 | Thin unit for verify script | `e498967` |
+| CODEX-055 | UNIFIED_MCP one-line pointer to verify script | `9dd49cd` |
+
+No VitalDB download or implementation, and no CapnoBase or PulseDB benchmark, is part
+of `v1.4-path-b-verify` (superseding `v1.3-mcp-dx2` for Path B verify packaging). All entries remain research
 engineering artifacts with
 `clinical_validation=false`; none supports a DS-specific or other clinical claim.
 
