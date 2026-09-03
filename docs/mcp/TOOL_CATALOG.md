@@ -1,30 +1,42 @@
-# MCP tool catalog
+# MCP Tool Catalog
 
-**Status:** auto-generated · Path B / RUO / Shadow
-**clinical_validation:** `false`
+> **RUO / Path B / `clinical_validation=false`**
+>
+> Research Use Only. Path B engineering tooling. Not for clinical diagnosis,
+> dosing, alerts, or drug-safety claims. Shadow / PROXY / synthetic scopes only.
 
-Regenerate:
+This file is **auto-generated** by `scripts/generate_mcp_tool_catalog.py` from
+`t21_engine.fantasia_mcp.server.TOOLS` and
+`t21_engine.research_node_mcp.server.TOOLS`. Do not edit by hand.
+
+Regenerate from the repository root:
 
 ```bash
-PYTHONPATH=services/engine/src python scripts/generate_mcp_tool_catalog.py
+python scripts/generate_mcp_tool_catalog.py
 ```
 
-This catalog is Research Use Only. It is not a clinical monitor. No dosing,
-actuation, closed-loop, drug advice, EMR write, or DS clinical claims.
-Every tool response must keep `clinical_validation=false`.
+---
 
-## fantasia-proxy (`t21-fantasia-mcp`)
+## fantasia-proxy
 
-| Tool | Description |
+Local Fantasia WFDB sample and HRV/age-stability **PROXY** benchmark MCP tools.
+
+| Tool name | Description |
 | --- | --- |
 | `list_records` | List local Fantasia WFDB records and SHA-256 fixture status. |
 | `load_sample` | Load at most 1000 samples from one local Fantasia WFDB record. |
 | `run_hrv_proxy_bench` | Run the deterministic Fantasia HRV/age-stability PROXY benchmark. |
 
-## research-node (`t21-research-node-mcp`)
+---
 
-| Tool | Description |
+## research-node
+
+Synthetic demo/QC, shadow JSONL, SQI/baseline sensitivity, and BIDMC/MIT-BIH
+**PROXY** benchmark MCP tools.
+
+| Tool name | Description |
 | --- | --- |
+| `list_demo_presets` | List read-only synthetic Research Node demo CLI presets (no I/O). |
 | `list_local_shadow_exports` | List local shadow JSONL exports without returning record content. |
 | `export_shadow_summary` | Validate a local shadow JSONL file and return aggregate counts only. |
 | `run_synthetic_demo` | Run deterministic synthetic alignment QC and observe-only replay. |
@@ -33,3 +45,11 @@ Every tool response must keep `clinical_validation=false`.
 | `run_bidmc_align_resp_bench` | Run the pinned local BIDMC alignment/RESP PROXY engineering benchmark. |
 | `run_sqi_missingness_impact` | Run synthetic-only SQI/missingness engineering sensitivity; PI_TO_DEFINE. |
 | `run_baseline_window_sensitivity` | Compare fixed 180/300-second synthetic baseline summaries; PI_TO_DEFINE. |
+
+---
+
+## Notes
+
+- Banner: RUO / Path B / `clinical_validation=false`
+- Source of truth: in-process `TOOLS` registries (no network)
+- Output path: `docs/mcp/TOOL_CATALOG.md`

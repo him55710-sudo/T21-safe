@@ -16,6 +16,7 @@ FANTASIA_TOOL_NAMES = (
     "run_hrv_proxy_bench",
 )
 RESEARCH_TOOL_NAMES = (
+    "list_demo_presets",
     "list_local_shadow_exports",
     "export_shadow_summary",
     "run_synthetic_demo",
@@ -68,3 +69,4 @@ def test_main_writes_catalog_under_docs_mcp(tmp_path: Path, monkeypatch) -> None
     assert "clinical_validation=false" in text
     assert "list_records" in text
     assert "run_synthetic_demo" in text
+    assert "list_demo_presets" in text
