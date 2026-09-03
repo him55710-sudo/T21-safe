@@ -1,0 +1,56 @@
+# CODEX-051: CI coverage for schema/unit pins (export manifest, shadow JSONL, tool catalog).
+name: MCP schema unit pins
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "contracts/export-manifest.schema.json"
+      - "contracts/shadow-capture.schema.json"
+      - "scripts/generate_mcp_tool_catalog.py"
+      - "docs/mcp/TOOL_CATALOG.md"
+      - "services/engine/src/t21_engine/streaming/**"
+      - "services/engine/src/t21_engine/fantasia_mcp/**"
+      - "services/engine/src/t21_engine/research_node_mcp/**"
+      - "tests/backend/unit/test_export_manifest_schema.py"
+      - "tests/backend/unit/test_shadow_jsonl_schema.py"
+      - "tests/backend/unit/test_mcp_tool_catalog.py"
+      - "tests/backend/fixtures/shadow_capture.synthetic.json"
+      - ".github/workflows/mcp-schema-unit-pins.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "contracts/export-manifest.schema.json"
+      - "contracts/shadow-capture.schema.json"
+      - "scripts/generate_mcp_tool_catalog.py"
+      - "docs/mcp/TOOL_CATALOG.md"
+      - "services/engine/src/t21_engine/streaming/**"
+      - "services/engine/src/t21_engine/fantasia_mcp/**"
+      - "services/engine/src/t21_engine/research_node_mcp/**"
+      - "tests/backend/unit/test_export_manifest_schema.py"
+      - "tests/backend/unit/test_shadow_jsonl_schema.py"
+      - "tests/backend/unit/test_mcp_tool_catalog.py"
+      - "tests/backend/fixtures/shadow_capture.synthetic.json"
+      - ".github/workflows/mcp-schema-unit-pins.yml"
+
+jobs:
+  schema-unit-pins:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install engine (dev)
+        run: python -m pip install -e "services/engine[dev]"
+      - name: Pytest schema/unit pins
+        env:
+          PYTHONPATH: services/engine/src
+        run: |
+          set -euo pipefail
+          python -m pytest \
+            tests/backend/unit/test_export_manifest_schema.py \
+            tests/backend/unit/test_shadow_jsonl_schema.py \
+            tests/backend/unit/test_mcp_tool_catalog.py \
+            -q --tb=short
