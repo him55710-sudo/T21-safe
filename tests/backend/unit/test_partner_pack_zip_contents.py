@@ -1,4 +1,4 @@
-"""CODEX-098: partner zip must include showcard.html and available business 1-pagers."""
+"""Partner zip must fail closed on required docs-only partner artifacts."""
 
 from __future__ import annotations
 
@@ -18,11 +18,18 @@ REQUIRED_BUSINESS_ONE_PAGERS = (
     "docs/business/research-overview-2p.md",
     "docs/business/safety-local-first-1p.md",
 )
+REQUIRED_MEETING_ONEPAGER = "docs/founder/MEETING_ONEPAGER_PROXY_v0.1_KR.md"
 
 
 def test_required_business_one_pagers_exist_in_repo() -> None:
     missing = [p for p in REQUIRED_BUSINESS_ONE_PAGERS if not (REPOSITORY_ROOT / p).is_file()]
     assert not missing, f"required partner 1-pagers missing from repo: {missing}"
+
+
+def test_required_meeting_onepager_exists_in_repo() -> None:
+    assert (REPOSITORY_ROOT / REQUIRED_MEETING_ONEPAGER).is_file(), (
+        f"required meeting one-pager missing from repo: {REQUIRED_MEETING_ONEPAGER}"
+    )
 
 
 def test_partner_zip_includes_showcard_html_and_business_one_pagers(
@@ -51,6 +58,10 @@ def test_partner_zip_includes_showcard_html_and_business_one_pagers(
         names = set(zf.namelist())
     assert "reports/showcard.html" in names, names
     assert "reports/showcard.md" in names, names
+    meeting_onepager_name = Path(REQUIRED_MEETING_ONEPAGER).name
+    assert f"docs/{meeting_onepager_name}" in names, (
+        f"missing {meeting_onepager_name} in zip; have={sorted(names)}"
+    )
     for rel in REQUIRED_BUSINESS_ONE_PAGERS:
         basename = Path(rel).name
         assert f"docs/{basename}" in names, f"missing {basename} in zip; have={sorted(names)}"

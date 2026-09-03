@@ -37,3 +37,7 @@ def test_pack_script_excludes_waveforms_and_includes_docs() -> None:
     assert "research-node-one-pager.md" in text
     assert "safety-local-first-1p.md" in text
     assert "research-overview-2p.md" in text
+    assert (
+        'cp docs/founder/MEETING_ONEPAGER_PROXY_v0.1_KR.md "${STAGING}/docs/"'
+        in text
+    )

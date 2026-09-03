@@ -1,4 +1,4 @@
-# CODEX-082/086/092/098: hospital demo runner + showcards + pack zip fail-closed contents.
+# CODEX-082/086/092/098/124: hospital demo runner + showcards + pack zip fail-closed contents.
 # Synthetic-only · clinical_validation=false · PHI-false · no VitalDB.
 name: Hospital demo smoke
 
@@ -21,6 +21,7 @@ on:
       - "docs/business/research-node-one-pager.md"
       - "docs/business/research-overview-2p.md"
       - "docs/business/safety-local-first-1p.md"
+      - "docs/founder/MEETING_ONEPAGER_PROXY_v0.1_KR.md"
       - "Makefile"
       - "services/engine/src/t21_engine/demo.py"
       - "services/engine/src/t21_engine/adapters/synthetic_hospital_case.py"
@@ -44,6 +45,7 @@ on:
       - "docs/business/research-node-one-pager.md"
       - "docs/business/research-overview-2p.md"
       - "docs/business/safety-local-first-1p.md"
+      - "docs/founder/MEETING_ONEPAGER_PROXY_v0.1_KR.md"
       - "Makefile"
       - "services/engine/src/t21_engine/demo.py"
       - "services/engine/src/t21_engine/adapters/synthetic_hospital_case.py"
@@ -97,4 +99,4 @@ jobs:
           bash scripts/pack_hospital_demo_partner.sh \
             "${RUNNER_TEMP}/t21-hospital-demo" \
             "${RUNNER_TEMP}/t21-hospital-demo-partner-pack"
-          python -c 'import os,zipfile; from pathlib import Path; z=Path(os.environ["RUNNER_TEMP"])/"t21-hospital-demo-partner-pack"/"t21-hospital-demo-partner-pack.zip"; n=set(zipfile.ZipFile(z).namelist()); r={"reports/showcard.html","reports/showcard.md","docs/export-manifest-phi-false-1p.md","docs/research-node-one-pager.md","docs/research-overview-2p.md","docs/safety-local-first-1p.md"}; m=sorted(r-n); assert not m, m; print("partner zip fail-closed contents OK")'
+          python -c 'import os,zipfile; from pathlib import Path; z=Path(os.environ["RUNNER_TEMP"])/"t21-hospital-demo-partner-pack"/"t21-hospital-demo-partner-pack.zip"; n=set(zipfile.ZipFile(z).namelist()); r={"reports/showcard.html","reports/showcard.md","docs/export-manifest-phi-false-1p.md","docs/research-node-one-pager.md","docs/research-overview-2p.md","docs/safety-local-first-1p.md","docs/MEETING_ONEPAGER_PROXY_v0.1_KR.md"}; m=sorted(r-n); assert not m, m; print("partner zip fail-closed contents OK")'
