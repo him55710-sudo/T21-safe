@@ -1,13 +1,13 @@
 # Public Data Report v1 — PROXY engine smoke
 
-**Freeze version:** `v1.0-pre-VitalDB`
+**Freeze version:** `v1.1-mcp-pre-VitalDB`
 
-**Freeze date:** `2026-09-02 UTC`
+**Freeze date:** `2026-09-03 UTC`
 
 **Status:** Scaffold filled from CODEX-006 family · **PROXY only**  
 **clinical_validation:** `false`  
 **DS clinical claims:** none (public non-DS / synthetic-fixture data ≠ DS validation)  
-**Fantasia Master Notion:** `PENDING` (`operational_proxy_ok` only)
+**Fantasia Master Notion:** `VERIFIED PROXY` (`operational_proxy_ok`; page `3d09631d743b81efae8fe2731113b4f6`)
 
 **Not included in this freeze:** VitalDB, CapnoBase, PulseDB
 
@@ -24,7 +24,7 @@ following shipped **PROXY** engineering benchmarks and synthetic support artifac
 | --- | --- | --- |
 | CODEX-011 | BIDMC synchronization / respiration benchmark | `869b996` |
 | CODEX-009 | MIT-BIH beat benchmark | `0606d62` |
-| CODEX-016 | Fantasia HRV / age-stability benchmark; `operational_proxy_ok`, with Master Notion still `PENDING` | `f290223` |
+| CODEX-016 | Fantasia HRV / age-stability benchmark; `operational_proxy_ok`; Fantasia Master now `VERIFIED PROXY` | `f290223` |
 | CODEX-008 | Synthetic hospital case factory with time-alignment QC | `2648af7` |
 | CODEX-010 | Deterministic synthetic Research Node demo | `020dd79` |
 | CODEX-012 | Synthetic baseline-window comparison (180 / 300 seconds) | `a7d8ebd` |
@@ -32,8 +32,22 @@ following shipped **PROXY** engineering benchmarks and synthetic support artifac
 | CODEX-014 | `ARTIFACTS_INDEX.md` reproducibility pointers | `cce9194` |
 | CODEX-015 | Clean-environment install smoke | `631e74c` |
 
+The `v1.1-mcp-pre-VitalDB` bump also records the engineering-only MCP track. These
+local, bounded interfaces organize existing PROXY and synthetic research workflows;
+they do not add clinical validation or expand the datasets in this freeze.
+
+| Delivery | Shipped MCP engineering artifact | Commit |
+| --- | --- | --- |
+| CODEX-018 | Fantasia local-first PROXY HRV MCP | `38e749d` |
+| CODEX-019 | Fantasia MCP client configuration and stdio CI smoke | `41211ce` |
+| CODEX-020 | Fantasia multi-record synthetic fixture matrix | `7c69ff8` |
+| CODEX-021 | Research Node synthetic demo, QC, and shadow MCP | `9c5d4d9` |
+| CODEX-022 | Unified Fantasia + Research Node MCP configuration and CI smoke | `66c792a` |
+| CODEX-023 | Research Node MCP read-only SQI and baseline tools | `3cd2dab` |
+
 No VitalDB download or implementation, and no CapnoBase or PulseDB benchmark, is part
-of `v1.0-pre-VitalDB`. All entries remain research engineering artifacts with
+of `v1.1-mcp-pre-VitalDB`. All entries, including the MCP track, remain research
+engineering artifacts with
 `clinical_validation=false`; none supports a DS-specific or other clinical claim.
 
 ---
@@ -44,7 +58,7 @@ of `v1.0-pre-VitalDB`. All entries remain research engineering artifacts with
 | --- | --- | --- |
 | BIDMC PPG and Respiration v1.0.0 | Master VERIFIED public path | Local-first sample root `data/public/bidmc/1.0.0/` or CI fixture-equivalent + `sha256-manifest.json` |
 | MIT-BIH Arrhythmia v1.0.0 (catalog `wfdb:mitdb-100`) | Master VERIFIED **PROXY** public path, unlocked in CODEX-006b | Local-first root `data/public/mitdb/1.0.0/` or clearly labeled synthetic CI fixture-equivalent; `clinical_validation=false`; **no DS validation claim** |
-| Fantasia v1.0.0 (catalog `wfdb:fantasia-f1o01`) | `operational_proxy_ok`; Founder APPROVE + ODC-By VERIFIED; Notion Master PENDING | Local-first root `data/public/fantasia/1.0.0/` or synthetic fixture-equivalent + SHA-256 manifest; `clinical_validation=false`; not permanent Auditor Master verification |
+| Fantasia v1.0.0 (catalog `wfdb:fantasia-f1o01`) | `operational_proxy_ok`; Fantasia Master `VERIFIED PROXY` | Local-first root `data/public/fantasia/1.0.0/` or synthetic fixture-equivalent + SHA-256 manifest; `clinical_validation=false`; PROXY status is not clinical verification |
 
 Harness: `t21_engine.evaluation.public_data_bench` — seeded, fail-closed, machine-readable PASS/FAIL.
 
@@ -97,7 +111,7 @@ provenance, checksums, WFDB loading, or insufficient RR intervals.
 No age is assigned to the CI fixture, so no age comparison, association, or clinical age
 claim is calculated. Split-window absolute deltas are engineering diagnostics, not
 acceptance thresholds or clinical performance. Authorization is explicitly
-`operational_proxy_ok`; Notion Master remains pending due to broken auto-review, and
+`operational_proxy_ok`; the Fantasia Master is `VERIFIED PROXY`, and
 `clinical_validation=false`. This is not DS/anesthesia validation and makes no PTT/PPG
 claim. Schema: `fantasia-hrv-age-bench/1.0`.
 

@@ -1,12 +1,11 @@
 # Research engineering artifacts index
 
-> **PUBLIC_DATA_REPORT_V1 freeze: `v1.0-pre-VitalDB` · `2026-09-02 UTC`**
+> **PUBLIC_DATA_REPORT_V1 freeze: `v1.1-mcp-pre-VitalDB` · `2026-09-03 UTC`**
 >
 > **PROXY / engineering only**  
 > **clinical_validation=false**  
 > **No DS clinical claims.**  
 > **Fantasia Master Notion: `VERIFIED PROXY` (page `3d09631d743b81efae8fe2731113b4f6`).**
-> The frozen `PUBLIC_DATA_REPORT_V1` retains its historical `PENDING` label.
 >
 > **VitalDB, CapnoBase, and PulseDB are NOT included in this freeze.**
 >
@@ -63,11 +62,13 @@ fixture has no age metadata, so age-stability is unavailable / `PI_TO_DEFINE`.
 
 ## Unified local MCP setup
 
+- Commit: `66c792a` (CODEX-022)
 - Two-server client configuration and shared stdio smoke matrix:
   [`docs/mcp/UNIFIED_MCP.md`](../mcp/UNIFIED_MCP.md)
 
 ## Fantasia local-first MCP
 
+- Commits: `38e749d` (CODEX-018), `41211ce` (CODEX-019), `7c69ff8` (CODEX-020)
 - Guide: [`docs/mcp/FANTASIA_MCP.md`](../mcp/FANTASIA_MCP.md)
 - Module / command: `t21_engine.fantasia_mcp` / `t21-fantasia-mcp`
 - Tools: `list_records`, `load_sample`, `run_hrv_proxy_bench`
@@ -83,6 +84,7 @@ Fantasia download is required.
 
 ## Synthetic Research Node MCP
 
+- Commits: `9c5d4d9` (CODEX-021), `66c792a` (CODEX-022), `3cd2dab` (CODEX-023)
 - Guide: [`docs/mcp/RESEARCH_NODE_MCP.md`](../mcp/RESEARCH_NODE_MCP.md)
 - Module / command: `t21_engine.research_node_mcp` / `t21-research-node-mcp`
 - Tools: `run_synthetic_demo`, `run_time_align_qc`, `run_sqi_missingness_impact`,
@@ -119,7 +121,7 @@ select a clinical baseline window.
 ## PUBLIC_DATA_REPORT_V1
 
 - Frozen report: [`docs/benchmarks/PUBLIC_DATA_REPORT_V1.md`](PUBLIC_DATA_REPORT_V1.md)
-  (`v1.0-pre-VitalDB`, `2026-09-02 UTC`)
+  (`v1.1-mcp-pre-VitalDB`, `2026-09-03 UTC`)
 - Verification command: `python -m pytest tests/backend/unit/test_public_data_bench.py`
 - Engineering trail documented in the report: `f4b36f5` → `44ed44c` → `b816efa` →
   `ba514e5`, with related follow-on documentation and benchmark commits in repository

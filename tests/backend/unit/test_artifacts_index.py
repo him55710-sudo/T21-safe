@@ -15,6 +15,9 @@ def test_artifacts_index_exists_and_lists_required_sections() -> None:
         "## MIT-BIH beat table",
         "## BIDMC align / respiration",
         "## Fantasia HRV / age-stability PROXY",
+        "## Unified local MCP setup",
+        "## Fantasia local-first MCP",
+        "## Synthetic Research Node MCP",
         "## Baseline 180 / 300",
         "## SQI missingness",
         "## PUBLIC_DATA_REPORT_V1",
@@ -29,14 +32,22 @@ def test_public_data_report_freeze_labels_and_boundaries_are_explicit() -> None:
     index = ARTIFACTS_INDEX.read_text(encoding="utf-8")
 
     for contents in (report, index):
-        assert "v1.0-pre-VitalDB" in contents
-        assert "2026-09-02 UTC" in contents
+        assert "v1.1-mcp-pre-VitalDB" in contents
+        assert "2026-09-03 UTC" in contents
         assert "clinical_validation=false" in contents
         assert "VitalDB" in contents
         assert "CapnoBase" in contents
         assert "PulseDB" in contents
-        assert "PENDING" in contents
         assert "operational_proxy_ok" in contents
+        assert "VERIFIED PROXY" in contents
 
     assert "No DS clinical claims" in index
     assert "DS clinical claims:** none" in report
+
+
+def test_artifacts_index_links_all_mcp_guides() -> None:
+    contents = ARTIFACTS_INDEX.read_text(encoding="utf-8")
+
+    assert "../mcp/UNIFIED_MCP.md" in contents
+    assert "../mcp/FANTASIA_MCP.md" in contents
+    assert "../mcp/RESEARCH_NODE_MCP.md" in contents
