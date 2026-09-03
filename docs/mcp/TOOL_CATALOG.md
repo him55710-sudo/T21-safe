@@ -6,8 +6,9 @@
 > dosing, alerts, or drug-safety claims. Shadow / PROXY / synthetic scopes only.
 
 This file is **auto-generated** by `scripts/generate_mcp_tool_catalog.py` from
-`t21_engine.fantasia_mcp.server.TOOLS` and
-`t21_engine.research_node_mcp.server.TOOLS`. Do not edit by hand.
+`t21_engine.fantasia_mcp.server.TOOLS`,
+`t21_engine.research_node_mcp.server.TOOLS`, and
+`t21_engine.proxy_hyp_mcp.server.TOOLS`. Do not edit by hand.
 
 Regenerate from the repository root:
 
@@ -26,6 +27,17 @@ Local Fantasia WFDB sample and HRV/age-stability **PROXY** benchmark MCP tools.
 | `list_records` | List local Fantasia WFDB records and SHA-256 fixture status. |
 | `load_sample` | Load at most 1000 samples from one local Fantasia WFDB record. |
 | `run_hrv_proxy_bench` | Run the deterministic Fantasia HRV/age-stability PROXY benchmark. |
+
+---
+
+## proxy-hyp
+
+Local PROXY HYP-01/03/07 bench list/run MCP tools (MIT-BIH+Fantasia fixtures only).
+
+| Tool name | Description |
+| --- | --- |
+| `list_proxy_hyp_benches` | List locked PROXY HYP-01/03/07 benches (MIT-BIH+Fantasia fixture-only; clinical_validation=false; LF/HF not primary; RQ-004 HYPOTHESIS). |
+| `run_proxy_hyp_benches` | Run PROXY HYP-01/03/07 local benches and optionally write JSON/MD tables. No network; no BIDMC; no waveforms returned. |
 
 ---
 

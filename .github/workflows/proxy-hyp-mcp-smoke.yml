@@ -1,0 +1,45 @@
+# CODEX-109: CI smoke for PROXY HYP MCP (list/run + stdio; fixture-only; no BIDMC).
+name: PROXY HYP MCP smoke
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "services/engine/src/t21_engine/proxy_hyp_mcp/**"
+      - "services/engine/src/t21_engine/evaluation/proxy_hyp_bench_runner.py"
+      - "tests/backend/unit/test_proxy_hyp_mcp.py"
+      - "tests/backend/unit/test_proxy_hyp_mcp_stdio.py"
+      - "scripts/generate_mcp_tool_catalog.py"
+      - "docs/mcp/TOOL_CATALOG.md"
+      - ".github/workflows/proxy-hyp-mcp-smoke.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "services/engine/src/t21_engine/proxy_hyp_mcp/**"
+      - "services/engine/src/t21_engine/evaluation/proxy_hyp_bench_runner.py"
+      - "tests/backend/unit/test_proxy_hyp_mcp.py"
+      - "tests/backend/unit/test_proxy_hyp_mcp_stdio.py"
+      - "scripts/generate_mcp_tool_catalog.py"
+      - "docs/mcp/TOOL_CATALOG.md"
+      - ".github/workflows/proxy-hyp-mcp-smoke.yml"
+
+jobs:
+  proxy-hyp-mcp-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install engine (dev)
+        run: python -m pip install -e "services/engine[dev]"
+      - name: Pytest PROXY HYP MCP units + stdio
+        env:
+          PYTHONPATH: services/engine/src
+        run: |
+          set -euo pipefail
+          python -m pytest \
+            tests/backend/unit/test_proxy_hyp_mcp.py \
+            tests/backend/unit/test_proxy_hyp_mcp_stdio.py \
+            -q --tb=short

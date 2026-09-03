@@ -8,6 +8,7 @@ on:
       - "docs/mcp/TOOL_CATALOG.md"
       - "scripts/generate_mcp_tool_catalog.py"
       - "services/engine/src/t21_engine/fantasia_mcp/**"
+      - "services/engine/src/t21_engine/proxy_hyp_mcp/**"
       - "services/engine/src/t21_engine/research_node_mcp/**"
       - ".github/workflows/mcp-tool-catalog-drift.yml"
   pull_request:
@@ -16,6 +17,7 @@ on:
       - "docs/mcp/TOOL_CATALOG.md"
       - "scripts/generate_mcp_tool_catalog.py"
       - "services/engine/src/t21_engine/fantasia_mcp/**"
+      - "services/engine/src/t21_engine/proxy_hyp_mcp/**"
       - "services/engine/src/t21_engine/research_node_mcp/**"
       - ".github/workflows/mcp-tool-catalog-drift.yml"
 

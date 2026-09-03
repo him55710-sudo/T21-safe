@@ -249,4 +249,4 @@ if __name__ == "__main__":
     raise SystemExit(main())
 
 
-__all__ = ["run_proxy_hyp_benches", "main", "SCHEMA_VERSION"]
+__all__ = ["run_proxy_hyp_benches", "main", "SCHEMA_VERSION", "BENCH_COMMITS"]

@@ -16,6 +16,7 @@ if _engine_src not in sys.path:
 
 from t21_engine.fantasia_mcp.server import TOOLS as FANTASIA_TOOLS  # noqa: E402
 from t21_engine.research_node_mcp.server import TOOLS as RESEARCH_TOOLS  # noqa: E402
+from t21_engine.proxy_hyp_mcp.server import TOOLS as PROXY_HYP_TOOLS  # noqa: E402
 
 
 def _tool_rows(tools: list[dict]) -> str:
@@ -37,8 +38,9 @@ def render_catalog() -> str:
 > dosing, alerts, or drug-safety claims. Shadow / PROXY / synthetic scopes only.
 
 This file is **auto-generated** by `scripts/generate_mcp_tool_catalog.py` from
-`t21_engine.fantasia_mcp.server.TOOLS` and
-`t21_engine.research_node_mcp.server.TOOLS`. Do not edit by hand.
+`t21_engine.fantasia_mcp.server.TOOLS`,
+`t21_engine.research_node_mcp.server.TOOLS`, and
+`t21_engine.proxy_hyp_mcp.server.TOOLS`. Do not edit by hand.
 
 Regenerate from the repository root:
 
@@ -53,6 +55,14 @@ python scripts/generate_mcp_tool_catalog.py
 Local Fantasia WFDB sample and HRV/age-stability **PROXY** benchmark MCP tools.
 
 {_tool_rows(list(FANTASIA_TOOLS))}
+
+---
+
+## proxy-hyp
+
+Local PROXY HYP-01/03/07 bench list/run MCP tools (MIT-BIH+Fantasia fixtures only).
+
+{_tool_rows(list(PROXY_HYP_TOOLS))}
 
 ---
 
