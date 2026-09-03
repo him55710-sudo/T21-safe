@@ -1,0 +1,48 @@
+# CODEX-066: thin CI smoke for public PROXY benches (BIDMC align/resp + MIT-BIH beat).
+# Fixture-only · clinical_validation=false · no VitalDB / CapnoBase / PulseDB.
+name: Public PROXY bench smoke
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "services/engine/src/t21_engine/evaluation/bidmc_align_resp_bench.py"
+      - "services/engine/src/t21_engine/evaluation/mitbih_beat_bench.py"
+      - "services/engine/src/t21_engine/evaluation/public_data_bench.py"
+      - "tests/backend/unit/test_bidmc_align_resp_bench.py"
+      - "tests/backend/unit/test_mitbih_beat_bench.py"
+      - "tests/backend/fixtures/wfdb_bidmc_synthetic/**"
+      - "tests/backend/fixtures/wfdb_mitdb_synthetic/**"
+      - ".github/workflows/proxy-bench-smoke.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "services/engine/src/t21_engine/evaluation/bidmc_align_resp_bench.py"
+      - "services/engine/src/t21_engine/evaluation/mitbih_beat_bench.py"
+      - "services/engine/src/t21_engine/evaluation/public_data_bench.py"
+      - "tests/backend/unit/test_bidmc_align_resp_bench.py"
+      - "tests/backend/unit/test_mitbih_beat_bench.py"
+      - "tests/backend/fixtures/wfdb_bidmc_synthetic/**"
+      - "tests/backend/fixtures/wfdb_mitdb_synthetic/**"
+      - ".github/workflows/proxy-bench-smoke.yml"
+
+jobs:
+  proxy-bench-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install engine (dev)
+        run: python -m pip install -e "services/engine[dev]"
+      - name: Pytest BIDMC + MIT-BIH PROXY bench units
+        env:
+          PYTHONPATH: services/engine/src
+        run: |
+          set -euo pipefail
+          python -m pytest \
+            tests/backend/unit/test_bidmc_align_resp_bench.py \
+            tests/backend/unit/test_mitbih_beat_bench.py \
+            -q --tb=short
