@@ -1,6 +1,6 @@
 # Public Data Report v1 — PROXY engine smoke
 
-**Freeze version:** `v1.5-mcp-verify`
+**Freeze version:** `v1.6-eng-ci`
 
 **Freeze date:** `2026-09-03 UTC`
 
@@ -115,6 +115,25 @@ packaging and regression hooks only; no new datasets or clinical claims.
 
 No VitalDB download or implementation, and no CapnoBase or PulseDB benchmark, is part
 of `v1.5-mcp-verify` (superseding `v1.4-path-b-verify` for MCP verify packaging). All entries remain research
+engineering artifacts with
+`clinical_validation=false`; none supports a DS-specific or other clinical claim.
+
+The `v1.6-eng-ci` bump records engineering CI coverage after `v1.5-mcp-verify`
+(PROXY/Fantasia/public_data benches, replay + research-node demo smokes,
+baseline/SQI sensitivity CI, ReplayPipeline empty-batch fail-closed). CI/docs
+and fail-closed hardening only; no new datasets or clinical claims.
+
+| Delivery | Shipped eng CI / fail-closed artifact | Commit |
+| --- | --- | --- |
+| CODEX-069 | Fantasia HRV/age PROXY bench CI (proxy-bench-smoke) | `ae1a59b` |
+| CODEX-070 | Replay pipeline integration CI | `48feac4` |
+| CODEX-071 | Research node demo + hospital integration CI | `85ed55f` |
+| CODEX-072 | Baseline-window + SQI/missingness CI | `6e0d4c2` |
+| CODEX-073 | `public_data_bench` harness CI (proxy-bench-smoke) | `f7dd376` |
+| CODEX-074 | ReplayPipeline empty signal batch fail-closed | `8b1ba66` |
+
+No VitalDB download or implementation, and no CapnoBase or PulseDB benchmark, is part
+of `v1.6-eng-ci` (superseding `v1.5-mcp-verify` for eng CI packaging). All entries remain research
 engineering artifacts with
 `clinical_validation=false`; none supports a DS-specific or other clinical claim.
 

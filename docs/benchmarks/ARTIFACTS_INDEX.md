@@ -1,6 +1,6 @@
 # Research engineering artifacts index
 
-> **PUBLIC_DATA_REPORT_V1 freeze: `v1.5-mcp-verify` · `2026-09-03 UTC`**
+> **PUBLIC_DATA_REPORT_V1 freeze: `v1.6-eng-ci` · `2026-09-03 UTC`**
 >
 > **PROXY / engineering only**  
 > **clinical_validation=false**  
@@ -211,5 +211,20 @@ Freeze companion: [`PUBLIC_DATA_REPORT_V1.md`](PUBLIC_DATA_REPORT_V1.md) (`v1.5-
 | Fantasia list_records sha256 | `09fa324` | `tests/backend/unit/test_fantasia_mcp.py` |
 | Public PROXY bench CI | `f0d661d` | `.github/workflows/proxy-bench-smoke.yml` |
 | Synthetic hospital QC CI | `904cc9e` | `.github/workflows/synthetic-hospital-qc-smoke.yml` |
+
+`clinical_validation=false` · PROXY/RUO only · no DS clinical claims · VitalDB not included.
+
+## Eng CI packaging (069–074)
+
+Freeze companion: [`PUBLIC_DATA_REPORT_V1.md`](PUBLIC_DATA_REPORT_V1.md) (`v1.6-eng-ci`).
+
+| Item | Commit | Pointer |
+| --- | --- | --- |
+| Fantasia HRV/age PROXY CI | `ae1a59b` | `.github/workflows/proxy-bench-smoke.yml` |
+| Replay pipeline CI | `48feac4` | `.github/workflows/replay-pipeline-smoke.yml` |
+| Research node demo CI | `85ed55f` | `.github/workflows/research-node-demo-smoke.yml` |
+| Baseline + SQI sensitivity CI | `6e0d4c2` | `.github/workflows/sensitivity-bench-smoke.yml` |
+| public_data_bench CI | `f7dd376` | `.github/workflows/proxy-bench-smoke.yml` |
+| Empty signal batch fail-closed | `8b1ba66` | `services/engine/src/t21_engine/streaming/replay.py` |
 
 `clinical_validation=false` · PROXY/RUO only · no DS clinical claims · VitalDB not included.
