@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
+import os
+import shutil
 import subprocess
 import zipfile
 from pathlib import Path
-
-import pytest
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[3]
 PACK_SCRIPT = REPOSITORY_ROOT / "scripts" / "pack_hospital_demo_partner.sh"
@@ -21,8 +21,26 @@ REQUIRED_BUSINESS_ONE_PAGERS = (
 REQUIRED_MEETING_ONEPAGER = "docs/founder/MEETING_ONEPAGER_PROXY_v0.1_KR.md"
 
 
+def _hospital_demo_subprocess_env() -> dict[str, str]:
+    """Make the repository's engine Python available to demo shell scripts."""
+    env = os.environ.copy()
+    if shutil.which("python", path=env.get("PATH")) is None:
+        engine_python = (
+            REPOSITORY_ROOT / "services" / "engine" / ".venv" / "bin" / "python"
+        )
+        if engine_python.is_file():
+            env["PATH"] = os.pathsep.join(
+                part for part in (str(engine_python.parent), env.get("PATH")) if part
+            )
+            env.setdefault("PYTHON", str(engine_python))
+    env["PYTHONPATH"] = str(REPOSITORY_ROOT / "services" / "engine" / "src")
+    return env
+
+
 def test_required_business_one_pagers_exist_in_repo() -> None:
-    missing = [p for p in REQUIRED_BUSINESS_ONE_PAGERS if not (REPOSITORY_ROOT / p).is_file()]
+    missing = [
+        p for p in REQUIRED_BUSINESS_ONE_PAGERS if not (REPOSITORY_ROOT / p).is_file()
+    ]
     assert not missing, f"required partner 1-pagers missing from repo: {missing}"
 
 
@@ -46,10 +64,7 @@ def test_partner_zip_includes_showcard_html_and_business_one_pagers(
         capture_output=True,
         text=True,
         check=False,
-        env={
-            **dict(**{k: v for k, v in __import__("os").environ.items()}),
-            "PYTHONPATH": str(REPOSITORY_ROOT / "services" / "engine" / "src"),
-        },
+        env=_hospital_demo_subprocess_env(),
     )
     assert completed.returncode == 0, completed.stdout + "\n" + completed.stderr
     zip_path = pack_dir / "t21-hospital-demo-partner-pack.zip"
@@ -64,4 +79,6 @@ def test_partner_zip_includes_showcard_html_and_business_one_pagers(
     )
     for rel in REQUIRED_BUSINESS_ONE_PAGERS:
         basename = Path(rel).name
-        assert f"docs/{basename}" in names, f"missing {basename} in zip; have={sorted(names)}"
+        assert f"docs/{basename}" in names, (
+            f"missing {basename} in zip; have={sorted(names)}"
+        )
