@@ -32,3 +32,11 @@ def test_run_hospital_demo_banner_mentions_ruo_and_phi_false() -> None:
     assert "t21_engine.demo" in text
     assert "export-manifest/1.0" in text
     assert "VitalDB" in text or "synthetic" in text.lower()
+
+
+def test_run_hospital_demo_documents_multi_seed_matrix() -> None:
+    """CODEX-084: script documents --seeds fail-closed matrix."""
+    text = SCRIPT.read_text(encoding="utf-8")
+    assert "--seeds" in text
+    assert "multi-seed-report.json" in text
+    assert "hospital-demo-multi-seed/1.0" in text
