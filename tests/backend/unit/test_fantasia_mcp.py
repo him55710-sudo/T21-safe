@@ -7,7 +7,6 @@ from types import SimpleNamespace
 
 import numpy as np
 import pytest
-
 from t21_engine.fantasia_mcp.handlers import (
     MASTER_NOTION_PAGE_ID,
     list_records,
@@ -47,7 +46,44 @@ def test_list_records_verifies_fixture_and_includes_gates() -> None:
     payload = list_records(FIXTURE)
 
     assert payload["status"] == "PASS"
-    assert payload["records"] == [{"record": "f1o01", "sha256_verified": True}]
+    assert payload["records"] == [
+        {"record": "f1o01", "sha256_verified": True},
+        {"record": "synthetic02", "sha256_verified": True},
+        {"record": "synthetic03", "sha256_verified": True},
+    ]
+    _assert_gates(payload)
+
+
+def test_list_records_fails_closed_on_unmanifested_matrix_record(
+    tmp_path: Path,
+) -> None:
+    for source in FIXTURE.iterdir():
+        if source.name != "generate_fixture.py":
+            (tmp_path / source.name).write_bytes(source.read_bytes())
+    (tmp_path / "extra.hea").write_text(
+        "extra 1 100 1\nextra.dat 16 1/mV 16 0 0 0 0 ECG\n"
+    )
+    (tmp_path / "extra.dat").write_bytes(b"\0\0")
+
+    payload = list_records(tmp_path)
+
+    assert payload["status"] == "FAIL"
+    assert payload["failure_reason_code"] == "SHA256_MISMATCH"
+    assert payload["record"] == "extra"
+    _assert_gates(payload)
+
+
+def test_list_records_fails_closed_on_missing_manifested_record_file(
+    tmp_path: Path,
+) -> None:
+    for source in FIXTURE.iterdir():
+        if source.name not in {"generate_fixture.py", "synthetic03.hea"}:
+            (tmp_path / source.name).write_bytes(source.read_bytes())
+
+    payload = list_records(tmp_path)
+
+    assert payload["status"] == "FAIL"
+    assert payload["failure_reason_code"] == "MISSING_SAMPLE"
     _assert_gates(payload)
 
 
@@ -68,7 +104,9 @@ def test_load_sample_is_bounded_and_verified(monkeypatch: pytest.MonkeyPatch) ->
 
 
 def test_run_bench_reuses_existing_benchmark(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setitem(sys.modules, "wfdb", SimpleNamespace(rdrecord=lambda _name: _record()))
+    monkeypatch.setitem(
+        sys.modules, "wfdb", SimpleNamespace(rdrecord=lambda _name: _record())
+    )
 
     payload = run_hrv_proxy_bench(FIXTURE)
 
@@ -107,7 +145,10 @@ def test_stdio_tool_call_wraps_json_payload() -> None:
             "jsonrpc": "2.0",
             "id": 7,
             "method": "tools/call",
-            "params": {"name": "list_records", "arguments": {"sample_root": str(FIXTURE)}},
+            "params": {
+                "name": "list_records",
+                "arguments": {"sample_root": str(FIXTURE)},
+            },
         }
     )
 

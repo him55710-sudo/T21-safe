@@ -6,7 +6,7 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import numpy as np
-
+import pytest
 from t21_engine.evaluation.fantasia_hrv_age_bench import run_fantasia_hrv_age_bench
 
 FIXTURE = Path(__file__).parents[1] / "fixtures" / "wfdb_fantasia_synthetic"
@@ -26,7 +26,9 @@ def _record() -> SimpleNamespace:
 
 
 def test_fixture_reports_reproducibility_and_withholds_age_claims(monkeypatch) -> None:
-    monkeypatch.setitem(sys.modules, "wfdb", SimpleNamespace(rdrecord=lambda _name: _record()))
+    monkeypatch.setitem(
+        sys.modules, "wfdb", SimpleNamespace(rdrecord=lambda _name: _record())
+    )
 
     report = run_fantasia_hrv_age_bench(FIXTURE)
 
@@ -63,7 +65,9 @@ def test_checksum_mismatch_fails_closed(tmp_path: Path) -> None:
 
 def test_insufficient_rr_intervals_fails_closed(monkeypatch) -> None:
     short = SimpleNamespace(fs=100.0, p_signal=np.zeros((100, 1)))
-    monkeypatch.setitem(sys.modules, "wfdb", SimpleNamespace(rdrecord=lambda _name: short))
+    monkeypatch.setitem(
+        sys.modules, "wfdb", SimpleNamespace(rdrecord=lambda _name: short)
+    )
 
     report = run_fantasia_hrv_age_bench(FIXTURE)
 
@@ -77,3 +81,34 @@ def test_catalog_labels_operational_proxy() -> None:
     entry = WFDB_CATALOG["wfdb:fantasia-f1o01"]
     assert entry.public_bench_enabled is True
     assert "Open Data Commons Attribution" in entry.license_notes
+
+
+def test_fixture_matrix_withholds_all_age_metadata() -> None:
+    manifest = json.loads(
+        (FIXTURE / "sha256-manifest.json").read_text(encoding="utf-8")
+    )
+
+    assert manifest["records"] == ["f1o01", "synthetic02", "synthetic03"]
+    for record in manifest["records"]:
+        metadata = json.loads(
+            (FIXTURE / f"{record}.synthetic-metadata.json").read_text(encoding="utf-8")
+        )
+        assert metadata["synthetic"] is True
+        assert metadata["age_metadata_available"] is False
+        assert metadata["age_band"] == "PI_TO_DEFINE"
+        assert metadata["age_group"] == "PI_TO_DEFINE"
+
+
+@pytest.mark.parametrize("record", ["synthetic02", "synthetic03"])
+def test_benchmark_handles_each_additional_synthetic_record(
+    monkeypatch, record: str
+) -> None:
+    monkeypatch.setitem(
+        sys.modules, "wfdb", SimpleNamespace(rdrecord=lambda _name: _record())
+    )
+
+    report = run_fantasia_hrv_age_bench(FIXTURE, record=record)
+
+    assert report["status"] == "PASS"
+    assert report["records"][0]["record"] == record
+    assert report["records"][0]["age_stability"]["reason"] == "PI_TO_DEFINE"

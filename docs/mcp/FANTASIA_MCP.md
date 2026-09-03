@@ -77,7 +77,9 @@ client for verification.
 ## Tools
 
 - `list_records`: lists local `.hea` records and reports synthetic-fixture SHA-256
-  verification when a manifest is present.
+  verification when a manifest is present. The offline fixture is a three-record,
+  visibly synthetic matrix (`f1o01`, `synthetic02`, `synthetic03`); listing fails
+  closed if any matrix record is incomplete, unmanifested, or checksum-invalid.
 - `load_sample`: returns 1–1000 waveform samples from one record. It verifies the
   fixture manifest before loading and requires the optional `wfdb` dependency.
 - `run_hrv_proxy_bench`: calls the existing versioned
@@ -85,6 +87,8 @@ client for verification.
 
 Every successful or rejected tool payload repeats the scope and non-clinical gates.
 Use the fixture for offline CI; it is synthetic and is not a real participant record.
+Its age-band and age-group fields are `PI_TO_DEFINE` placeholders,
+`age_metadata_available=false`, and support no age-effect interpretation.
 
 ## Verify
 

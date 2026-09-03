@@ -105,17 +105,36 @@ def _file_digest(path: Path) -> str:
 
 
 def list_records(sample_root: str | Path | None = None) -> dict[str, Any]:
-    """List local WFDB record names and fixture-integrity status."""
+    """List local WFDB records, failing closed on incomplete fixture matrices."""
     root, failure = _local_root(sample_root)
     if failure is not None or root is None:
         return failure or _result("FAIL", failure_reason_code="MISSING_SAMPLE_ROOT")
     manifest, manifest_error = _manifest(root)
     if manifest_error is not None:
         return _result("FAIL", failure_reason_code=manifest_error, sample_root=str(root))
+    if manifest:
+        for name, expected_digest in manifest.items():
+            path = root / name
+            if not path.is_file():
+                return _result(
+                    "FAIL",
+                    failure_reason_code="MISSING_SAMPLE",
+                    sample_root=str(root),
+                )
+            if _file_digest(path) != expected_digest:
+                return _result(
+                    "FAIL",
+                    failure_reason_code="SHA256_MISMATCH",
+                    sample_root=str(root),
+                )
     records = sorted(path.stem for path in root.glob("*.hea") if _valid_record(path.stem))
+    if not records:
+        return _result("FAIL", failure_reason_code="MISSING_SAMPLE", sample_root=str(root))
     rows: list[dict[str, Any]] = []
     for record in records:
         names = [f"{record}.hea", f"{record}.dat"]
+        if manifest:
+            names.append(f"{record}.synthetic-metadata.json")
         expected = manifest or {}
         verified = bool(manifest) and all(
             (root / name).is_file()
@@ -123,6 +142,17 @@ def list_records(sample_root: str | Path | None = None) -> dict[str, Any]:
             and _file_digest(root / name) == expected[name]
             for name in names
         )
+        if not (root / f"{record}.dat").is_file():
+            return _result(
+                "FAIL", failure_reason_code="MISSING_SAMPLE", sample_root=str(root), record=record
+            )
+        if manifest and not verified:
+            return _result(
+                "FAIL",
+                failure_reason_code="SHA256_MISMATCH",
+                sample_root=str(root),
+                record=record,
+            )
         rows.append({"record": record, "sha256_verified": verified})
     return _result(
         "PASS",
