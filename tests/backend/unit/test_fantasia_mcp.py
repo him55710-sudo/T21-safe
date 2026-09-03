@@ -170,6 +170,9 @@ def test_hrv_proxy_bench_age_fields_stay_pi_to_define(monkeypatch: pytest.Monkey
     assert payload["status"] == "PASS"
     assert payload["clinical_validation"] is False
     assert "clinical_age_effect" in payload["prohibited_claims"]
+    assert frozenset(payload["prohibited_claims"]) >= frozenset(
+        {"DS", "anesthesia", "clinical_age_effect", "PTT_PPG"}
+    )
     assert payload["aggregate"]["age_stability_status"] == "UNAVAILABLE"
     records = payload["records"]
     assert isinstance(records, list) and records

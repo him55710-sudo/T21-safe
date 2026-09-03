@@ -105,6 +105,9 @@ def test_stdio_hrv_bench_fail_closed_keeps_non_clinical_age_banners() -> None:
     payload = json.loads(responses[-1]["result"]["content"][0]["text"])
     assert payload["clinical_validation"] is False
     assert "clinical_age_effect" in payload["prohibited_claims"]
+    assert frozenset(payload["prohibited_claims"]) >= frozenset(
+        {"DS", "anesthesia", "clinical_age_effect", "PTT_PPG"}
+    )
     # PASS path pins PI_TO_DEFINE; FAIL path (no wfdb) must still refuse clinical age claims.
     if payload["status"] == "PASS":
         age = payload["records"][0]["age_stability"]
