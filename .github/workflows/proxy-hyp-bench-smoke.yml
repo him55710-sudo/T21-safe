@@ -1,0 +1,82 @@
+# CODEX-105: CI smoke for CODEX-104 PROXY HYP-01/03/07 one-command runner.
+# Fixture-only · clinical_validation=false · no network · no BIDMC.
+name: PROXY HYP bench runner smoke
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/run_proxy_hyp_benches.sh"
+      - "services/engine/src/t21_engine/evaluation/proxy_hyp_bench_runner.py"
+      - "services/engine/src/t21_engine/evaluation/mitbih_brady_def_sensitivity.py"
+      - "services/engine/src/t21_engine/evaluation/fantasia_short_window_hrv_lfhf.py"
+      - "services/engine/src/t21_engine/evaluation/fantasia_age_band_hrv_stability.py"
+      - "tests/backend/unit/test_proxy_hyp_bench_runner.py"
+      - "tests/backend/unit/test_run_proxy_hyp_benches_script.py"
+      - "tests/backend/unit/test_mitbih_brady_def_sensitivity.py"
+      - "tests/backend/unit/test_fantasia_short_window_hrv_lfhf.py"
+      - "tests/backend/unit/test_fantasia_age_band_hrv_stability.py"
+      - "tests/backend/fixtures/wfdb_mitdb_synthetic/**"
+      - "tests/backend/fixtures/wfdb_fantasia_synthetic/**"
+      - "Makefile"
+      - ".github/workflows/proxy-hyp-bench-smoke.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "scripts/run_proxy_hyp_benches.sh"
+      - "services/engine/src/t21_engine/evaluation/proxy_hyp_bench_runner.py"
+      - "services/engine/src/t21_engine/evaluation/mitbih_brady_def_sensitivity.py"
+      - "services/engine/src/t21_engine/evaluation/fantasia_short_window_hrv_lfhf.py"
+      - "services/engine/src/t21_engine/evaluation/fantasia_age_band_hrv_stability.py"
+      - "tests/backend/unit/test_proxy_hyp_bench_runner.py"
+      - "tests/backend/unit/test_run_proxy_hyp_benches_script.py"
+      - "tests/backend/unit/test_mitbih_brady_def_sensitivity.py"
+      - "tests/backend/unit/test_fantasia_short_window_hrv_lfhf.py"
+      - "tests/backend/unit/test_fantasia_age_band_hrv_stability.py"
+      - "tests/backend/fixtures/wfdb_mitdb_synthetic/**"
+      - "tests/backend/fixtures/wfdb_fantasia_synthetic/**"
+      - "Makefile"
+      - ".github/workflows/proxy-hyp-bench-smoke.yml"
+
+jobs:
+  proxy-hyp-bench-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install engine (dev)
+        run: python -m pip install -e "services/engine[dev]"
+      - name: Bash syntax + HYP bench units + runner suite
+        env:
+          PYTHONPATH: services/engine/src
+        run: |
+          set -euo pipefail
+          bash -n scripts/run_proxy_hyp_benches.sh
+          python -m pytest \
+            tests/backend/unit/test_mitbih_brady_def_sensitivity.py \
+            tests/backend/unit/test_fantasia_short_window_hrv_lfhf.py \
+            tests/backend/unit/test_fantasia_age_band_hrv_stability.py \
+            tests/backend/unit/test_proxy_hyp_bench_runner.py \
+            tests/backend/unit/test_run_proxy_hyp_benches_script.py \
+            -q --tb=short
+      - name: Full local runner (tmp, fixture-only)
+        env:
+          PYTHONPATH: services/engine/src
+        run: |
+          set -euo pipefail
+          bash scripts/run_proxy_hyp_benches.sh /tmp/t21-proxy-hyp-ci
+          test -f /tmp/t21-proxy-hyp-ci/proxy-hyp-bench-report.json
+          test -f /tmp/t21-proxy-hyp-ci/proxy-hyp-bench-results.md
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path("/tmp/t21-proxy-hyp-ci/proxy-hyp-bench-report.json").read_text())
+          assert report["status"] == "PASS"
+          assert report["clinical_validation"] is False
+          assert report["network_required"] is False
+          assert "BIDMC" in report["prohibited"]
+          print("CI gate PASS")
+          PY
