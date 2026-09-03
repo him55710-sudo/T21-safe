@@ -15,6 +15,7 @@ dependencies = [
 
 [project.scripts]
 t21-research-node-demo = "t21_engine.demo:main"
+t21-research-node-mcp = "t21_engine.research_node_mcp.server:main"
 t21-fantasia-mcp = "t21_engine.fantasia_mcp.server:main"
 
 [project.optional-dependencies]

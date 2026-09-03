@@ -76,6 +76,20 @@ The stdio smoke test starts the real server process and checks MCP initializatio
 tool discovery using the repository's synthetic-fixture setup; no desktop client or
 Fantasia download is required.
 
+## Synthetic Research Node MCP
+
+- Guide: [`docs/mcp/RESEARCH_NODE_MCP.md`](../mcp/RESEARCH_NODE_MCP.md)
+- Module / command: `t21_engine.research_node_mcp` / `t21-research-node-mcp`
+- Tools: `run_synthetic_demo`, `run_time_align_qc`
+- Verification command:
+  `python -m pytest tests/backend/unit/test_research_node_mcp.py tests/backend/unit/test_research_node_mcp_stdio.py tests/backend/integration/test_research_node_demo.py`
+
+This local-only MCP reuses the deterministic synthetic Path B demo, alignment QC,
+replay, shadow JSONL writer, and `ExportManifest`. It requires neither Fantasia nor a
+public clinical dataset and provides no VitalDB, CapnoBase, PulseDB, MIMIC, PHI,
+dosing, alerting, or actuation path. Every tool payload preserves
+`clinical_validation=false`, `synthetic_only=true`, and observe-only gates.
+
 ## Baseline 180 / 300
 
 - Commit: `a7d8ebd`
