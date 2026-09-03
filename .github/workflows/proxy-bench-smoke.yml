@@ -1,4 +1,5 @@
-# CODEX-066: thin CI smoke for public PROXY benches (BIDMC align/resp + MIT-BIH beat).
+# CODEX-066/069: thin CI smoke for public PROXY benches
+# (BIDMC align/resp + MIT-BIH beat + Fantasia HRV/age).
 # Fixture-only · clinical_validation=false · no VitalDB / CapnoBase / PulseDB.
 name: Public PROXY bench smoke
 
@@ -13,6 +14,9 @@ on:
       - "tests/backend/unit/test_mitbih_beat_bench.py"
       - "tests/backend/fixtures/wfdb_bidmc_synthetic/**"
       - "tests/backend/fixtures/wfdb_mitdb_synthetic/**"
+      - "services/engine/src/t21_engine/evaluation/fantasia_hrv_age_bench.py"
+      - "tests/backend/unit/test_fantasia_hrv_age_bench.py"
+      - "tests/backend/fixtures/wfdb_fantasia_synthetic/**"
       - ".github/workflows/proxy-bench-smoke.yml"
   pull_request:
     branches: [main]
@@ -24,6 +28,9 @@ on:
       - "tests/backend/unit/test_mitbih_beat_bench.py"
       - "tests/backend/fixtures/wfdb_bidmc_synthetic/**"
       - "tests/backend/fixtures/wfdb_mitdb_synthetic/**"
+      - "services/engine/src/t21_engine/evaluation/fantasia_hrv_age_bench.py"
+      - "tests/backend/unit/test_fantasia_hrv_age_bench.py"
+      - "tests/backend/fixtures/wfdb_fantasia_synthetic/**"
       - ".github/workflows/proxy-bench-smoke.yml"
 
 jobs:
@@ -37,7 +44,7 @@ jobs:
           python-version: "3.12"
       - name: Install engine (dev)
         run: python -m pip install -e "services/engine[dev]"
-      - name: Pytest BIDMC + MIT-BIH PROXY bench units
+      - name: Pytest BIDMC + MIT-BIH + Fantasia PROXY bench units
         env:
           PYTHONPATH: services/engine/src
         run: |
@@ -45,4 +52,5 @@ jobs:
           python -m pytest \
             tests/backend/unit/test_bidmc_align_resp_bench.py \
             tests/backend/unit/test_mitbih_beat_bench.py \
+            tests/backend/unit/test_fantasia_hrv_age_bench.py \
             -q --tb=short
