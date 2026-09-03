@@ -1,6 +1,6 @@
 # Public Data Report v1 — PROXY engine smoke
 
-**Freeze version:** `v1.7-hospital-demo`
+**Freeze version:** `v1.8-hospital-demo-html`
 
 **Freeze date:** `2026-09-03 UTC`
 
@@ -156,6 +156,24 @@ Documentation/DX and local demo tooling only; no new datasets or clinical claims
 
 No VitalDB download or implementation, and no CapnoBase or PulseDB benchmark, is part
 of `v1.7-hospital-demo` (superseding `v1.6-eng-ci` for hospital-demo packaging). All entries remain research
+engineering artifacts with
+`clinical_validation=false`; none supports a DS-specific or other clinical claim.
+
+The `v1.8-hospital-demo-html` bump records browser-openable hospital demo packaging
+after `v1.7-hospital-demo` (HTML show-card, demo→HTML→zip chain, KR runbook, CI/pack
+HTML defaults). Documentation/DX and local demo tooling only; no new datasets or
+clinical claims.
+
+| Delivery | Shipped hospital-demo HTML artifact | Commit |
+| --- | --- | --- |
+| CODEX-089 | HTML browser show-card generator | `b1a5597` |
+| CODEX-090 | Demo → HTML → partner zip chain | `001a008` |
+| CODEX-091 | HOSPITAL_DEMO_RUNBOOK_KR + ARTIFACTS | `abbac57` |
+| CODEX-092 | CI wire HTML showcard + chain units | `12f01c7` |
+| CODEX-093 | Partner pack includes HTML showcard | `abca64c` |
+
+No VitalDB download or implementation, and no CapnoBase or PulseDB benchmark, is part
+of `v1.8-hospital-demo-html` (superseding `v1.7-hospital-demo` for HTML demo packaging). All entries remain research
 engineering artifacts with
 `clinical_validation=false`; none supports a DS-specific or other clinical claim.
 

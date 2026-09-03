@@ -1,6 +1,6 @@
 # Research engineering artifacts index
 
-> **PUBLIC_DATA_REPORT_V1 freeze: `v1.7-hospital-demo` · `2026-09-03 UTC`**
+> **PUBLIC_DATA_REPORT_V1 freeze: `v1.8-hospital-demo-html` · `2026-09-03 UTC`**
 >
 > **PROXY / engineering only**  
 > **clinical_validation=false**  
@@ -251,7 +251,7 @@ CODEX-078 checklist of Path B eng smoke workflows landed after MCP verify packag
 
 `clinical_validation=false` · PROXY/RUO only · no DS clinical claims · VitalDB not included.
 
-## Hospital demo packaging (079–091)
+## Hospital demo packaging (079–093)
 
 Founder/partner showable Path B demo track after eng CI packaging (`v1.6-eng-ci` tip moves to `v1.7-hospital-demo` in CODEX-088).
 
@@ -268,6 +268,8 @@ Founder/partner showable Path B demo track after eng CI packaging (`v1.6-eng-ci`
 | HTML browser show-card | `b1a5597` | `scripts/generate_hospital_demo_showcard_html.py` |
 | Demo → HTML → partner zip chain | `001a008` | `scripts/run_hospital_demo_chain.sh` |
 | Hospital demo runbook (KR) | `abbac57` | `docs/founder/HOSPITAL_DEMO_RUNBOOK_KR.md` |
+| CI HTML showcard + chain units | `12f01c7` | `.github/workflows/hospital-demo-smoke.yml` |
+| Partner pack HTML showcard default | `abca64c` | `scripts/pack_hospital_demo_partner.sh` |
 
 `clinical_validation=false` · synthetic/local · `includes_phi=false` · no DS clinical claims · VitalDB not included.
 
@@ -276,5 +278,13 @@ Founder/partner showable Path B demo track after eng CI packaging (`v1.6-eng-ci`
 Freeze companion: [`PUBLIC_DATA_REPORT_V1.md`](PUBLIC_DATA_REPORT_V1.md) (`v1.7-hospital-demo`).
 
 See **Hospital demo packaging (079–086)** above for paths/commits. CODEX-087 refreshes this index; tip freeze is `v1.7-hospital-demo`.
+
+`clinical_validation=false` · synthetic/local · PHI-false · no DS clinical claims · VitalDB not included.
+
+## Hospital demo HTML freeze (089–093)
+
+Freeze companion: [`PUBLIC_DATA_REPORT_V1.md`](PUBLIC_DATA_REPORT_V1.md) (`v1.8-hospital-demo-html`).
+
+See **Hospital demo packaging (079–093)** above. Tip freeze is `v1.8-hospital-demo-html`.
 
 `clinical_validation=false` · synthetic/local · PHI-false · no DS clinical claims · VitalDB not included.
