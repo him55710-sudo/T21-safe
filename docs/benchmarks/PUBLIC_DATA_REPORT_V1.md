@@ -1,8 +1,8 @@
 # Public Data Report v1 — PROXY engine smoke
 
-**Freeze version:** `v2.1-proxy-hyp-benches`
+**Freeze version:** `v2.2-proxy-hyp-guards`
 
-**Freeze date:** `2026-09-04 UTC` (prior hospital-demo tip stamped `2026-09-03 UTC`)
+**Freeze date:** `2026-09-04 UTC` (prior hospital-demo tip stamped `2026-09-03 UTC`; prior PROXY benches tip `v2.1-proxy-hyp-benches`)
 
 **Status:** Scaffold filled from CODEX-006 family · **PROXY only**  
 **clinical_validation:** `false`  
@@ -366,4 +366,20 @@ benches, one-command runner, partner zip, METHODS_CRITIQUE docs, and read-only M
 
 The prior tip `v2.0-hospital-demo-ready` remains the hospital-demo packaging freeze;
 this tip adds the PROXY Analysis Plan engineering track without expanding clinical claims.
+
+## PROXY hyp guards freeze (CODEX-111–114)
+
+Tip freeze `v2.2-proxy-hyp-guards` records Auditor DUAL-GATE wording + runner stamps +
+fail-closed doc pins + hospital-demo founder cross-links. No new HYP benches.
+
+| Delivery | Artifact | Commit |
+| --- | --- | --- |
+| CODEX-111 | Founder-pack Auditor DSCS wording | `9e7dce8` (tip `e374856`) |
+| CODEX-112 | Runner JSON/MD Auditor DUAL-GATE stamps (schema 1.1) | `666bc98` |
+| CODEX-113 | Fail-closed string pins in PROXY_HYP_RESULTS_KR + ARTIFACTS_INDEX | `0f2b649` |
+| CODEX-114 | Hospital-demo founder docs → v2.1 + 111 labels | `870d4b8` |
+
+`clinical_validation=false` · HYP-01 PARTIALLY_SUPPORTED · HYP-03/07 STRETCH/neg-control-QA · Airway+BIDMC do-not-run · PI_TO_DEFINE · no clinical FACT.
+
+Prior tip `v2.1-proxy-hyp-benches` remains the benches/runner/pack/MCP packaging freeze (101–109).
 

@@ -48,7 +48,7 @@ Path B · RUO · MIT-BIH + Fantasia **로컬 fixture만**.
 
 ## Freeze tip
 
-`v2.1-proxy-hyp-benches` (`2026-09-04 UTC`) — CODEX-101–109; wording patch CODEX-111 (Auditor DSCS labels).
+`v2.2-proxy-hyp-guards` (`2026-09-04 UTC`) — CODEX-111–114 DUAL-GATE guards; benches tip `v2.1-proxy-hyp-benches` (101–109) still applies.
 
 ## 한 줄 요약
 

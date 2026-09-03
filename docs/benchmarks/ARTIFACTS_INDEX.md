@@ -1,6 +1,6 @@
 # Research engineering artifacts index
 
-> **PUBLIC_DATA_REPORT_V1 freeze: `v2.1-proxy-hyp-benches` · `2026-09-04 UTC`**
+> **PUBLIC_DATA_REPORT_V1 freeze: `v2.2-proxy-hyp-guards` · `2026-09-04 UTC`**
 >
 > **PROXY / engineering only**  
 > **clinical_validation=false**  
@@ -361,5 +361,15 @@ Freeze companion: [`PUBLIC_DATA_REPORT_V1.md`](PUBLIC_DATA_REPORT_V1.md) (`v2.1-
 
 Covers CODEX-101–109 (benches, runner, CI, METHODS_CRITIQUE docs, partner zip, MCP).
 Hospital demo tip `v2.0-hospital-demo-ready` remains valid for packaging track.
+Superseded as **current tip** by `v2.2-proxy-hyp-guards` (111–114) below.
 
 `clinical_validation=false` · PROXY≠DS · MIT-BIH+Fantasia local only · no BIDMC/Airway/PHI · no dosing/closed-loop.
+
+## PROXY hyp guards freeze tip
+
+Freeze companion: [`PUBLIC_DATA_REPORT_V1.md`](PUBLIC_DATA_REPORT_V1.md) (`v2.2-proxy-hyp-guards`).
+
+Covers CODEX-111–114 (Auditor DUAL-GATE wording, runner stamps, fail-closed doc pins, hospital-demo cross-links).
+Prior tip `v2.1-proxy-hyp-benches` covers 101–109 benches/runner/pack/MCP.
+
+`clinical_validation=false` · PARTIALLY_SUPPORTED / STRETCH / do-not-run · no FACT · no new HYP benches.
