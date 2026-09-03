@@ -3,13 +3,35 @@ name: MCP stdio smoke
 on:
   push:
     branches: [main]
+    paths:
+      - "services/engine/src/t21_engine/fantasia_mcp/**"
+      - "services/engine/src/t21_engine/research_node_mcp/**"
+      - "scripts/smoke_dual_mcp.py"
+      - "tests/backend/unit/test_mcp_stdio_smoke.py"
+      - "tests/backend/unit/test_fantasia_mcp_stdio.py"
+      - "tests/backend/unit/test_research_node_mcp_stdio.py"
+      - "tests/backend/unit/test_smoke_dual_mcp_script.py"
+      - ".github/workflows/mcp-stdio-smoke.yml"
   pull_request:
     branches: [main]
+    paths:
+      - "services/engine/src/t21_engine/fantasia_mcp/**"
+      - "services/engine/src/t21_engine/research_node_mcp/**"
+      - "scripts/smoke_dual_mcp.py"
+      - "tests/backend/unit/test_mcp_stdio_smoke.py"
+      - "tests/backend/unit/test_fantasia_mcp_stdio.py"
+      - "tests/backend/unit/test_research_node_mcp_stdio.py"
+      - "tests/backend/unit/test_smoke_dual_mcp_script.py"
+      - ".github/workflows/mcp-stdio-smoke.yml"
 
 jobs:
   dual-mcp-stdio:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        server: [fantasia-proxy, research-node]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -17,16 +39,34 @@ jobs:
           python-version: "3.12"
       - name: Install engine (dev + wfdb)
         run: python -m pip install -e "services/engine[dev,wfdb]"
-      - name: Pytest MCP stdio matrix (includes BIDMC/MIT-BIH PROXY tools)
+      - name: Pytest MCP stdio (${{ matrix.server }})
+        env:
+          PYTHONPATH: services/engine/src
+          MCP_SMOKE_SERVER: ${{ matrix.server }}
+        run: |
+          set -euo pipefail
+          case "${MCP_SMOKE_SERVER}" in
+            fantasia-proxy)
+              python -m pytest \
+                tests/backend/unit/test_fantasia_mcp_stdio.py \
+                tests/backend/unit/test_mcp_stdio_smoke.py \
+                -k "fantasia" -q --tb=short
+              ;;
+            research-node)
+              python -m pytest \
+                tests/backend/unit/test_research_node_mcp_stdio.py \
+                tests/backend/unit/test_mcp_stdio_smoke.py \
+                -k "research" -q --tb=short
+              ;;
+            *)
+              echo "unknown matrix server: ${MCP_SMOKE_SERVER}" >&2
+              exit 1
+              ;;
+          esac
+      - name: Dual MCP script smoke (research-node matrix leg)
+        if: matrix.server == 'research-node'
         env:
           PYTHONPATH: services/engine/src
         run: |
-          python -m pytest \
-            tests/backend/unit/test_mcp_stdio_smoke.py \
-            tests/backend/unit/test_research_node_mcp_stdio.py \
-            tests/backend/unit/test_smoke_dual_mcp_script.py \
-            -q --tb=short
-      - name: Dual MCP script smoke
-        env:
-          PYTHONPATH: services/engine/src
-        run: python scripts/smoke_dual_mcp.py
+          python -m pytest tests/backend/unit/test_smoke_dual_mcp_script.py -q --tb=short
+          python scripts/smoke_dual_mcp.py
