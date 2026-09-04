@@ -15,6 +15,7 @@ def test_hyp01_defaults_to_pi_to_define_without_clinical_cutoffs() -> None:
     report = run_mitbih_brady_def_sensitivity(FIXTURE)
     assert report["status"] == "PASS"
     assert report["clinical_validation"] is False
+    assert report["sqi_fail_reason"] is None
     assert report["role_tag"] == "PROXY_ECG_BENCHMARK"
     assert report["hypothesis_id"] == "HYP-01"
     assert report["thresholds"] == {
@@ -51,3 +52,17 @@ def test_hyp01_missing_sample_fails_closed(tmp_path: Path) -> None:
     report = run_mitbih_brady_def_sensitivity(tmp_path)
     assert report["status"] == "FAIL"
     assert report["failure_reason_code"] == "MISSING_SAMPLE"
+
+
+def test_hyp01_propagates_structured_sqi_fail_reason() -> None:
+    sqi_fail_reason = {
+        "code": "ECG_SQI_UNUSABLE",
+        "reason": "Synthetic proxy ECG did not pass its configured SQI gate.",
+    }
+    report = run_mitbih_brady_def_sensitivity(
+        FIXTURE,
+        sqi_fail_reason=sqi_fail_reason,
+    )
+
+    assert report["sqi_fail_reason"] == sqi_fail_reason
+    assert report["clinical_validation"] is False

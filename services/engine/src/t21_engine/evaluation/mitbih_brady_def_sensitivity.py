@@ -60,12 +60,17 @@ def _base_meta() -> dict[str, Any]:
     }
 
 
-def _failure(reason: str, record: str) -> dict[str, Any]:
+def _failure(
+    reason: str,
+    record: str,
+    sqi_fail_reason: str | dict[str, Any] | None,
+) -> dict[str, Any]:
     payload = _base_meta()
     payload.update(
         {
             "status": "FAIL",
             "failure_reason_code": reason,
+            "sqi_fail_reason": sqi_fail_reason,
             "records": [{"record": record, "status": "FAIL", "failure_reason_code": reason}],
             "fact": None,
             "interpretation": None,
@@ -97,6 +102,7 @@ def run_mitbih_brady_def_sensitivity(
     record: str = DEFAULT_RECORD,
     absolute_hr_bpm: float | None = None,
     relative_drop_fraction: float | None = None,
+    sqi_fail_reason: str | dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Scaffold FACT/INTERPRETATION/HYPOTHESIS for abs vs rel definition sensitivity.
 
@@ -105,19 +111,19 @@ def run_mitbih_brady_def_sensitivity(
     """
     metadata = WFDB_CATALOG[CATALOG_CASE_ID]
     if not metadata.public_bench_enabled:
-        return _failure("DATASET_NOT_PROMOTED", record)
+        return _failure("DATASET_NOT_PROMOTED", record, sqi_fail_reason)
     root = Path(sample_root).resolve() if sample_root is not None else _default_sample_root()
     if root is None or not root.is_dir():
-        return _failure("MISSING_SAMPLE", record)
+        return _failure("MISSING_SAMPLE", record, sqi_fail_reason)
     record_base = root / record
     if not record_base.with_suffix(".hea").is_file():
-        return _failure("MISSING_SAMPLE", record)
+        return _failure("MISSING_SAMPLE", record, sqi_fail_reason)
     try:
         annotations, annotation_source = _load_annotations(record_base)
     except FileNotFoundError:
-        return _failure("MISSING_ANNOTATIONS", record)
+        return _failure("MISSING_ANNOTATIONS", record, sqi_fail_reason)
     except (ImportError, OSError, TypeError, ValueError):
-        return _failure("ANNOTATION_LOAD_FAILURE", record)
+        return _failure("ANNOTATION_LOAD_FAILURE", record, sqi_fail_reason)
 
     # WFDB header line 1: record nsig fs nsamp ...
     fs = None
@@ -135,11 +141,11 @@ def run_mitbih_brady_def_sensitivity(
             payload = json.loads(syn.read_text(encoding="utf-8"))
             fs = float(payload.get("sample_rate_hz") or 0.0) or None
     if fs is None or fs <= 0:
-        return _failure("INVALID_SAMPLE_RATE", record)
+        return _failure("INVALID_SAMPLE_RATE", record, sqi_fail_reason)
 
     rr_ms = _rr_from_annotations(annotations, float(fs))
     if rr_ms.size == 0:
-        return _failure("INSUFFICIENT_RR_INTERVALS", record)
+        return _failure("INSUFFICIENT_RR_INTERVALS", record, sqi_fail_reason)
     hr_bpm = 60000.0 / rr_ms
     fact = {
         "record": record,
@@ -200,6 +206,7 @@ def run_mitbih_brady_def_sensitivity(
         {
             "status": "PASS",
             "failure_reason_code": None,
+            "sqi_fail_reason": sqi_fail_reason,
             "records": [{"record": record, "status": "PASS", "failure_reason_code": None}],
             "fact": fact,
             "interpretation": interpretation,
