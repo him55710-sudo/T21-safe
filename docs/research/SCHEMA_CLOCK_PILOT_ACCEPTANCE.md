@@ -1,8 +1,8 @@
 # Schema / Clock Pilot Acceptance — M0-B
 
-**Status:** DRAFT · pre-extract research gate · checklist for 1–3 deidentified (or synthetic) schema/clock samples  
-**Mode:** Path B / RUO / Shadow / `clinical_validation=false`  
-**Tip freeze:** `edff0f1` — no RII/PROXY/threshold/MCP/feature code changes authorized  
+**Status:** DRAFT · pre-extract research gate · checklist for 1–3 deidentified (or synthetic) schema/clock samples<br>
+**Mode:** Path B / RUO / Shadow / `clinical_validation=false`<br>
+**Tip freeze:** `edff0f1` — no RII/PROXY/threshold/MCP/feature code changes authorized<br>
 **Related:** [`HOSPITAL_DATA_REQUEST_SPEC.md`](HOSPITAL_DATA_REQUEST_SPEC.md) §13 · [`HOSPITAL_AGGREGATE_FEASIBILITY_QUERY_KR.md`](../business/HOSPITAL_AGGREGATE_FEASIBILITY_QUERY_KR.md) · [`SIGNAL_EXTERNAL_VALIDITY_PLAN.md`](SIGNAL_EXTERNAL_VALIDITY_PLAN.md) · [`PI_DECISION_PACK_KR.md`](../founder/PI_DECISION_PACK_KR.md)
 
 ---

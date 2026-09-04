@@ -1,8 +1,8 @@
 # 병원 Aggregate Feasibility Query (KR) — M0-B
 
-**상태:** DRAFT · Founder 발송용 초안 · PI/기관 검토 전 · 지금은 자동 발송하지 않음  
-**범위:** Path B / Research Use Only / Shadow / `clinical_validation=false`  
-**Tip freeze:** `edff0f1` ([`FREEZE_DECLARATION_M0.md`](../governance/FREEZE_DECLARATION_M0.md))  
+**상태:** DRAFT · Founder 발송용 초안 · PI/기관 검토 전 · 지금은 자동 발송하지 않음<br>
+**범위:** Path B / Research Use Only / Shadow / `clinical_validation=false`<br>
+**Tip freeze:** `edff0f1` ([`FREEZE_DECLARATION_M0.md`](../governance/FREEZE_DECLARATION_M0.md))<br>
 **관련:** [`PI_DECISION_PACK_KR.md`](../founder/PI_DECISION_PACK_KR.md) · [`HOSPITAL_DATA_REQUEST_SPEC.md`](../research/HOSPITAL_DATA_REQUEST_SPEC.md) §11 · [`SCHEMA_CLOCK_PILOT_ACCEPTANCE.md`](../research/SCHEMA_CLOCK_PILOT_ACCEPTANCE.md) · [`hospital-aggregate-query-1p.md`](hospital-aggregate-query-1p.md) (prior 1p; SUPERSEDE candidate for tip/send authority)
 
 ---
