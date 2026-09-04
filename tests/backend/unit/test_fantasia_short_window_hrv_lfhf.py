@@ -37,6 +37,7 @@ def test_short_window_negative_control_layers(monkeypatch) -> None:
     assert report["status"] == "PASS"
     assert report["clinical_validation"] is False
     assert report["lf_hf_primary"] is False
+    assert report["neg_control_qa"] is True
     assert report["role_tag"] == "PROXY_HRV_AGE_STABILITY"
     assert report["hypothesis_id"] == "HYP-03"
     assert report["hypothesis"]["rq004_status"] == "HYPOTHESIS"
@@ -54,6 +55,7 @@ def test_short_window_negative_control_layers(monkeypatch) -> None:
     assert interpretation["layer"] == "INTERPRETATION"
     assert interpretation["engineering_probe_only"] is True
     assert interpretation["lf_hf_primary"] is False
+    assert interpretation["neg_control_qa"] is True
     assert "RQ004_as_FACT" in report["prohibited_claims"]
     json.dumps(report)
 
@@ -70,6 +72,7 @@ def test_checksum_mismatch_fails_closed(tmp_path: Path) -> None:
     assert report["failure_reason_code"] == "SHA256_MISMATCH"
     assert report["clinical_validation"] is False
     assert report["lf_hf_primary"] is False
+    assert report["neg_control_qa"] is True
     assert report["fact"] is None
 
 
@@ -85,3 +88,4 @@ def test_insufficient_rr_fails_closed(monkeypatch) -> None:
     assert report["failure_reason_code"] == "INSUFFICIENT_RR_INTERVALS"
     assert report["clinical_validation"] is False
     assert report["lf_hf_primary"] is False
+    assert report["neg_control_qa"] is True

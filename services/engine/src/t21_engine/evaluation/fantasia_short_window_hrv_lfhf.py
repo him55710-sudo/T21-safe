@@ -57,6 +57,7 @@ def _base_meta() -> dict[str, Any]:
         "network_required": False,
         "proxy_not_ds": True,
         "lf_hf_primary": False,
+        "neg_control_qa": True,
         "thresholds": {
             "ultra_short_window_seconds": "PI_TO_DEFINE",
             "reference_window_seconds": "PI_TO_DEFINE",
@@ -260,6 +261,7 @@ def run_fantasia_short_window_hrv_lfhf(
             "reason": "PI_TO_DEFINE",
             "engineering_probe_only": False,
             "lf_hf_primary": False,
+            "neg_control_qa": True,
             "note": "Short-window LF/HF probe skipped; Task Force withhold remains FACT.",
         }
     else:
@@ -293,6 +295,7 @@ def run_fantasia_short_window_hrv_lfhf(
             "reason": None,
             "engineering_probe_only": True,
             "lf_hf_primary": False,
+            "neg_control_qa": True,
             "clinical_cutoff": "PI_TO_DEFINE",
             "probe_lf_hf_by_window": probe_rows,
             "probe_lf_hf_relative_spread": rel_spread,
