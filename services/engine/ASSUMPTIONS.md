@@ -29,7 +29,7 @@ inventing clinical claims.
     synthetic local fixture when requested; fallback data is never represented as
     remotely loaded or as a real patient record.
 11. Drug events or infusion rates, when present, are metadata only and never become a
-    dosing recommendation or a control signal.
+    medication-dose advice or a control signal.
 12. No PHI is accepted or persisted. Replay sessions are in-memory and are cleaned up
     after completion or cancellation.
 13. The bundled four-second CSV is a visibly labeled synthetic transport fixture. When
