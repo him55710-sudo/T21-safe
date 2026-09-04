@@ -64,6 +64,8 @@ RUO / Shadow · `clinical_validation=false` · PHI-false · synthetic only.
 
 Hospital-demo freeze tip: `v2.0-hospital-demo-ready`. Meeting one-pager freeze: `v2.3-meeting-onepager`; PROXY talk-track is ECG HR-event / SQI only. Related PROXY Analysis Plan tip: `v2.1-proxy-hyp-benches` (Auditor DUAL-GATE labels in `PROXY_HYP_RESULTS_KR.md`; **no FACT**; Airway/BIDMC do-not-run on PROXY track).
 
+Meeting-pack follow-up freeze tip: `v2.7-meeting-pack-mcp-followup`; `docs/founder/MEETING_ONEPAGER_PROXY_v0.1_KR.md` is staged in this pack.
+
 ## Contents
 
 - `reports/hospital-demo-report.json` — demo gates + QC summary
