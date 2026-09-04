@@ -1,6 +1,6 @@
 # Research engineering artifacts index
 
-> **PUBLIC_DATA_REPORT_V1 freeze: `v2.4-meeting-demo-links` · `2026-09-04 UTC`**
+> **PUBLIC_DATA_REPORT_V1 freeze: `v2.5-meeting-demo-harness` · `2026-09-04 UTC`**
 >
 > **PROXY / engineering only**  
 > **clinical_validation=false**  
@@ -389,5 +389,13 @@ Prior tip `v2.2-proxy-hyp-guards` retains the Auditor DUAL-GATE guards.
 Freeze companion: [`PUBLIC_DATA_REPORT_V1.md`](PUBLIC_DATA_REPORT_V1.md) (`v2.4-meeting-demo-links`; tip `c6806e1`).
 
 Covers CODEX-122–124: hospital-demo Founder docs link the meeting one-pager (`eb1f5e5`), UNIFIED_MCP states its claim guards (`46a6b62`), and hospital-demo pack CI/unit tests assert the one-pager is staged (`c6806e1`). Prior tip `v2.3-meeting-onepager` covers 116–118.
+
+`clinical_validation=false` · Auditor DUAL-GATE retained · Path B / RUO / Shadow Mode · no FACT · no new HYP benches · no BIDMC/Airway.
+
+## Meeting demo harness freeze tip
+
+Freeze companion: [`PUBLIC_DATA_REPORT_V1.md`](PUBLIC_DATA_REPORT_V1.md) (`v2.5-meeting-demo-harness`; tip `c601b11`).
+
+Covers CODEX-125–127: record the prior freeze (`877f582`), make the hospital-demo unit harness prefer the engine venv Python when needed (`3ae0026`), and add direct `DEMO.md` / founder README meeting-one-pager links (`c601b11`). Prior tip `v2.4-meeting-demo-links` covers 122–124.
 
 `clinical_validation=false` · Auditor DUAL-GATE retained · Path B / RUO / Shadow Mode · no FACT · no new HYP benches · no BIDMC/Airway.

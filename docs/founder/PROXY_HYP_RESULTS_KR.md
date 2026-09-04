@@ -48,7 +48,7 @@ Path B · RUO · MIT-BIH + Fantasia **로컬 fixture만**.
 
 ## Freeze tip
 
-`v2.4-meeting-demo-links` (`2026-09-04 UTC`; tip `c6806e1`) — CODEX-122–124 hospital-demo Founder links to `MEETING_ONEPAGER_PROXY_v0.1_KR.md` (`eb1f5e5`), UNIFIED_MCP claim-guard mention (`46a6b62`), and hospital-demo pack CI/unit staging asserts (`c6806e1`). Auditor DUAL-GATE guards remain; `clinical_validation=false`; no FACT, new HYP benches, BIDMC, or Airway. Prior meeting one-pager tip `v2.3-meeting-onepager` still applies.
+`v2.5-meeting-demo-harness` (`2026-09-04 UTC`; tip `c601b11`) — CODEX-125–127 record the prior freeze (`877f582`), make the hospital-demo unit harness prefer the engine venv Python when needed (`3ae0026`), and add direct demo/founder meeting-one-pager links (`c601b11`). Auditor DUAL-GATE guards remain; `clinical_validation=false`; no FACT, new HYP benches, BIDMC, or Airway. Prior tip `v2.4-meeting-demo-links` covers CODEX-122–124.
 
 ## 한 줄 요약
 

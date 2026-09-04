@@ -1,6 +1,6 @@
 # Public Data Report v1 — PROXY engine smoke
 
-**Freeze version:** `v2.4-meeting-demo-links`
+**Freeze version:** `v2.5-meeting-demo-harness`
 
 **Freeze date:** `2026-09-04 UTC` (prior hospital-demo tip stamped `2026-09-03 UTC`; prior PROXY benches tip `v2.1-proxy-hyp-benches`)
 
@@ -413,3 +413,19 @@ pack CI/unit assertions. No new HYP benches.
 `clinical_validation=false` · Auditor DUAL-GATE retained · no FACT · no new HYP benches · no BIDMC/Airway · Path B / RUO / Shadow Mode.
 
 Prior tip `v2.3-meeting-onepager` remains the meeting one-pager freeze (116–118); the `v2.4-meeting-demo-links` tip SHA is `c6806e1`.
+
+## Meeting demo harness freeze (CODEX-125–127)
+
+Tip freeze `v2.5-meeting-demo-harness` records the prior freeze documentation, a
+portable hospital-demo unit harness, and direct demo/founder meeting-one-pager links.
+No new HYP benches.
+
+| Delivery | Artifact | Commit |
+| --- | --- | --- |
+| CODEX-125 | Record `v2.4-meeting-demo-links` freeze | `877f582` |
+| CODEX-126 | Hospital-demo unit harness prefers engine venv Python when needed | `3ae0026` |
+| CODEX-127 | `DEMO.md` + founder README meeting-one-pager cross-links | `c601b11` |
+
+`clinical_validation=false` · Auditor DUAL-GATE retained · no FACT · no new HYP benches · no BIDMC/Airway · Path B / RUO / Shadow Mode.
+
+Prior tip `v2.4-meeting-demo-links` covers 122–124; the `v2.5-meeting-demo-harness` tip SHA after CODEX-127 is `c601b11`.
