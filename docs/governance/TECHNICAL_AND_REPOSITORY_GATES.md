@@ -111,8 +111,8 @@ These documents and checks do not unfreeze clinical definitions or authorize RII
 
 Short sibling copy for admins: [`REQUIRED_CI_CHECK_HOWTO.md`](REQUIRED_CI_CHECK_HOWTO.md).
 
-**Workflow file (already on `main` via M0-A):** [`.github/workflows/all-up-required.yml`](../../.github/workflows/all-up-required.yml)  
-**GitHub Actions check name:** `All-up required` (job names appear as `all-up-required / docs paths` and `all-up-required / existing unit smokes`).  
+**Workflow file (already on `main` via M0-A):** [`.github/workflows/all-up-required.yml`](../../.github/workflows/all-up-required.yml)
+**GitHub Actions check name:** `All-up required` (job names appear as `all-up-required / docs paths` and `all-up-required / existing unit smokes`).
 **M0 backlog:** M0-07 (human applies protection) · M0-06 (this gates doc).
 
 ### Why this workflow
@@ -155,4 +155,3 @@ If the API rejects unknown contexts, use the exact job check names from a comple
 - Do not push directly to `main`.
 - Do not add PROXY/HYP or threshold gates as required checks during M0 freeze.
 - Do not treat a green All-up check as clinical validation or FACT.
-

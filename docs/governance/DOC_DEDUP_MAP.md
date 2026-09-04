@@ -101,23 +101,6 @@ Tip HEAD: `edff0f1`. Path B / RUO / Shadow.
 4. **Hospital demo onboarding vs runbook:** schedule MERGE after freeze; both KEEP for now.  
 5. **Obsolete SHA `c6806e1`:** strip on next touch of any doc that still cites it; prefer `edff0f1`.
 
-## Superseded tip / pack archive candidates
-
-These are classification candidates only. Do not delete or move them during M0; preserve links and history until a dedicated archive PR is approved.
-
-| Path or pack | Candidate action | Superseded for current decisions by | Reason |
-| --- | --- | --- | --- |
-| Docs that present `c6806e1` or `edff0f1` as the current tip | **ARCHIVE** tip-bound snapshot or remove stale tip on next touch | `docs/founder/T21_REFOCUS_DECISION_KR.md` plus the merge SHA recorded by governance | A historical observation SHA must not look like a permanent current tip |
-| `docs/business/hospital-aggregate-query-1p.md` | **ARCHIVE** | `docs/business/HOSPITAL_AGGREGATE_FEASIBILITY_QUERY_KR.md` | New document adds privacy gate, disposition fields, and pilot handoff |
-| `docs/founder/MEETING_ONEPAGER_PROXY_v0.1_KR.md` + `docs/founder/PROXY_HYP_RESULTS_KR.md` as a decision pack | **ARCHIVE AS PACK** after PI migration; retain source artifacts | `docs/founder/PI_DECISION_PACK_KR.md` for current PI decisions | PROXY artifacts remain engineering history, not the active clinical-decision packet |
-| `docs/founder/HOSPITAL_DEMO_ONBOARDING_KR.md` + showcard examples as a partner pack | **MERGE/ARCHIVE** candidate after runbook consolidation | `docs/founder/HOSPITAL_DEMO_RUNBOOK_KR.md` | Avoid parallel operational packs; examples may remain as referenced artifacts |
-
-Archive labels do not invalidate historical engineering results and do not authorize removal of attribution, provenance, or safety language.
-
----
-
-
-
 ---
 
 ## Tip / pack churn archive candidates (M0-B)
@@ -133,7 +116,7 @@ Archive labels do not invalidate historical engineering results and do not autho
 | `docs/founder/README.md` (stale tip `a0aa6dd` / `v2.7-meeting-pack-*`) | **SUPERSEDE** tip line | Index **KEEP**; update pointer to Refocus + `edff0f1` (M0-B light edit) |
 | `docs/founder/MEETING_ONEPAGER_PROXY_v0.1_KR.md` | **KEEP** talk track; tip cites **SUPERSEDE** to `edff0f1` on next touch | Spoken PROXY boundary still canonical for meetings |
 | `docs/founder/PROXY_HYP_RESULTS_KR.md` | **KEEP** | Eng results; not clinical; tip refs → `edff0f1` when edited |
-| `docs/business/hospital-aggregate-query-1p.md` | **KEEP** (EN/plan §6-2) | Founder send pack: prefer [`../business/HOSPITAL_AGGREGATE_FEASIBILITY_QUERY_KR.md`](../business/HOSPITAL_AGGREGATE_FEASIBILITY_QUERY_KR.md) |
+| `docs/business/hospital-aggregate-query-1p.md` | **ARCHIVE** candidate | Superseded by [`HOSPITAL_AGGREGATE_FEASIBILITY_QUERY_KR.md`](../business/HOSPITAL_AGGREGATE_FEASIBILITY_QUERY_KR.md); retain history and add a pointer if archived |
 | Pre-Evidence-First “meeting pack” tip-only CHANGELOG blurbs in README footers | **ARCHIVE** / **SUPERSEDE** | Do not expand; point to freeze declaration |
 
 ### Supersession markers (copy into footers when touching)
@@ -142,6 +125,8 @@ Archive labels do not invalidate historical engineering results and do not autho
 SUPERSEDED (tip authority): Evidence-First M0 freeze tip edff0f1 — see docs/governance/FREEZE_DECLARATION_M0.md
 Obsolete observation SHA c6806e1 — do not cite as current tip
 ```
+
+Archive labels do not invalidate historical engineering results and do not authorize removal of attribution, provenance, or safety language.
 
 ## Explicit non-actions in M0
 
