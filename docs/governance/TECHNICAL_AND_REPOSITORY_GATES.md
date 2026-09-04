@@ -112,7 +112,7 @@ These documents and checks do not unfreeze clinical definitions or authorize RII
 Short sibling copy for admins: [`REQUIRED_CI_CHECK_HOWTO.md`](REQUIRED_CI_CHECK_HOWTO.md).
 
 **Workflow file (already on `main` via M0-A):** [`.github/workflows/all-up-required.yml`](../../.github/workflows/all-up-required.yml)
-**GitHub Actions check name:** `All-up required` (job names appear as `all-up-required / docs paths` and `all-up-required / existing unit smokes`).
+**GitHub Actions check name:** `All-up required` (job names appear as `all-up-required / docs paths`, `all-up-required / forbidden-claim scan`, and `all-up-required / existing unit smokes`).
 **M0 backlog:** M0-07 (human applies protection) · M0-06 (this gates doc).
 
 ### Why this workflow
@@ -127,8 +127,9 @@ Short sibling copy for admins: [`REQUIRED_CI_CHECK_HOWTO.md`](REQUIRED_CI_CHECK_
 2. Open **Settings → Branches → Branch protection rule** for `main` (or create the rule if missing).
 3. Enable **Require status checks to pass before merging**.
 4. Enable **Require branches to be up to date before merging** only if the team accepts the extra merge friction (optional for M0).
-5. Search and select the check(s) produced by the workflow. Prefer requiring the **workflow-level** rollup if shown as `All-up required`; otherwise require both job checks:
+5. Search and select the check(s) produced by the workflow. Prefer requiring the **workflow-level** rollup if shown as `All-up required`; otherwise require all job checks:
    - `all-up-required / docs paths`
+   - `all-up-required / forbidden-claim scan`
    - `all-up-required / existing unit smokes`
 6. Leave **Do not allow bypassing the above settings** / admin enforcement aligned with current policy: today **`enforce_admins=false`**. Turning enforce_admins on is a Founder decision (stronger freeze hygiene; admins lose bypass).
 7. Save. Confirm with a docs-only PR that the required check appears and blocks merge when red.

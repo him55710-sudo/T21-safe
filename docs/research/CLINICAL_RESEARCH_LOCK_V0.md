@@ -27,7 +27,7 @@ Related: [`RESEARCH_PRD.md`](RESEARCH_PRD.md), [`PICOTS.md`](PICOTS.md), [`CLINI
 | FACT elevation | `PI_REQUIRED` | (A) Remain false indefinitely under Path B until prospective silent gate; (B) Define Master FACT checklist (data, SAP, adjudication, lock) then Founder+PI sign-off; (C) Never elevate from PROXY fixture PASS | Fixture PASS ≠ Master FACT. `clinical_validation=false` stays. |
 | Hypotension MAP / duration (eng present) | `PI_REQUIRED` | (A) Review eng `hypotension_map_mm_hg=65`, `duration_seconds=60` as literature-inspired defaults needing PI confirm; (B) Age/procedure-specific MAP; (C) Relative MAP decline primary (`-20%` eng probe) | Classify in provenance as ENGINEERING_DEFAULT / PI_REQUIRED — do not tune in code during freeze. |
 | RII watch/elevated/high bins | `PI_REQUIRED` | (A) Keep 25/50/75 as research bins only with RUO labeling; (B) Freeze bins + forbid retune until Phase 3 SAP; (C) Replace numeric bins with ordinal research states without urgency UX | Not probability, alarm, or treatment threshold (`PROHIBITED_CLAIMS.md`). |
-| DS_HYPOTHESIS_MODE / PROXY labeling | Lock reminder | N/A — already constrained | Must not be read as DS-specific activation or validation. |
+| DS_HYPOTHESIS_MODE / PROXY labeling | Lock reminder | N/A — already constrained | Must not be read as DS-calibrated mode activation or validation. |
 
 ---
 

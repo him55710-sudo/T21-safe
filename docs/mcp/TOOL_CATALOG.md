@@ -2,7 +2,7 @@
 
 > **RUO / Path B / `clinical_validation=false`**
 >
-> Research Use Only. Path B engineering tooling. Not for clinical diagnosis,
+> Research Use Only. Path B engineering tooling. Not for clinical diagnostic use,
 > dosing, alerts, or drug-safety claims. Shadow / PROXY / synthetic scopes only.
 
 This file is **auto-generated** by `scripts/generate_mcp_tool_catalog.py` from

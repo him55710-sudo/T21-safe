@@ -1,4 +1,4 @@
-# Stable, always-reporting required check for M0-A.
+# Stable, always-reporting required check for M0-A/C.
 # No secrets, network data, clinical activation, or model/threshold mutation.
 name: All-up required
 
@@ -25,7 +25,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 2
-      - name: Required M0-A documents and relative links
+      - name: Required M0-A/C documents and relative links
         run: |
           set -euo pipefail
           python - <<'PY'
@@ -40,6 +40,10 @@ jobs:
               Path("docs/governance/RELEASE_TAG_PROCESS.md"),
               Path("docs/model/RII_DISPLAY_HF_OPTIONS.md"),
               Path("docs/governance/TECHNICAL_AND_REPOSITORY_GATES.md"),
+              Path("docs/governance/REQUIRED_CI_CHECK_HOWTO.md"),
+              Path("docs/governance/M0_COMPLETION_CHECKLIST.md"),
+              Path("docs/business/HOSPITAL_AGGREGATE_FEASIBILITY_QUERY_KR.md"),
+              Path("docs/research/SCHEMA_CLOCK_PILOT_ACCEPTANCE.md"),
           ]
           missing = [str(path) for path in required if not path.is_file()]
           if missing:
@@ -60,6 +64,100 @@ jobs:
           PY
       - name: Whitespace errors
         run: git diff --check HEAD^
+
+  forbidden-claim-scan:
+    name: all-up-required / forbidden-claim scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Scan SAFE SUBSET forbidden claim phrases
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+
+          # SAFE SUBSET of docs/safety/PROHIBITED_CLAIMS.md Absolute denylist
+          # (case-insensitive substring match). Keep list in sync with that doc.
+          FORBIDDEN = [
+              "predicts cardiac arrest",
+              "optimizes anesthetic",
+              "safe to proceed",
+              "dosing recommendation",
+              "administer atropine",
+              "reduce propofol",
+              "ds-specific activation",
+              "clinical diagnosis",
+          ]
+
+          SCAN_ROOTS = [
+              Path("docs"),
+              Path("apps"),
+              Path("services"),
+              Path("README.md"),
+          ]
+          SKIP_DIR_NAMES = {
+              "node_modules",
+              ".venv",
+              "dist",
+              ".next",
+              "__pycache__",
+              ".git",
+          }
+          SKIP_SUFFIXES = {".lock", ".png", ".jpg", ".jpeg", ".gif", ".webp", ".pdf", ".zip", ".gz", ".whl", ".pyc", ".so", ".bin"}
+
+          # Paths that intentionally quote the denylist (governance / fixtures / this job).
+          ALLOW_EXACT = {
+              Path("docs/safety/PROHIBITED_CLAIMS.md"),
+              Path("docs/safety/CLAIM_AUDIT.md"),
+              Path(".github/workflows/all-up-required.yml"),
+          }
+
+          def is_allowlisted(path: Path) -> bool:
+              if path in ALLOW_EXACT:
+                  return True
+              name = path.name.lower()
+              if "forbidden" in name or "claim_pin" in name:
+                  return True
+              # Nested claim-pin / forbidden fixtures under tests/ remain out of SCAN_ROOTS,
+              # but keep the name heuristic if roots expand later.
+              return False
+
+          def iter_files():
+              for root in SCAN_ROOTS:
+                  if root.is_file():
+                      yield root
+                      continue
+                  if not root.is_dir():
+                      continue
+                  for path in root.rglob("*"):
+                      if not path.is_file():
+                          continue
+                      if any(part in SKIP_DIR_NAMES for part in path.parts):
+                          continue
+                      if path.suffix.lower() in SKIP_SUFFIXES or path.name.endswith(".lock"):
+                          continue
+                      yield path
+
+          hits = []
+          for path in iter_files():
+              if is_allowlisted(path):
+                  continue
+              try:
+                  text = path.read_text(encoding="utf-8")
+              except (UnicodeDecodeError, OSError):
+                  continue
+              lowered = text.lower()
+              for phrase in FORBIDDEN:
+                  if phrase in lowered:
+                      hits.append(f"{path}: contains forbidden phrase {phrase!r}")
+
+          if hits:
+              raise SystemExit(
+                  "forbidden-claim scan failed:\n" + "\n".join(hits)
+              )
+          print("forbidden-claim scan: OK")
+          PY
 
   existing-unit-smokes:
     name: all-up-required / existing unit smokes
@@ -84,4 +182,5 @@ jobs:
             tests/backend/unit/test_export_manifest_schema.py \
             tests/backend/unit/test_shadow_jsonl_schema.py \
             tests/backend/unit/test_meeting_onepager_claim_pins.py \
+            tests/backend/unit/test_mixed_rate_time_alignment.py \
             -q --tb=short
