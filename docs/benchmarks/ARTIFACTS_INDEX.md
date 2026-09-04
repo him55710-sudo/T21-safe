@@ -1,6 +1,6 @@
 # Research engineering artifacts index
 
-> **PUBLIC_DATA_REPORT_V1 freeze: `v2.5-meeting-demo-harness` · `2026-09-04 UTC`**
+> **PUBLIC_DATA_REPORT_V1 freeze: `v2.6-meeting-pack-mcp` · `2026-09-04 UTC`**
 >
 > **PROXY / engineering only**  
 > **clinical_validation=false**  
@@ -391,6 +391,14 @@ Freeze companion: [`PUBLIC_DATA_REPORT_V1.md`](PUBLIC_DATA_REPORT_V1.md) (`v2.4-
 Covers CODEX-122–124: hospital-demo Founder docs link the meeting one-pager (`eb1f5e5`), UNIFIED_MCP states its claim guards (`46a6b62`), and hospital-demo pack CI/unit tests assert the one-pager is staged (`c6806e1`). Prior tip `v2.3-meeting-onepager` covers 116–118.
 
 `clinical_validation=false` · Auditor DUAL-GATE retained · Path B / RUO / Shadow Mode · no FACT · no new HYP benches · no BIDMC/Airway.
+
+## Meeting pack / MCP freeze tip
+
+Freeze companion: [`PUBLIC_DATA_REPORT_V1.md`](PUBLIC_DATA_REPORT_V1.md) (`v2.6-meeting-pack-mcp`; base `3a5589f` plus visible in-tree CODEX-131/132).
+
+Covers CODEX-128–132: expose the meeting one-pager in the PROXY HYP pack README (`38f2cea`), pin hospital-demo Founder-document links (`a66ac5d`), record the prior freeze (`3a5589f`), and include the visible in-tree Path B / RUO / Silent Shadow v0.2 business refresh, versioned copies, pack help text, and PROXY HYP MCP tool-help claim guards with unit/stdio pins. No commit SHA is claimed for the in-tree CODEX-131/132 edits.
+
+`clinical_validation=false` · Auditor DUAL-GATE retained · Path B / RUO / Shadow Mode · no FACT · no new HYP/BIDMC/Airway.
 
 ## Meeting demo harness freeze tip
 

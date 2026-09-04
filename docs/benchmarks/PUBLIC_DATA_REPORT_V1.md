@@ -1,6 +1,6 @@
 # Public Data Report v1 — PROXY engine smoke
 
-**Freeze version:** `v2.5-meeting-demo-harness`
+**Freeze version:** `v2.6-meeting-pack-mcp`
 
 **Freeze date:** `2026-09-04 UTC` (prior hospital-demo tip stamped `2026-09-03 UTC`; prior PROXY benches tip `v2.1-proxy-hyp-benches`)
 
@@ -429,3 +429,21 @@ No new HYP benches.
 `clinical_validation=false` · Auditor DUAL-GATE retained · no FACT · no new HYP benches · no BIDMC/Airway · Path B / RUO / Shadow Mode.
 
 Prior tip `v2.4-meeting-demo-links` covers 122–124; the `v2.5-meeting-demo-harness` tip SHA after CODEX-127 is `c601b11`.
+
+## Meeting pack / MCP freeze (CODEX-128–132)
+
+Tip freeze `v2.6-meeting-pack-mcp` records meeting-one-pager pack visibility and
+documentation pins on base `3a5589f`, plus the visible in-tree Path B / RUO / Silent
+Shadow business-document refresh. No new HYP, BIDMC, or Airway work.
+
+| Delivery | Artifact | Commit / state |
+| --- | --- | --- |
+| CODEX-128 | PROXY HYP pack README notes the meeting one-pager | `38f2cea` |
+| CODEX-129 | Unit pin for hospital-demo Founder-document meeting-one-pager links | `a66ac5d` |
+| CODEX-130 | Record `v2.5-meeting-demo-harness` freeze | `3a5589f` |
+| CODEX-131 | Path B / RUO / Silent Shadow v0.2 business refresh, versioned copies, and pack help text | in-tree |
+| CODEX-132 | PROXY HYP MCP tool help pins the meeting one-pager and claim guards, with unit/stdio pins | in-tree |
+
+`clinical_validation=false` · Auditor DUAL-GATE retained · no FACT · no new HYP/BIDMC/Airway · Path B / RUO / Shadow Mode.
+
+Freeze base is `3a5589f`; CODEX-131/132 are recorded as visible in-tree edits and are not assigned invented commit SHAs.
