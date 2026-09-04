@@ -408,6 +408,14 @@ Covers CODEX-134–135: append the guarded meeting-one-pager pointer to PROXY HY
 
 `clinical_validation=false` · Auditor DUAL-GATE retained · Path B / RUO / Shadow Mode · no FACT · no new HYP/BIDMC/Airway.
 
+## Meeting tip sync freeze tip
+
+Freeze companion: [`PUBLIC_DATA_REPORT_V1.md`](PUBLIC_DATA_REPORT_V1.md) (`v2.8-meeting-tip-sync`; committed base `a0aa6dd`, the CODEX-134–136 tip, plus visible in-tree CODEX-137/138).
+
+Covers CODEX-137–138: sync meeting/founder/MCP/partner-pack references to `v2.7-meeting-pack-mcp-followup` (`a0aa6dd`), then refresh the Path B / RUO / Silent Shadow v0.2 Founder/PI business documents and add their versioned copies. No commit SHA is claimed for these visible in-tree edits.
+
+`clinical_validation=false` · Auditor DUAL-GATE retained · Path B / RUO / Shadow Mode · no FACT · no new HYP/BIDMC/Airway.
+
 ## Meeting demo harness freeze tip
 
 Freeze companion: [`PUBLIC_DATA_REPORT_V1.md`](PUBLIC_DATA_REPORT_V1.md) (`v2.5-meeting-demo-harness`; tip `c601b11`).

@@ -461,3 +461,18 @@ committed base `76779ec` (the CODEX-131–133 tip). No new HYP, BIDMC, or Airway
 `clinical_validation=false` · Auditor DUAL-GATE retained · no FACT · no new HYP/BIDMC/Airway · Path B / RUO / Shadow Mode.
 
 Freeze base is `76779ec`; CODEX-134/135 are visible in-tree edits and are not assigned invented commit SHAs.
+
+## Meeting tip sync freeze (CODEX-137–138)
+
+Tip freeze `v2.8-meeting-tip-sync` records the visible in-tree Path B / RUO /
+Silent Shadow business-document sync on committed base `a0aa6dd` (the
+CODEX-134–136 tip). No new HYP, BIDMC, or Airway work.
+
+| Delivery | Artifact | Commit / state |
+| --- | --- | --- |
+| CODEX-137 | Meeting/founder/MCP/partner-pack references sync to `v2.7-meeting-pack-mcp-followup` (`a0aa6dd`) | in-tree |
+| CODEX-138 | Path B / RUO / Silent Shadow v0.2 Founder/PI business-document refresh and versioned copies | in-tree |
+
+`clinical_validation=false` · Auditor DUAL-GATE retained · no FACT · no new HYP/BIDMC/Airway · Path B / RUO / Shadow Mode.
+
+Freeze base is `a0aa6dd`; CODEX-137/138 are visible in-tree edits and are not assigned invented commit SHAs.
