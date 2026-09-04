@@ -56,32 +56,11 @@
 
 ---
 
-## 4. Docs-only workflow — decision for this PR
+## 4. All-up required workflow — M0-A decision
 
-**Decision:** Document first; **no new workflow file in this commit**.
+**Decision:** Add one stable, always-reporting required workflow in M0-A.
 
-Rationale:
-
-- Multiple smokes already exist; adding another workflow mid-freeze increases tip noise.
-- M0 success is docs/governance completeness, not CI expansion.
-- If added later, constraints: `paths: ['docs/**']` only; job = checkout + `git diff --check` or markdown link check; **no** engine/bench execution.
-
-Suggested stub shape (do **not** apply until approved):
-
-```yaml
-# .github/workflows/docs-path-check.yml  (FUTURE — not added in M0 commit)
-name: docs-path-check
-on:
-  pull_request:
-    paths: ['docs/**']
-jobs:
-  docs:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: noop docs marker
-        run: test -d docs && echo "docs path OK"
-```
+The workflow performs documentation path/link and whitespace checks plus a small reuse of existing secret-free unit smokes. It does not run new PROXY benches, access governed data, change clinical/model values, or require repository secrets. Keeping it unfiltered at the workflow trigger level ensures a required status is reported for every PR; path-sensitive validation remains inside its jobs.
 
 ---
 
@@ -107,3 +86,9 @@ jobs:
 - `REPO_FACT` (`edff0f1`, repository state supplied/checked for M0): `main` branch protection is absent.
 - `REPO_FACT` (`edff0f1`, repository state supplied/checked for M0): tags, releases, and issues are empty.
 - These absences are governance gaps; they are not evidence of approval, validation, or a release.
+
+## 8. M0-A evidence and operating documents
+
+The implementation package is defined by the [Signal External Validity Plan](../research/SIGNAL_EXTERNAL_VALIDITY_PLAN.md), [Security Stage Matrix D0–D3](../security/SECURITY_STAGE_MATRIX_D0_D3.md), [Clinician Comprehension Protocol](../product/CLINICIAN_COMPREHENSION_PROTOCOL.md), [PI Decision Pack](../founder/PI_DECISION_PACK_KR.md), [Release Tag Process](RELEASE_TAG_PROCESS.md), and [RII Display Human-Factors Options](../model/RII_DISPLAY_HF_OPTIONS.md). The repository-wide, secret-free required check is [`.github/workflows/all-up-required.yml`](../../.github/workflows/all-up-required.yml); it verifies these paths and relative documentation links, then runs a small set of existing unit smokes.
+
+These documents and checks do not unfreeze clinical definitions or authorize RII/PROXY/threshold/weight changes.
