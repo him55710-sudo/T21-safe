@@ -8,6 +8,14 @@ import subprocess
 import sys
 from pathlib import Path
 
+MEETING_ONEPAGER_POINTER = "docs/founder/MEETING_ONEPAGER_PROXY_v0.1_KR.md"
+REQUIRED_TOOL_CLAIM_GUARDS = (
+    "Path B",
+    "Research Use Only",
+    "clinical_validation=false",
+    "no FACT",
+)
+
 
 def test_stdio_initialize_and_list_tools() -> None:
     repository_root = Path(__file__).parents[3]
@@ -44,8 +52,16 @@ def test_stdio_initialize_and_list_tools() -> None:
     responses = [json.loads(line) for line in completed.stdout.splitlines()]
     assert completed.stderr == ""
     assert responses[0]["result"]["serverInfo"]["name"] == "t21-proxy-hyp-mcp"
-    names = {tool["name"] for tool in responses[1]["result"]["tools"]}
+    tools = responses[1]["result"]["tools"]
+    names = {tool["name"] for tool in tools}
     assert names == {"list_proxy_hyp_benches", "run_proxy_hyp_benches"}
+    for tool in tools:
+        description = tool["description"]
+        assert MEETING_ONEPAGER_POINTER in description
+        for guard in REQUIRED_TOOL_CLAIM_GUARDS:
+            assert guard in description, (
+                f"{tool['name']}: missing claim guard {guard!r}"
+            )
 
 
 def test_stdio_run_proxy_hyp_benches_clinical_false(tmp_path: Path) -> None:

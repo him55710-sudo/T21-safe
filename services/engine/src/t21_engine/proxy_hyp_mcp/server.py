@@ -13,12 +13,16 @@ from t21_engine.proxy_hyp_mcp.handlers import (
 )
 
 SERVER_INFO = {"name": "t21-proxy-hyp-mcp", "version": "0.1.0"}
+CLAIM_GUARD_HELP = (
+    "Path B / Research Use Only; clinical_validation=false; no FACT. "
+    "Claim guard: docs/founder/MEETING_ONEPAGER_PROXY_v0.1_KR.md."
+)
 TOOLS = [
     {
         "name": "list_proxy_hyp_benches",
         "description": (
             "List locked PROXY HYP-01/03/07 benches (MIT-BIH+Fantasia fixture-only; "
-            "clinical_validation=false; LF/HF not primary; RQ-004 HYPOTHESIS)."
+            "LF/HF not primary; RQ-004 HYPOTHESIS). " + CLAIM_GUARD_HELP
         ),
         "inputSchema": {
             "type": "object",
@@ -30,7 +34,7 @@ TOOLS = [
         "name": "run_proxy_hyp_benches",
         "description": (
             "Run PROXY HYP-01/03/07 local benches and optionally write JSON/MD tables. "
-            "No network; no BIDMC; no waveforms returned."
+            "No network; no BIDMC; no waveforms returned. " + CLAIM_GUARD_HELP
         ),
         "inputSchema": {
             "type": "object",
