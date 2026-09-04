@@ -61,8 +61,20 @@ def test_run_proxy_hyp_benches_emits_layers_and_artifacts(tmp_path: Path) -> Non
     loaded = json.loads(
         (out / "proxy-hyp-bench-report.json").read_text(encoding="utf-8")
     )
+    assert loaded["schema_version"] == "proxy-hyp-bench-runner/1.2"
     assert loaded["status"] == "PASS"
-    assert all("sqi_fail_reason" in row for row in loaded["summary_rows"])
+    assert all(
+        {"claim_label", "sqi_fail_reason"} <= row.keys()
+        for row in loaded["summary_rows"]
+    )
+    assert {
+        row["hypothesis_id"]: row["claim_label"]
+        for row in loaded["summary_rows"]
+    } == {
+        "HYP-01": "PARTIALLY_SUPPORTED",
+        "HYP-03": "STRETCH/QA",
+        "HYP-07": "STRETCH/QA",
+    }
 
 
 def test_default_fixture_roots_are_local() -> None:
