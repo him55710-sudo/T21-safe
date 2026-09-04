@@ -6,7 +6,7 @@ and always reports `clinical_validation=false`. It is not a clinical monitor.
 
 Korean PROXY v0.1 meeting talk track (ECG HR-event/SQI only; no FACT):
 [`docs/founder/MEETING_ONEPAGER_PROXY_v0.1_KR.md`](founder/MEETING_ONEPAGER_PROXY_v0.1_KR.md).
-Freeze: `v2.4-meeting-demo-links`.
+Freeze tip: `v2.7-meeting-pack-mcp-followup` (`a0aa6dd`).
 
 ## Cursor dual-MCP (Founder)
 

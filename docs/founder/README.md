@@ -1,6 +1,6 @@
 # Founder docs (KR / DX)
 
-Path B · Research Use Only · Shadow Mode · `clinical_validation=false` · freeze tip `v2.4-meeting-demo-links` (116–118; tip `360db7d`, body `e57fd2b`; Auditor DUAL-GATE tip `v2.2-proxy-hyp-guards`; prior benches tip `v2.1-proxy-hyp-benches`; hospital demo pack tip still `v2.0-hospital-demo-ready`)
+Path B · Research Use Only · Shadow Mode · `clinical_validation=false` · freeze tip `v2.7-meeting-pack-mcp-followup` (`a0aa6dd`)
 
 임상·DS·투약/알림 claim 없음. VitalDB/CapnoBase/PulseDB 미포함.
 
@@ -13,7 +13,7 @@ Path B · Research Use Only · Shadow Mode · `clinical_validation=false` · fre
 | [`RESEARCH_NODE_DEMO_CHECKLIST_KR.md`](RESEARCH_NODE_DEMO_CHECKLIST_KR.md) | Research Node demo 실행 체크리스트 |
 | [`DUAL_MCP_TROUBLESHOOTING_KR.md`](DUAL_MCP_TROUBLESHOOTING_KR.md) | dual-MCP 안 보일 때 진단 |
 | [`PROXY_HYP_RESULTS_KR.md`](PROXY_HYP_RESULTS_KR.md) | PROXY HYP-01/03/07 결과 팩·원커맨드 러너 포인터 |
-| [`MEETING_ONEPAGER_PROXY_v0.1_KR.md`](MEETING_ONEPAGER_PROXY_v0.1_KR.md) | PROXY v0.1 미팅 talk track · ECG HR-event/SQI only · `clinical_validation=false` · no FACT · freeze `v2.4-meeting-demo-links` |
+| [`MEETING_ONEPAGER_PROXY_v0.1_KR.md`](MEETING_ONEPAGER_PROXY_v0.1_KR.md) | PROXY v0.1 미팅 talk track · ECG HR-event/SQI only · `clinical_validation=false` · no FACT · freeze `v2.7-meeting-pack-mcp-followup` (`a0aa6dd`) |
 
 영문/상세:
 
