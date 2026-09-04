@@ -447,3 +447,17 @@ Shadow business-document refresh. No new HYP, BIDMC, or Airway work.
 `clinical_validation=false` · Auditor DUAL-GATE retained · no FACT · no new HYP/BIDMC/Airway · Path B / RUO / Shadow Mode.
 
 Freeze base is `3a5589f`; CODEX-131/132 are recorded as visible in-tree edits and are not assigned invented commit SHAs.
+
+## Meeting pack / MCP follow-up freeze (CODEX-134–135)
+
+Tip freeze `v2.7-meeting-pack-mcp-followup` records the visible in-tree follow-up on
+committed base `76779ec` (the CODEX-131–133 tip). No new HYP, BIDMC, or Airway work.
+
+| Delivery | Artifact | Commit / state |
+| --- | --- | --- |
+| CODEX-134 | PROXY HYP runner appends the guarded meeting-one-pager pointer to its Markdown output | in-tree |
+| CODEX-135 | PROXY HYP / hospital-demo smoke workflows include meeting-one-pager claim/link checks and document triggers | in-tree |
+
+`clinical_validation=false` · Auditor DUAL-GATE retained · no FACT · no new HYP/BIDMC/Airway · Path B / RUO / Shadow Mode.
+
+Freeze base is `76779ec`; CODEX-134/135 are visible in-tree edits and are not assigned invented commit SHAs.

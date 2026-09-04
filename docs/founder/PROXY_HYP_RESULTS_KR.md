@@ -48,7 +48,7 @@ Path B · RUO · MIT-BIH + Fantasia **로컬 fixture만**.
 
 ## Freeze tip
 
-`v2.6-meeting-pack-mcp` (`2026-09-04 UTC`; base `3a5589f` + visible in-tree CODEX-131/132) — CODEX-128 exposes the meeting one-pager in the PROXY HYP pack README (`38f2cea`), CODEX-129 pins hospital-demo Founder-document links (`a66ac5d`), CODEX-130 records the prior freeze (`3a5589f`), and CODEX-131/132 are the visible in-tree Path B / RUO / Silent Shadow v0.2 business refresh, versioned copies, pack help text, and PROXY HYP MCP tool-help claim guards with unit/stdio pins. No commit SHA is claimed for CODEX-131/132. Auditor DUAL-GATE guards remain; `clinical_validation=false`; no FACT or new HYP/BIDMC/Airway. Prior tip `v2.5-meeting-demo-harness` covers CODEX-125–127.
+`v2.7-meeting-pack-mcp-followup` (`2026-09-04 UTC`; committed base `76779ec`, the CODEX-131–133 tip, plus visible in-tree CODEX-134/135) — CODEX-134 appends the guarded meeting-one-pager pointer to PROXY HYP runner Markdown output; CODEX-135 includes meeting-one-pager claim/link checks and document triggers in the PROXY HYP / hospital-demo smoke workflows. No commit SHA is claimed for CODEX-134/135. Auditor DUAL-GATE guards remain; `clinical_validation=false`; no FACT or new HYP/BIDMC/Airway. Prior tip `v2.6-meeting-pack-mcp` covers CODEX-128–133.
 
 ## 한 줄 요약
 

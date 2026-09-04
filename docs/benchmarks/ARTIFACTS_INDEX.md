@@ -400,6 +400,14 @@ Covers CODEX-128–132: expose the meeting one-pager in the PROXY HYP pack READM
 
 `clinical_validation=false` · Auditor DUAL-GATE retained · Path B / RUO / Shadow Mode · no FACT · no new HYP/BIDMC/Airway.
 
+## Meeting pack / MCP follow-up freeze tip
+
+Freeze companion: [`PUBLIC_DATA_REPORT_V1.md`](PUBLIC_DATA_REPORT_V1.md) (`v2.7-meeting-pack-mcp-followup`; committed base `76779ec` plus visible in-tree CODEX-134/135).
+
+Covers CODEX-134–135: append the guarded meeting-one-pager pointer to PROXY HYP runner Markdown output, and include meeting-one-pager claim/link checks and document triggers in the PROXY HYP / hospital-demo smoke workflows. No commit SHA is claimed for these visible in-tree edits.
+
+`clinical_validation=false` · Auditor DUAL-GATE retained · Path B / RUO / Shadow Mode · no FACT · no new HYP/BIDMC/Airway.
+
 ## Meeting demo harness freeze tip
 
 Freeze companion: [`PUBLIC_DATA_REPORT_V1.md`](PUBLIC_DATA_REPORT_V1.md) (`v2.5-meeting-demo-harness`; tip `c601b11`).
