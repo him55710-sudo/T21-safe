@@ -21,6 +21,8 @@ PI가 코드 값을 고르는 회의가 아니라, 다음 연구 프로토콜에
 | PI-06 | external cohort 및 validation design | site/device 분포, DUA/IRB 상태 | 독립성, split/holdout, 성공/중단 기준 초안 | 없음 |
 | PI-07 | clinician comprehension의 critical items | HF protocol, display 옵션 | 사용자 역할, critical error, retest gate | display 연구만 |
 | PI-08 | 임상/통계 자문 및 sign-off RACI | 현재 owner와 gap | PI, statistician, adjudicator, security/data owner | 없음 |
+| PI-09 | 병원 aggregate feasibility 질의 범위 | 집계 항목, small-cell 정책, 기관 taxonomy | 발송 가능 문구, 기관 담당자, 미해결 범주 | 없음 |
+| PI-10 | 1–3 case schema/clock pilot 진입 조건 | IRB/DUA/security 상태, acceptance checklist | 허용 sample 유형, reviewer, 중단/재요청 조건 | 없음 |
 
 ## 3. 회의에서 결정하지 않는 것
 
@@ -81,3 +83,5 @@ Does this request an unfreeze? NO by default
 - [Signal External Validity Plan](../research/SIGNAL_EXTERNAL_VALIDITY_PLAN.md)
 - [Clinician Comprehension Protocol](../product/CLINICIAN_COMPREHENSION_PROTOCOL.md)
 - [RII Display HF Options](../model/RII_DISPLAY_HF_OPTIONS.md)
+- [병원 Aggregate Feasibility Query](../business/HOSPITAL_AGGREGATE_FEASIBILITY_QUERY_KR.md)
+- [Schema/Clock Pilot Acceptance](../research/SCHEMA_CLOCK_PILOT_ACCEPTANCE.md)

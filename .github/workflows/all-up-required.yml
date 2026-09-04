@@ -1,4 +1,4 @@
-# Stable, always-reporting required check for M0-A.
+# Stable, always-reporting required check for M0-A/M0-B docs gates.
 # No secrets, network data, clinical activation, or model/threshold mutation.
 name: All-up required
 
@@ -40,6 +40,10 @@ jobs:
               Path("docs/governance/RELEASE_TAG_PROCESS.md"),
               Path("docs/model/RII_DISPLAY_HF_OPTIONS.md"),
               Path("docs/governance/TECHNICAL_AND_REPOSITORY_GATES.md"),
+              Path("docs/business/HOSPITAL_AGGREGATE_FEASIBILITY_QUERY_KR.md"),
+              Path("docs/research/SCHEMA_CLOCK_PILOT_ACCEPTANCE.md"),
+              Path("docs/governance/DOC_DEDUP_MAP.md"),
+              Path("docs/governance/REQUIRED_CI_CHECK_HOWTO.md"),
           ]
           missing = [str(path) for path in required if not path.is_file()]
           if missing:
