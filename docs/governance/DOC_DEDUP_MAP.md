@@ -26,6 +26,7 @@ Tip HEAD: `edff0f1`. Path B / RUO / Shadow.
 | `docs/founder/T21_REFOCUS_DECISION_KR.md` | **KEEP** (new canonical decision) | Why freeze; STOP/CONTINUE |
 | `docs/founder/MEETING_ONEPAGER_PROXY_v0.1_KR.md` | **KEEP** (talk track) | PROXY scope only; update tip refs away from obsolete SHA when editing |
 | `docs/founder/PROXY_HYP_RESULTS_KR.md` | **KEEP** | Engineering results pack; not clinical |
+| `docs/founder/PI_DECISION_PACK_KR.md` | **KEEP** | Current PI decision agenda; cross-links feasibility and pilot gates |
 | `docs/founder/README.md` | **KEEP** | Index — should link Refocus + freeze docs |
 | `docs/founder/MCP_ONBOARDING_KR.md` | **KEEP** | DX |
 | `docs/founder/DUAL_MCP_TROUBLESHOOTING_KR.md` | **KEEP** | DX |
@@ -54,6 +55,7 @@ Tip HEAD: `edff0f1`. Path B / RUO / Shadow.
 | `docs/research/DATA_GAP_MAP.md` | **KEEP** | |
 | `docs/research/DATASET_PRIORITY_MATRIX.md` | **KEEP** | |
 | `docs/research/HOSPITAL_DATA_REQUEST_SPEC.md` | **KEEP** | |
+| `docs/research/SCHEMA_CLOCK_PILOT_ACCEPTANCE.md` | **KEEP** | Canonical pre-extract schema/clock acceptance gate; no numeric criteria |
 | `docs/research/ASSUMPTIONS.md` | **KEEP** | Mark PRODUCT_ASSUMPTION vs PI_REQUIRED |
 | `docs/research/RESEARCH_REVIEW_BOARD.md` | **KEEP** | Process |
 | `docs/research/COMPETITOR_REFERENCE_PATTERNS.md` | **ARCHIVE** candidate | Low priority during freeze |
@@ -68,6 +70,7 @@ Tip HEAD: `edff0f1`. Path B / RUO / Shadow.
 | `docs/roadmap/90_DAY_EVIDENCE_ROADMAP_KR.md` | **KEEP** | Evidence calendar; does not replace VALIDATION_ROADMAP phases |
 | `docs/governance/FREEZE_DECLARATION_M0.md` | **KEEP** | Tip freeze |
 | `docs/governance/TECHNICAL_AND_REPOSITORY_GATES.md` | **KEEP** | Branch protection proposal |
+| `docs/governance/REQUIRED_CI_CHECK_HOWTO.md` | **KEEP** | Admin procedure to require and verify All-up checks |
 | `docs/governance/DOC_DEDUP_MAP.md` | **KEEP** | This file |
 | `docs/governance/M0_ISSUE_BACKLOG.md` | **KEEP** | Issues if gh milestone fails |
 | `docs/model/THRESHOLD_WEIGHT_PROVENANCE.md` | **KEEP** | Complements MODEL_AUDIT / FEATURE_TRACEABILITY |
@@ -85,6 +88,8 @@ Tip HEAD: `edff0f1`. Path B / RUO / Shadow.
 | `docs/safety/CLINICAL_SAFETY_BOUNDARIES.md` | **KEEP** | |
 | `docs/regulatory/INTENDED_USE_DRAFT.md` | **KEEP** | RUO intended use |
 | `docs/business/*one-pager*` | **KEEP** | Partner-facing; must not outclaim meeting one-pager |
+| `docs/business/HOSPITAL_AGGREGATE_FEASIBILITY_QUERY_KR.md` | **KEEP** | Canonical aggregate-first hospital query |
+| `docs/business/hospital-aggregate-query-1p.md` | **ARCHIVE** candidate | Superseded by KR feasibility query; retain history, add pointer on later archive move |
 
 ---
 
@@ -97,6 +102,31 @@ Tip HEAD: `edff0f1`. Path B / RUO / Shadow.
 5. **Obsolete SHA `c6806e1`:** strip on next touch of any doc that still cites it; prefer `edff0f1`.
 
 ---
+
+## Tip / pack churn archive candidates (M0-B)
+
+**Intent only — no deletes.** These paths (or embedded tip-bump narratives) were driven by successive meeting-pack / freeze-tip bumps (`v1.x`…`v2.7` / SHAs such as `a0aa6dd`, obsolete `c6806e1`). Decision-making for tip and clinical freeze is **SUPERSEDED** by Evidence-First M0: [`FREEZE_DECLARATION_M0.md`](FREEZE_DECLARATION_M0.md) tip `edff0f1` + [`T21_REFOCUS_DECISION_KR.md`](../founder/T21_REFOCUS_DECISION_KR.md).
+
+| Path | Action | Notes |
+| --- | --- | --- |
+| `docs/DEMO.md` (embedded freeze-tip bump history) | **ARCHIVE** candidate / **SUPERSEDE** for tip authority | Keep file for demo ops; tip authority → `edff0f1` declaration |
+| `docs/mcp/UNIFIED_MCP.md` (tip pins) | **ARCHIVE** candidate for tip-churn paragraphs | MCP DX content **KEEP**; tip pins **SUPERSEDE** → freeze declaration |
+| `docs/benchmarks/ARTIFACTS_INDEX.md` (repeated freeze bump entries) | **ARCHIVE** candidate for historical tip rows | Index **KEEP**; do not treat old tip rows as current freeze |
+| `docs/benchmarks/PUBLIC_DATA_REPORT_V1.md` (freeze bump trail) | **ARCHIVE** candidate for tip-churn trail | Report body **KEEP** as eng PROXY evidence; not DS validation |
+| `docs/founder/README.md` (stale tip `a0aa6dd` / `v2.7-meeting-pack-*`) | **SUPERSEDE** tip line | Index **KEEP**; update pointer to Refocus + `edff0f1` (M0-B light edit) |
+| `docs/founder/MEETING_ONEPAGER_PROXY_v0.1_KR.md` | **KEEP** talk track; tip cites **SUPERSEDE** to `edff0f1` on next touch | Spoken PROXY boundary still canonical for meetings |
+| `docs/founder/PROXY_HYP_RESULTS_KR.md` | **KEEP** | Eng results; not clinical; tip refs → `edff0f1` when edited |
+| `docs/business/hospital-aggregate-query-1p.md` | **ARCHIVE** candidate | Superseded by [`HOSPITAL_AGGREGATE_FEASIBILITY_QUERY_KR.md`](../business/HOSPITAL_AGGREGATE_FEASIBILITY_QUERY_KR.md); retain history and add a pointer if archived |
+| Pre-Evidence-First “meeting pack” tip-only CHANGELOG blurbs in README footers | **ARCHIVE** / **SUPERSEDE** | Do not expand; point to freeze declaration |
+
+### Supersession markers (copy into footers when touching)
+
+```text
+SUPERSEDED (tip authority): Evidence-First M0 freeze tip edff0f1 — see docs/governance/FREEZE_DECLARATION_M0.md
+Obsolete observation SHA c6806e1 — do not cite as current tip
+```
+
+Archive labels do not invalidate historical engineering results and do not authorize removal of attribution, provenance, or safety language.
 
 ## Explicit non-actions in M0
 

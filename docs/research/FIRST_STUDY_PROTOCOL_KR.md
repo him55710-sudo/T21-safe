@@ -35,3 +35,8 @@
 
 - `docs/research/IRB_PROTOCOL_DRAFT.md`, `PICOTS.md`, `HOSPITAL_DATA_REQUEST_SPEC.md`
 - `docs/business/HOSPITAL_POC_ONEPAGER.md`
+- M0 gates (cross-link only; 이 문서는 여전히 **STUB**):
+  - [`docs/business/HOSPITAL_AGGREGATE_FEASIBILITY_QUERY_KR.md`](../business/HOSPITAL_AGGREGATE_FEASIBILITY_QUERY_KR.md) — Founder 수동 합계 질의
+  - [`docs/research/SCHEMA_CLOCK_PILOT_ACCEPTANCE.md`](SCHEMA_CLOCK_PILOT_ACCEPTANCE.md) — 비식별 1–3건 schema/clock 수용
+  - [`docs/founder/PI_DECISION_PACK_KR.md`](../founder/PI_DECISION_PACK_KR.md) — PI 회의 팩
+  - [`docs/governance/FREEZE_DECLARATION_M0.md`](../governance/FREEZE_DECLARATION_M0.md) — tip `edff0f1`
