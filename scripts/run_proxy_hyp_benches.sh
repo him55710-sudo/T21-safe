@@ -52,6 +52,14 @@ MD="${OUT_DIR}/proxy-hyp-bench-results.md"
 [[ -f "${JSON}" ]] || { echo "FAIL: missing ${JSON}" >&2; exit 1; }
 [[ -f "${MD}" ]] || { echo "FAIL: missing ${MD}" >&2; exit 1; }
 
+cat >>"${MD}" <<'EOF'
+
+---
+
+> **Claim guard:** Path B / RUO · ECG HR-event / SQI only · `clinical_validation=false` · no FACT.
+> Meeting pointer: `docs/founder/MEETING_ONEPAGER_PROXY_v0.1_KR.md`.
+EOF
+
 "${PYTHON}" - <<PY
 import json
 from pathlib import Path
@@ -75,9 +83,13 @@ for row in rows:
 md = (out / "proxy-hyp-bench-results.md").read_text(encoding="utf-8")
 assert "clinical_validation" in md
 assert "HYP-01" in md and "HYP-03" in md and "HYP-07" in md
+assert "Path B / RUO · ECG HR-event / SQI only" in md
+assert "`clinical_validation=false` · no FACT" in md
+assert "docs/founder/MEETING_ONEPAGER_PROXY_v0.1_KR.md" in md
 print("gate checks PASS")
 PY
 
 echo "=== DONE ==="
 echo "JSON: ${JSON}"
 echo "MD:   ${MD}"
+echo "Meeting one-pager: docs/founder/MEETING_ONEPAGER_PROXY_v0.1_KR.md"
