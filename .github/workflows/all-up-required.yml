@@ -1,0 +1,87 @@
+# Stable, always-reporting required check for M0-A.
+# No secrets, network data, clinical activation, or model/threshold mutation.
+name: All-up required
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: all-up-required-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  docs-path-checks:
+    name: all-up-required / docs paths
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - name: Required M0-A documents and relative links
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          required = [
+              Path("docs/research/SIGNAL_EXTERNAL_VALIDITY_PLAN.md"),
+              Path("docs/security/SECURITY_STAGE_MATRIX_D0_D3.md"),
+              Path("docs/product/CLINICIAN_COMPREHENSION_PROTOCOL.md"),
+              Path("docs/founder/PI_DECISION_PACK_KR.md"),
+              Path("docs/governance/RELEASE_TAG_PROCESS.md"),
+              Path("docs/model/RII_DISPLAY_HF_OPTIONS.md"),
+              Path("docs/governance/TECHNICAL_AND_REPOSITORY_GATES.md"),
+          ]
+          missing = [str(path) for path in required if not path.is_file()]
+          if missing:
+              raise SystemExit(f"missing required documentation: {missing}")
+
+          bad = []
+          link = re.compile(r"(?<!!)\[[^]]*\]\(([^)]+)\)")
+          for source in Path("docs").rglob("*.md"):
+              for raw in link.findall(source.read_text(encoding="utf-8")):
+                  target = raw.split("#", 1)[0].strip().strip("<>")
+                  if not target or "://" in target or target.startswith(("mailto:", "/")):
+                      continue
+                  if not (source.parent / target).resolve().exists():
+                      bad.append(f"{source}: {raw}")
+          if bad:
+              raise SystemExit("broken relative documentation links:\n" + "\n".join(bad))
+          print("required docs and relative links: OK")
+          PY
+      - name: Whitespace errors
+        run: git diff --check HEAD^
+
+  existing-unit-smokes:
+    name: all-up-required / existing unit smokes
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: services/engine/pyproject.toml
+      - name: Install engine test dependencies
+        run: python -m pip install -e "services/engine[dev]"
+      - name: Run existing secret-free smoke units
+        env:
+          PYTHONPATH: services/engine/src
+        run: |
+          set -euo pipefail
+          python -m pytest \
+            tests/backend/unit/test_baseline_features_risk.py \
+            tests/backend/unit/test_export_manifest_schema.py \
+            tests/backend/unit/test_shadow_jsonl_schema.py \
+            tests/backend/unit/test_meeting_onepager_claim_pins.py \
+            -q --tb=short
