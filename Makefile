@@ -11,9 +11,9 @@ PROXY_PACK_DIR ?= /tmp/t21-proxy-hyp-partner-pack
 help:
 	@echo "Targets:"
 	@echo "  make hospital-demo       # demo → HTML showcard → partner zip chain"
-	@echo "  make hospital-demo-pack  # pack only (runs demo if report missing)"
+	@echo "  make hospital-demo-pack  # pack incl. MEETING_ONEPAGER_PROXY_v0.1_KR.md (runs demo if report missing)"
 	@echo "  make proxy-hyp-benches  # HYP-01/03/07 PROXY local runner (CODEX-104)"
-	@echo "  make proxy-hyp-pack     # PROXY HYP partner zip (CODEX-108)"
+	@echo "  make proxy-hyp-pack     # PROXY HYP partner zip incl. MEETING_ONEPAGER_PROXY_v0.1_KR.md (CODEX-108)"
 	@echo "Vars: OUT_DIR=$(OUT_DIR) PACK_DIR=$(PACK_DIR) PROXY_OUT_DIR=$(PROXY_OUT_DIR) PROXY_PACK_DIR=$(PROXY_PACK_DIR)"
 
 hospital-demo:
