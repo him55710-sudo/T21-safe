@@ -44,6 +44,7 @@ def test_multi_record_engine_qa_layers(monkeypatch) -> None:
     assert report["schema_version"] == "fantasia-age-band-hrv-stability/1.0"
     assert report["status"] == "PASS"
     assert report["clinical_validation"] is False
+    assert report["age_unavailable"] is True
     assert report["lf_hf_as_balance_index"] is False
     assert report["role_tag"] == "PROXY_HRV_AGE_STABILITY"
     assert report["hypothesis_id"] == "HYP-07"
@@ -73,6 +74,8 @@ def test_checksum_mismatch_fails_closed(tmp_path: Path) -> None:
 
     assert report["status"] == "FAIL"
     assert report["failure_reason_code"] == "SHA256_MISMATCH"
+    assert report["clinical_validation"] is False
+    assert report["age_unavailable"] is True
     assert report["fact"] is None
 
 
@@ -86,3 +89,5 @@ def test_insufficient_rr_fails_closed(monkeypatch) -> None:
 
     assert report["status"] == "FAIL"
     assert report["failure_reason_code"] == "INSUFFICIENT_RR_INTERVALS"
+    assert report["clinical_validation"] is False
+    assert report["age_unavailable"] is True

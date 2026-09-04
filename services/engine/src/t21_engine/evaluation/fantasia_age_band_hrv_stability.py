@@ -53,6 +53,7 @@ def _base_meta() -> dict[str, Any]:
         "research_use_only": True,
         "network_required": False,
         "proxy_not_ds": True,
+        "age_unavailable": True,
         "lf_hf_as_balance_index": False,
         "thresholds": {
             "age_band_cutoffs": "PI_TO_DEFINE",
@@ -339,6 +340,7 @@ def run_fantasia_age_band_hrv_stability(
     payload = _base_meta()
     payload.update(
         {
+            "age_unavailable": not age_available,
             "status": "PASS",
             "failure_reason_code": None,
             "records": rows,

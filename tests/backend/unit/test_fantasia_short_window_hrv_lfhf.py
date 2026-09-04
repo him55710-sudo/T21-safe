@@ -6,7 +6,6 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import numpy as np
-import pytest
 from t21_engine.evaluation.fantasia_short_window_hrv_lfhf import (
     run_fantasia_short_window_hrv_lfhf,
 )
@@ -69,6 +68,8 @@ def test_checksum_mismatch_fails_closed(tmp_path: Path) -> None:
 
     assert report["status"] == "FAIL"
     assert report["failure_reason_code"] == "SHA256_MISMATCH"
+    assert report["clinical_validation"] is False
+    assert report["lf_hf_primary"] is False
     assert report["fact"] is None
 
 
@@ -82,3 +83,5 @@ def test_insufficient_rr_fails_closed(monkeypatch) -> None:
 
     assert report["status"] == "FAIL"
     assert report["failure_reason_code"] == "INSUFFICIENT_RR_INTERVALS"
+    assert report["clinical_validation"] is False
+    assert report["lf_hf_primary"] is False
