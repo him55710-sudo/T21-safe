@@ -1,8 +1,8 @@
 # Required CI Check How-to — `All-up required`
 
-**Status:** REQUIRED M0 repository-control action  
-**Target branch:** `main`  
-**Workflow:** [`.github/workflows/all-up-required.yml`](../../.github/workflows/all-up-required.yml)  
+**Status:** REQUIRED M0 repository-control action<br>
+**Target branch:** `main`<br>
+**Workflow:** [`.github/workflows/all-up-required.yml`](../../.github/workflows/all-up-required.yml)<br>
 **Boundary:** Repository governance only; this check does not approve clinical definitions or model behavior.
 
 ## Required setting
