@@ -17,10 +17,21 @@ def test_hyp01_defaults_to_pi_to_define_without_clinical_cutoffs() -> None:
     assert report["clinical_validation"] is False
     assert report["role_tag"] == "PROXY_ECG_BENCHMARK"
     assert report["hypothesis_id"] == "HYP-01"
-    assert report["thresholds"]["absolute_hr_bpm"] == "PI_TO_DEFINE"
+    assert report["thresholds"] == {
+        "status": "UNAVAILABLE",
+        "reason": "PI_TO_DEFINE",
+        "absolute_hr_bpm": {"value": "PI_TO_DEFINE", "unit": "bpm"},
+        "relative_drop_fraction": {"value": "PI_TO_DEFINE", "unit": "fraction"},
+        "note": "No clinical cutoffs hardcoded; sensitivity waits on PI_TO_DEFINE.",
+    }
     assert report["fact"]["layer"] == "FACT"
     assert report["interpretation"]["status"] == "UNAVAILABLE"
     assert report["interpretation"]["reason"] == "PI_TO_DEFINE"
+    assert report["interpretation"]["abs_vs_rel_concordance"] == {
+        "status": "UNAVAILABLE",
+        "reason": "PI_TO_DEFINE",
+        "value": "PI_TO_DEFINE",
+    }
     assert report["hypothesis"]["status"] == "HYPOTHESIS"
     assert report["hypothesis"]["human_review_required"] is True
     assert "pooled_instability_score" not in report

@@ -37,8 +37,16 @@ def _base_meta() -> dict[str, Any]:
         "network_required": False,
         "proxy_not_ds": True,
         "thresholds": {
-            "absolute_hr_bpm": "PI_TO_DEFINE",
-            "relative_drop_fraction": "PI_TO_DEFINE",
+            "status": "UNAVAILABLE",
+            "reason": "PI_TO_DEFINE",
+            "absolute_hr_bpm": {
+                "value": "PI_TO_DEFINE",
+                "unit": "bpm",
+            },
+            "relative_drop_fraction": {
+                "value": "PI_TO_DEFINE",
+                "unit": "fraction",
+            },
             "note": "No clinical cutoffs hardcoded; sensitivity waits on PI_TO_DEFINE.",
         },
         "dataset": {
@@ -152,7 +160,11 @@ def run_mitbih_brady_def_sensitivity(
             "layer": "INTERPRETATION",
             "status": "UNAVAILABLE",
             "reason": "PI_TO_DEFINE",
-            "abs_vs_rel_concordance": None,
+            "abs_vs_rel_concordance": {
+                "status": "UNAVAILABLE",
+                "reason": "PI_TO_DEFINE",
+                "value": "PI_TO_DEFINE",
+            },
             "engineering_probe_only": False,
             "note": "Abs/rel sensitivity comparison deferred until PI defines thresholds.",
         }
