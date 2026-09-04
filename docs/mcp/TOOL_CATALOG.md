@@ -36,8 +36,8 @@ Local PROXY HYP-01/03/07 bench list/run MCP tools (MIT-BIH+Fantasia fixtures onl
 
 | Tool name | Description |
 | --- | --- |
-| `list_proxy_hyp_benches` | List locked PROXY HYP-01/03/07 benches (MIT-BIH+Fantasia fixture-only; clinical_validation=false; LF/HF not primary; RQ-004 HYPOTHESIS). |
-| `run_proxy_hyp_benches` | Run PROXY HYP-01/03/07 local benches and optionally write JSON/MD tables. No network; no BIDMC; no waveforms returned. |
+| `list_proxy_hyp_benches` | List locked PROXY HYP-01/03/07 benches (MIT-BIH+Fantasia fixture-only; LF/HF not primary; RQ-004 HYPOTHESIS). Path B / Research Use Only; clinical_validation=false; no FACT. Claim guard: docs/founder/MEETING_ONEPAGER_PROXY_v0.1_KR.md. |
+| `run_proxy_hyp_benches` | Run PROXY HYP-01/03/07 local benches and optionally write JSON/MD tables. No network; no BIDMC; no waveforms returned. Path B / Research Use Only; clinical_validation=false; no FACT. Claim guard: docs/founder/MEETING_ONEPAGER_PROXY_v0.1_KR.md. |
 
 ---
 
