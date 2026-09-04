@@ -101,3 +101,9 @@ jobs:
 | This document merged via PR | Required |
 | GitHub branch protection UI applied | Founder/admin action (tracked as M0 backlog issue) |
 | Docs-only workflow file | Optional / deferred |
+
+## 7. Current REPO_FACT baseline
+
+- `REPO_FACT` (`edff0f1`, repository state supplied/checked for M0): `main` branch protection is absent.
+- `REPO_FACT` (`edff0f1`, repository state supplied/checked for M0): tags, releases, and issues are empty.
+- These absences are governance gaps; they are not evidence of approval, validation, or a release.

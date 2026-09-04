@@ -1,8 +1,10 @@
 # 첫 연구 프로토콜 스텁 (KR)
 
-**상태:** STUB · Path B · RUO · Shadow Mode  
-**목적:** **실현 가능성(feasibility)** · 자료 품질·재현성 — **예측·진단·처치 권고 아님**  
+**상태:** STUB · Path B · RUO · Shadow Mode
+**목적:** **실현 가능성(feasibility)** · 자료 품질·재현성 — **예측·진단·처치 권고 아님**
 **임상 임계값:** 전부 `PI_TO_DEFINE`
+
+> 임상 연구 결정의 canonical source는 [`CLINICAL_RESEARCH_LOCK_V0.md`](CLINICAL_RESEARCH_LOCK_V0.md)다. 이 문서는 해당 결정이 승인·반영되기 전까지 `STUB`이다.
 
 ---
 

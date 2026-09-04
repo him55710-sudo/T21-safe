@@ -1,5 +1,7 @@
 # T21 Safe repository instructions
 
+> **Evidence-First M0 freeze:** docs/governance work may proceed, but clinical definitions and model/threshold/weight changes remain locked. Canonical decision: [`docs/founder/T21_REFOCUS_DECISION_KR.md`](docs/founder/T21_REFOCUS_DECISION_KR.md).
+
 ## Repository structure and ownership
 
 - `agent/research-data`: `docs/research`, `docs/regulatory`, `docs/safety`, `research`, `tools/datasets`
