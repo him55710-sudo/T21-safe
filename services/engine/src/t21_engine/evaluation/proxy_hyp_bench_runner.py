@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import json
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from types import SimpleNamespace
 from typing import Any
@@ -25,7 +25,7 @@ from t21_engine.evaluation.mitbih_brady_def_sensitivity import (
     run_mitbih_brady_def_sensitivity,
 )
 
-SCHEMA_VERSION = "proxy-hyp-bench-runner/1.1"
+SCHEMA_VERSION = "proxy-hyp-bench-runner/1.2"
 BENCH_COMMITS = {
     "CODEX-101": "af98247",
     "CODEX-102": "6318771",
@@ -41,17 +41,20 @@ AUDITOR_DUAL_GATE = {
     "hypotheses": {
         "HYP-01": {
             "auditor_label": "PARTIALLY_SUPPORTED",
+            "claim_label": "PARTIALLY_SUPPORTED",
             "scope": "HR-event/SQI",
             "note": "Partial support in ECG HR-event/SQI PROXY only — not clinical FACT.",
         },
         "HYP-03": {
             "auditor_label": "STRETCH_IF_POSITIVE_PROXY",
+            "claim_label": "STRETCH/QA",
             "ok_as": "neg-control-QA",
             "lf_hf_primary": False,
             "note": "STRETCH if read as positive PROXY; OK as negative-control / methods QA.",
         },
         "HYP-07": {
             "auditor_label": "STRETCH_IF_POSITIVE_PROXY",
+            "claim_label": "STRETCH/QA",
             "ok_as": "neg-control-QA",
             "note": "STRETCH if read as positive PROXY; OK as age-band engine QA only.",
         },
@@ -127,6 +130,7 @@ def _row_summary(codex_id: str, hyp_id: str, report: dict[str, Any]) -> dict[str
         "hypothesis_id": hyp_id,
         "status": report.get("status"),
         "failure_reason_code": report.get("failure_reason_code"),
+        "sqi_fail_reason": report.get("sqi_fail_reason"),
         "clinical_validation": report.get("clinical_validation"),
         "role_tag": report.get("role_tag"),
         "schema_version": report.get("schema_version"),
@@ -134,11 +138,10 @@ def _row_summary(codex_id: str, hyp_id: str, report: dict[str, Any]) -> dict[str
         "fact_layer": (report.get("fact") or {}).get("layer") if report.get("fact") else None,
         "interpretation_status": (report.get("interpretation") or {}).get("status"),
         "hypothesis_status": (report.get("hypothesis") or {}).get("status"),
-        "human_review_required": (report.get("hypothesis") or {}).get(
-            "human_review_required"
-        ),
+        "human_review_required": (report.get("hypothesis") or {}).get("human_review_required"),
         "thresholds_note": (report.get("thresholds") or {}).get("note"),
         "auditor_label": gate.get("auditor_label"),
+        "claim_label": gate.get("claim_label"),
         "auditor_ok_as": gate.get("ok_as"),
         "clinical_fact": False,
     }
@@ -155,8 +158,8 @@ def _markdown_table(rows: list[dict[str, Any]], aggregate: dict[str, Any]) -> st
         f"- clinical_fact: `{dual.get('clinical_fact', False)}`",
         f"- PI_TO_DEFINE: `{dual.get('pi_to_define', True)}`",
         f"- Airway+BIDMC: **do-not-run** (`{dual.get('airway_bidmc_do_not_run', True)}`)",
-        f"- HYP-01: **PARTIALLY_SUPPORTED** (HR-event/SQI)",
-        f"- HYP-03/07: **STRETCH if positive PROXY** / OK as **neg-control-QA**",
+        "- HYP-01: **PARTIALLY_SUPPORTED** (HR-event/SQI)",
+        "- HYP-03/07: **STRETCH if positive PROXY** / OK as **neg-control-QA**",
         "",
         f"- schema: `{SCHEMA_VERSION}`",
         f"- generated_at_utc: `{aggregate['generated_at_utc']}`",
@@ -164,15 +167,20 @@ def _markdown_table(rows: list[dict[str, Any]], aggregate: dict[str, Any]) -> st
         f"- wfdb_backend: `{aggregate['wfdb_backend']}`",
         f"- pooled_instability_score: `{aggregate['pooled_instability_score']}`",
         "",
-        "| CODEX | HYP | auditor_label | status | role_tag | FACT | INTERPRETATION | HYPOTHESIS | landing |",
-        "| --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+        "| CODEX | HYP | claim_label | SQI fail reason | status | role_tag | "
+        "FACT | INTERPRETATION | HYPOTHESIS | landing |",
+        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
     ]
     for row in rows:
         lines.append(
-            "| {codex} | {hyp} | `{label}` | {status} | `{role}` | {fact} | {interp} | {hyp_st} | `{sha}` |".format(
+            (
+                "| {codex} | {hyp} | `{label}` | `{sqi_reason}` | {status} | `{role}` | "
+                "{fact} | {interp} | {hyp_st} | `{sha}` |"
+            ).format(
                 codex=row["codex_id"],
                 hyp=row["hypothesis_id"],
-                label=row.get("auditor_label") or "—",
+                label=row.get("claim_label") or "—",
+                sqi_reason=row.get("sqi_fail_reason") or "—",
                 status=row["status"],
                 role=row.get("role_tag") or "",
                 fact=row.get("fact_layer") or "—",
@@ -230,7 +238,7 @@ def run_proxy_hyp_benches(
         "clinical_fact": False,
         "auditor_dual_gate": AUDITOR_DUAL_GATE,
         "wfdb_backend": wfdb_backend,
-        "generated_at_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "generated_at_utc": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "fixture_roots": {
             "mitbih": str(mit_root),
             "fantasia": str(fan_root),
