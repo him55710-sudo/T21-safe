@@ -65,6 +65,7 @@ See `docs/PROXY_HYP_RESULTS_KR.md` (Auditor DSCS + METHODS_CRITIQUE at top).
 - `reports/proxy-hyp-bench-report.json` — HYP-01/03/07 FACT/INTERPRETATION/HYPOTHESIS
 - `reports/proxy-hyp-bench-results.md` — summary table
 - `docs/PROXY_HYP_RESULTS_KR.md` — founder KR pack + critique
+- `docs/MEETING_ONEPAGER_PROXY_v0.1_KR.md` — also staged by the hospital-demo partner pack (cross-pack consistency; docs-only; no PHI)
 - `docs/ARTIFACTS_INDEX.md` — engineering artifact index (PROXY section)
 - `docs/safety-local-first-1p.md` — optional RUO one-pager (if present)
 
