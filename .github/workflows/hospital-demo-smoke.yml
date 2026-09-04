@@ -17,11 +17,16 @@ on:
       - "tests/backend/unit/test_generate_hospital_demo_showcard_html.py"
       - "tests/backend/unit/test_pack_hospital_demo_partner.py"
       - "tests/backend/unit/test_partner_pack_zip_contents.py"
+      - "tests/backend/unit/test_meeting_onepager_claim_pins.py"
+      - "tests/backend/unit/test_hospital_demo_meeting_onepager_doc_links.py"
       - "docs/business/export-manifest-phi-false-1p.md"
       - "docs/business/research-node-one-pager.md"
       - "docs/business/research-overview-2p.md"
       - "docs/business/safety-local-first-1p.md"
       - "docs/founder/MEETING_ONEPAGER_PROXY_v0.1_KR.md"
+      - "docs/founder/HOSPITAL_DEMO_RUNBOOK_KR.md"
+      - "docs/founder/HOSPITAL_DEMO_ONBOARDING_KR.md"
+      - "docs/founder/EXPORT_MANIFEST_PHI_FALSE_KR.md"
       - "Makefile"
       - "services/engine/src/t21_engine/demo.py"
       - "services/engine/src/t21_engine/adapters/synthetic_hospital_case.py"
@@ -41,11 +46,16 @@ on:
       - "tests/backend/unit/test_generate_hospital_demo_showcard_html.py"
       - "tests/backend/unit/test_pack_hospital_demo_partner.py"
       - "tests/backend/unit/test_partner_pack_zip_contents.py"
+      - "tests/backend/unit/test_meeting_onepager_claim_pins.py"
+      - "tests/backend/unit/test_hospital_demo_meeting_onepager_doc_links.py"
       - "docs/business/export-manifest-phi-false-1p.md"
       - "docs/business/research-node-one-pager.md"
       - "docs/business/research-overview-2p.md"
       - "docs/business/safety-local-first-1p.md"
       - "docs/founder/MEETING_ONEPAGER_PROXY_v0.1_KR.md"
+      - "docs/founder/HOSPITAL_DEMO_RUNBOOK_KR.md"
+      - "docs/founder/HOSPITAL_DEMO_ONBOARDING_KR.md"
+      - "docs/founder/EXPORT_MANIFEST_PHI_FALSE_KR.md"
       - "Makefile"
       - "services/engine/src/t21_engine/demo.py"
       - "services/engine/src/t21_engine/adapters/synthetic_hospital_case.py"
@@ -78,6 +88,8 @@ jobs:
             tests/backend/unit/test_generate_hospital_demo_showcard_html.py \
             tests/backend/unit/test_pack_hospital_demo_partner.py \
             tests/backend/unit/test_partner_pack_zip_contents.py \
+            tests/backend/unit/test_meeting_onepager_claim_pins.py \
+            tests/backend/unit/test_hospital_demo_meeting_onepager_doc_links.py \
             -q --tb=short
       - name: Full hospital demo runner (tmp)
         env:
