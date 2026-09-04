@@ -8,6 +8,8 @@ Path B · Research Use Only · Shadow Mode · `clinical_validation=false` · Evi
 | --- | --- |
 | [`T21_REFOCUS_DECISION_KR.md`](T21_REFOCUS_DECISION_KR.md) | Evidence-First 재집중 STOP/CONTINUE |
 | [`PI_DECISION_PACK_KR.md`](PI_DECISION_PACK_KR.md) | PI 회의 의사결정 팩 (M0-A) |
+| [`../governance/M0_COMPLETION_CHECKLIST.md`](../governance/M0_COMPLETION_CHECKLIST.md) | M0 Done vs PI/SITE Lock 잔여 (M0-C) |
+| [`../research/FAULT_INJECTION_MIXED_RATE_PLAN.md`](../research/FAULT_INJECTION_MIXED_RATE_PLAN.md) | Mixed-rate / clock-skew fault-injection plan (eng) |
 | [`../business/HOSPITAL_AGGREGATE_FEASIBILITY_QUERY_KR.md`](../business/HOSPITAL_AGGREGATE_FEASIBILITY_QUERY_KR.md) | 병원 aggregate 합계 질의 — **Founder만** 발송 |
 | [`MCP_ONBOARDING_KR.md`](MCP_ONBOARDING_KR.md) | Cursor dual-MCP 온보딩 1페이지 |
 | [`HOSPITAL_DEMO_RUNBOOK_KR.md`](HOSPITAL_DEMO_RUNBOOK_KR.md) | Hospital demo 원커맨드 체인 런북 (HTML 카드) |
