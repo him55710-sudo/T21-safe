@@ -1,11 +1,11 @@
 # T21 Safe — Evidence-First Refocus 결정 (Founder)
 
-**일자:** 2026-09-04 (KST)  
-**문서 성격:** Founder 의사결정 · Path B / RUO / Shadow · `clinical_validation=false`  
-**Eng tip (현재 HEAD):** `edff0f1` (`edff0f1abcf417729fd3029266d2c46e11b2b688`)  
+**일자:** 2026-09-04 (KST)
+**문서 성격:** Founder 의사결정 · Path B / RUO / Shadow · `clinical_validation=false`
+**Eng tip (현재 HEAD):** `edff0f1` (`edff0f1abcf417729fd3029266d2c46e11b2b688`)
 **폐기 관찰 SHA:** `c6806e1` (obsolete — 이후 기록·인용 금지)
 
-> Research Use Only. 진단·치료·투약·closed-loop·FACT 주장 없음.  
+> Research Use Only. 진단·치료·투약·closed-loop·FACT 주장 없음.
 > **PROXY ≠ DS 임상 검증.** 공개 ECG fixture PASS는 Master FACT가 아니다.
 
 ---
@@ -61,3 +61,8 @@ Engineering sprint tip이 `edff0f1`에 도달했다. PROXY HYP 하네스·SQI fa
 ## 5. Founder 다음 한 줄 (30일)
 
 **M0:** Clinical Research Lock 표의 PI_REQUIRED 행을 PI와 회의로 options만 좁히고, tip/코드 값은 건드리지 않는다.
+
+## 피벗 실행 (2026-09-07)
+
+창업자 확정: 다음 실행 본체는 **병원 자료 준비도 PoC**다. 계획: [`HOSPITAL_READINESS_PIVOT_PLAN_KR.md`](HOSPITAL_READINESS_PIVOT_PLAN_KR.md).
+실시간 위험 점수 제품화·점수 튜닝은 이 피벗 Done 전과 Founder unfreeze 전까지 하지 않는다.
