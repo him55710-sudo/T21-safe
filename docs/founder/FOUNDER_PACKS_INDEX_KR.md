@@ -40,6 +40,20 @@
 - [ ] 기관명, 담당자와 승인 상태를 추정해서 채우지 않았다.
 - [ ] 외부 발송과 병원 연락은 창업자가 직접 승인한다.
 
+
+## 연구 지식 문서 (paper-grade, RUO)
+
+창업자·PI가 근거 경계를 빠르게 확인할 때 아래를 본다. **공개 데이터 ≠ DS 임상 근거.** 새 수치는 Auditor FACT 승격 전 원장에 넣지 않는다.
+
+| 문서 | 내용 |
+| --- | --- |
+| [의학 지식 베이스](../research/MEDICAL_KNOWLEDGE_BASE_KR.md) | VERIFIED / LIMITED / unsupported, 서맥·HRV·CHD, 제품 허용·금지 문장 |
+| [논문 방법론 체크리스트](../research/PAPER_GRADE_METHODS_CHECKLIST_KR.md) | PICOTS·estimand·adjudication·leakage·patient-level·calibration·shadow (`PI_REQUIRED` / `BIOSTAT_REQUIRED`) |
+| [공개데이터 vs 논문용 병원 DS 공백](../research/PUBLIC_DATASET_GAP_FOR_PAPER_KR.md) | engineering QA와 paper-needed hospital DS data 구분 |
+| [문헌 갱신 계획](../research/LITERATURE_REFRESH_PLAN_KR.md) | PubMed refresh; FACT 전 후보만 |
+
+원천 원장: [EVIDENCE_SUMMARY](../research/EVIDENCE_SUMMARY.md), [EVIDENCE_LEDGER.csv](../research/EVIDENCE_LEDGER.csv)
+
 ## 기준 문서
 
 - [근거 우선 전환 결정](T21_REFOCUS_DECISION_KR.md)
