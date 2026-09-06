@@ -10,14 +10,14 @@
 
 ## 1. 목적
 
-1. 기존 seed(원장 claim_id CLN-*/HRV-*/GEN-*) 주변의 **최신·관련** 문헌을 빠짐없이 다시 훑는다.  
-2. 중복·철회·초록-본문 불일치를 조기에 걸러 `LIMITED`/`UNSUPPORTED` 경계를 유지한다.  
+1. 기존 seed(원장 claim_id CLN-*/HRV-*/GEN-*) 주변의 **최신·관련** 문헌을 빠짐없이 다시 훑는다.
+2. 중복·철회·초록-본문 불일치를 조기에 걸러 `LIMITED`/`UNSUPPORTED` 경계를 유지한다.
 3. 창업자·PI가 “무엇이 아직 가설인지”를 한눈에 보게 한다.
 
 ## 2. 현재 seed (원장에 이미 있는 PMID만 — 신규 발명 금지)
 
-임상·관찰 묶음: `40376277`, `21109130`, `20736433`, `40704557`, `40363932`, `30005737`, `16331125`, `20307953`  
-HRV·방법론: `8598068`, `23431279`, `21496161`, `16960742`, `29863781`, `41946377`  
+임상·관찰 묶음: `40376277`, `21109130`, `20736433`, `40704557`, `40363932`, `30005737`, `16331125`, `20307953`
+HRV·방법론: `8598068`, `23431279`, `21496161`, `16960742`, `29863781`, `41946377`
 합성·경계: GEN-001~004 (일부는 “qualifying source 없음”)
 
 이 목록 밖의 PMID는 **검색 히트일 뿐**이며, Auditor 전 FACT가 아니다.
@@ -39,18 +39,18 @@ HRV·방법론: `8598068`, `23431279`, `21496161`, `16960742`, `29863781`, `4194
 
 실행 시 날짜·히트 수는 로그에만 남기고 본문/원장에 “N건이 증명한다”고 쓰지 않는다.
 
-1. **DS + sevoflurane/induction bradycardia**  
-   `Down syndrome` / `trisomy 21` + `sevoflurane` + (`bradycardia` OR `heart rate`)  
-2. **DS + sedation hemodynamics**  
-   `Down syndrome` + (`sedation` OR `procedural`) + (`hypotension` OR `blood pressure`)  
-3. **DS + perioperative complications**  
-   `Down syndrome` + `anesthesia` + `complications` (비심장 맥락 주의)  
-4. **DS + HRV / baroreflex (비마취 생리)**  
-   `Down syndrome` + (`heart rate variability` OR `baroreflex`)  
-5. **HRV methods (마취 비특이)**  
-   ultra-short HRV, LF/HF critique, Task Force — 기존 HRV-* seed 인용·관련 인용 추적  
+1. **DS + sevoflurane/induction bradycardia**
+   `Down syndrome` / `trisomy 21` + `sevoflurane` + (`bradycardia` OR `heart rate`)
+2. **DS + sedation hemodynamics**
+   `Down syndrome` + (`sedation` OR `procedural`) + (`hypotension` OR `blood pressure`)
+3. **DS + perioperative complications**
+   `Down syndrome` + `anesthesia` + `complications` (비심장 맥락 주의)
+4. **DS + HRV / baroreflex (비마취 생리)**
+   `Down syndrome` + (`heart rate variability` OR `baroreflex`)
+5. **HRV methods (마취 비특이)**
+   ultra-short HRV, LF/HF critique, Task Force — 기존 HRV-* seed 인용·관련 인용 추적
 
-포함: 인간, 영어 또는 한국어 초록 가능, 원 연구·체계적 고찰·합의 표준.  
+포함: 인간, 영어 또는 한국어 초록 가능, 원 연구·체계적 고찰·합의 표준.
 제외: 동물만, DS 미확인, 용량/약물 추천 단독 서술, 제품 마케팅, 원장과 무관한 유전자 치료 등.
 
 ## 5. Staging 표 형식 (원장에 직접 쓰지 말 것)
@@ -75,11 +75,11 @@ HRV·방법론: `8598068`, `23431279`, `21496161`, `16960742`, `29863781`, `4194
 
 승격(`VERIFIED_CLINICAL_EVIDENCE` 등) 전에 확인:
 
-- [ ] 전문(또는 합의 표준 원문)과 초록 수치 일치  
-- [ ] 인구·노출·comparator·window가 claim 문장에 묶여 있음  
-- [ ] 단일 센터·후향·소표본 한계가 `limitations`에 남음  
-- [ ] 제품 금지 주장(예측·예방·투약·보편 위험)으로 읽히지 않음  
-- [ ] GEN-002/003류(atropine hypersensitivity, 감량 %)는 현대 비교 근거 없이 승격하지 않음  
+- [ ] 전문(또는 합의 표준 원문)과 초록 수치 일치
+- [ ] 인구·노출·comparator·window가 claim 문장에 묶여 있음
+- [ ] 단일 센터·후향·소표본 한계가 `limitations`에 남음
+- [ ] 제품 금지 주장(예측·예방·투약·보편 위험)으로 읽히지 않음
+- [ ] GEN-002/003류(atropine hypersensitivity, 감량 %)는 현대 비교 근거 없이 승격하지 않음
 
 반려 시: `LIMITED_EVIDENCE` 또는 `UNSUPPORTED_OR_REJECTED`로만 기록. “근거 없음” ≠ “현상 절대 없음”.
 
@@ -96,8 +96,8 @@ HRV·방법론: `8598068`, `23431279`, `21496161`, `16960742`, `29863781`, `4194
 
 ## 8. 창업자용 짧은 안내
 
-- 검색을 했다고 해서 **새 논문 숫자로 병원·투자자 설명을 바꾸지 마세요.**  
-- “검토 중(CANDIDATE)”과 “원장에 오른 근거(VERIFIED)”를 말로 구분해 주세요.  
+- 검색을 했다고 해서 **새 논문 숫자로 병원·투자자 설명을 바꾸지 마세요.**
+- “검토 중(CANDIDATE)”과 “원장에 오른 근거(VERIFIED)”를 말로 구분해 주세요.
 - 철회·정정 알림이 오면 제품 문장을 쓰기 전에 Auditor 게이트를 먼저 요청하세요.
 
 ## 9. 변경 로그
