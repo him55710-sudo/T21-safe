@@ -59,13 +59,13 @@ Tier·모듈 매핑의 상세는 [`DATASET_PRIORITY_MATRIX.md`](DATASET_PRIORITY
 
 레지스트리·우선순위 문서와 동일 목록을 창업자용으로 재진술한다.
 
-1. 임상의가 확인한 DS status와 동일 기관·시기 matched non-DS control pool  
-2. 마취/진정 전후 ECG, PPG, BP, SpO2, EtCO2/respiration (가능 범위)  
-3. source/device clock과 procedure phase anchors  
-4. 실제 약물 투여 timestamp (처치 권고가 아닌 context/label)  
-5. airway intervention 등 중재 기록  
-6. 사전 승인 postoperative/PACU outcome (해당 시)  
-7. CHD, age, procedure/anesthesia context 등 주요 confounder  
+1. 임상의가 확인한 DS status와 동일 기관·시기 matched non-DS control pool
+2. 마취/진정 전후 ECG, PPG, BP, SpO2, EtCO2/respiration (가능 범위)
+3. source/device clock과 procedure phase anchors
+4. 실제 약물 투여 timestamp (처치 권고가 아닌 context/label)
+5. airway intervention 등 중재 기록
+6. 사전 승인 postoperative/PACU outcome (해당 시)
+7. CHD, age, procedure/anesthesia context 등 주요 confounder
 
 이 항목 없이 “DS 모델 성능” 표를 넣지 않는다.
 
@@ -73,14 +73,14 @@ Tier·모듈 매핑의 상세는 [`DATASET_PRIORITY_MATRIX.md`](DATASET_PRIORITY
 
 측정·보고할 shift (공개 → 병원으로 숨기지 않음):
 
-- adult → pediatric  
-- ICU/ambulatory/healthy → anesthesia/sedation  
-- non-DS → DS  
-- noncardiac OR → dental/procedural sedation  
-- invasive ABP → intermittent cuff BP  
-- 단일 기관/장비 → 다른 site/device  
-- retrospective corrected time → prospective available-at time  
-- 고SQI 선택 샘플 → 연속 임상 사례  
+- adult → pediatric
+- ICU/ambulatory/healthy → anesthesia/sedation
+- non-DS → DS
+- noncardiac OR → dental/procedural sedation
+- invasive ABP → intermittent cuff BP
+- 단일 기관/장비 → 다른 site/device
+- retrospective corrected time → prospective available-at time
+- 고SQI 선택 샘플 → 연속 임상 사례
 
 각 shift는 feature 분포, missingness/SQI, event prevalence, calibration·error mode로 **따로** 적는다.
 
@@ -94,13 +94,13 @@ Tier·모듈 매핑의 상세는 [`DATASET_PRIORITY_MATRIX.md`](DATASET_PRIORITY
 
 **금지**
 
-- 공개 세트 AUROC/AUPRC를 DS 임상 성능처럼 제시  
-- INSPIRE 등에서 DS를 추론  
-- 새 PROXY bench·FACT 언어·발명 시장/성능 수치  
-- 공개 결과로 `clinical_validation=true` 암시  
+- 공개 세트 AUROC/AUPRC를 DS 임상 성능처럼 제시
+- INSPIRE 등에서 DS를 추론
+- 새 PROXY bench·FACT 언어·발명 시장/성능 수치
+- 공개 결과로 `clinical_validation=true` 암시
 
 ## 8. 변경 규칙
 
-- 데이터셋 추가·역할 변경은 `dataset_registry.yaml`/`csv`를 먼저 갱신한 뒤 본 문서를 맞춘다.  
-- 본 문서는 Path B tip·PROXY 확장 지시서가 아니다.  
+- 데이터셋 추가·역할 변경은 `dataset_registry.yaml`/`csv`를 먼저 갱신한 뒤 본 문서를 맞춘다.
+- 본 문서는 Path B tip·PROXY 확장 지시서가 아니다.
 - Auditor FACT 승격 전, 공개 QA 결과를 임상 근거 원장에 넣지 않는다.
