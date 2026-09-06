@@ -1,117 +1,107 @@
-# PubMed 문헌 갱신 계획 (FACT 승격 전)
+# 문헌 새로고침 계획 (PubMed seed → Auditor 전)
 
-문서 상태: Path B RUO — 검색·후보 관리 절차<br>
+문서 상태: Path B RUO — 검색·후보화만, FACT 아님<br>
 기준일: 2026-09-06<br>
-현행 seed 기준일: 2026-09-02 ([`EVIDENCE_SUMMARY.md`](EVIDENCE_SUMMARY.md), [`EVIDENCE_LEDGER.csv`](EVIDENCE_LEDGER.csv))
+원천 원장: [`EVIDENCE_SUMMARY.md`](EVIDENCE_SUMMARY.md), [`EVIDENCE_LEDGER.csv`](EVIDENCE_LEDGER.csv)<br>
+문헌 라이브러리: [`research/literature.bib`](../../research/literature.bib)<br>
+원천 검색·검증 기준일: 2026-09-02
 
-> **절대 규칙:** 검색으로 찾은 새 논문·초록 수치는 **Auditor가 FACT로 승격하기 전까지** `EVIDENCE_LEDGER`·제품 문장·논문 Abstract에 넣지 않는다. 후보는 `CANDIDATE` / `NEEDS_AUDIT`만 사용한다. 임상 수치를 발명하지 않는다.
+> **규칙:** PubMed를 다시 검색해도 **새 수치·PMID를 제품 문장·지식베이스·원장에 바로 넣지 않는다.** 후보는 `CANDIDATE`로만 두고, Auditor가 FACT/`VERIFIED_*`로 승격한 뒤에만 [`EVIDENCE_LEDGER.csv`](EVIDENCE_LEDGER.csv)와 [`MEDICAL_KNOWLEDGE_BASE_KR.md`](MEDICAL_KNOWLEDGE_BASE_KR.md)에 반영한다. 본 계획은 RII/PROXY tip을 확장하지 않는다.
 
 ## 1. 목적
 
-1. Seed PMID 이후 신규·반박·확장 문헌을 주기적으로 훑는다.
-2. 상충·초록 품질 이슈(예: CLN-003 분모 불일치)를 full-text 대기열에 올린다.
-3. 제품·논문 claim 경계를 유지한 채 근거 원장만 안전하게 갱신한다.
+1. 기존 seed(원장 claim_id CLN-*/HRV-*/GEN-*) 주변의 **최신·관련** 문헌을 빠짐없이 다시 훑는다.  
+2. 중복·철회·초록-본문 불일치를 조기에 걸러 `LIMITED`/`UNSUPPORTED` 경계를 유지한다.  
+3. 창업자·PI가 “무엇이 아직 가설인지”를 한눈에 보게 한다.
 
-## 2. 역할
+## 2. 현재 seed (원장에 이미 있는 PMID만 — 신규 발명 금지)
 
-| 역할 | 할 일 | 하지 말 일 |
-| --- | --- | --- |
-| Searcher / 연구보조 | PubMed 질의 실행, 후보 표 작성, PDF/초록 링크 수집 | 원장 status를 VERIFIED로 바꿈; 제품 카피 수정 |
-| Clinical Evidence Reviewer | 맥락·일반화·기전 과장을 검토 | Auditor 없이 FACT 선언 |
-| **Auditor** | PMID/DOI·전문·표 대조 후 status 승격/거절 | 검색어만으로 VERIFIED 부여 |
-| PI | endpoint·임상 문장 승인 | 미감사 수치를 발표에 사용 |
-| Biostat | 메타·표본·이질성 해석 | 미등록 endpoint로 효과 병합 |
+임상·관찰 묶음: `40376277`, `21109130`, `20736433`, `40704557`, `40363932`, `30005737`, `16331125`, `20307953`  
+HRV·방법론: `8598068`, `23431279`, `21496161`, `16960742`, `29863781`, `41946377`  
+합성·경계: GEN-001~004 (일부는 “qualifying source 없음”)
 
-## 3. 상태 머신 (필수)
+이 목록 밖의 PMID는 **검색 히트일 뿐**이며, Auditor 전 FACT가 아니다.
 
-```
-SEARCH_HIT → CANDIDATE_SCREEN → NEEDS_FULLTEXT → AUDITOR_REVIEW
-    → FACT_VERIFIED_CLINICAL_EVIDENCE
-    → FACT_LIMITED_EVIDENCE
-    → FACT_UNSUPPORTED_OR_REJECTED
-    → HOLD (정보 부족)
-```
+## 3. 새로고침 주기·역할
 
-- `CANDIDATE_*` / `NEEDS_*` / `HOLD`는 **문서·이슈·스프레드시트 초안**에만 존재한다.
-- `FACT_*`만 [`EVIDENCE_LEDGER.csv`](EVIDENCE_LEDGER.csv)의 `status` 열과 [`MEDICAL_KNOWLEDGE_BASE_KR.md`](MEDICAL_KNOWLEDGE_BASE_KR.md)에 반영한다.
-- Research Hypothesis(GEN-004류)는 합성 문장이며, 새 관찰 수치를 붙이려면 별도 claim_id + Auditor 필요.
+| 단계 | 담당 | 산출물 | FACT? |
+| --- | --- | --- | --- |
+| A. Query 실행 | 연구 보조 / Eng (문서만) | 검색식·실행일·히트 수(건수만) | 아니오 |
+| B. 제목·초록 스크리닝 | 연구 보조 | 포함/제외 이유 표 | 아니오 |
+| C. 전문 확보·초록 수치 대조 | PI 지정 reader | 불일치 flag (예: CLN-003형) | 아니오 |
+| D. claim 초안 | 문서 작성자 | `CANDIDATE` 행 (별도 staging) | 아니오 |
+| E. Auditor 심사 | Auditor | status 부여·원장 merge | **이때만** |
+| F. 지식베이스 반영 | 문서 소유자 | `MEDICAL_KNOWLEDGE_BASE_KR` 개정 | E 이후 |
 
-## 4. 검색 주기와 범위
+권장 주기: M0 동결 중에는 **분기 1회 또는 PI 회의 전**; 동결 해제 후 protocol lock 직전 1회 필수. 긴급 철회(retraction) 알림은 주기와 무관하게 B→E를 단축한다.
 
-| 주기 | 범위 | 산출물 |
-| --- | --- | --- |
-| 분기 1회 (최소) | 아래 질의군 + seed PMID “similar articles” | `docs/research/_candidates/YYYY-MM-DD_pubmed_refresh.md` (gitignore 가능) |
-| 주요 논문/프로토콜 제출 2주 전 | 동일 + full-text 우선순위 재정렬 | Auditor 큐 |
-| 긴급 | 안전·규제·경쟁 이슈 PMID | HOLD 또는 임시 safety note (제품 claim 아님) |
+## 4. 검색식 골격 (예시 — 결과 수치를 미리 적지 않음)
 
-### 4.1 질의군 (초안 — 실행 시 날짜·필터 기록)
+실행 시 날짜·히트 수는 로그에만 남기고 본문/원장에 “N건이 증명한다”고 쓰지 않는다.
 
-1. **DS + anesthesia/sedation + bradycardia/hemodynamic**  
-   `(Down syndrome OR trisomy 21) AND (anesthesia OR sevoflurane OR sedation) AND (bradycardia OR hemodynamic OR hypotension)`
-2. **DS + HRV / autonomic**  
-   `(Down syndrome OR trisomy 21) AND (heart rate variability OR baroreflex OR autonomic)`
-3. **HRV methods / ultra-short / LF-HF critique** (인구 DS 필수 아님)  
-   `ultra-short HRV` / `LF/HF sympathovagal` 등 — Methods 근거용; DS cutoff로 승격하지 않음
-4. **Seed 전방 인용:** PMID 40376277, 21109130, 20736433, 40704557, 40363932, 30005737
+1. **DS + sevoflurane/induction bradycardia**  
+   `Down syndrome` / `trisomy 21` + `sevoflurane` + (`bradycardia` OR `heart rate`)  
+2. **DS + sedation hemodynamics**  
+   `Down syndrome` + (`sedation` OR `procedural`) + (`hypotension` OR `blood pressure`)  
+3. **DS + perioperative complications**  
+   `Down syndrome` + `anesthesia` + `complications` (비심장 맥락 주의)  
+4. **DS + HRV / baroreflex (비마취 생리)**  
+   `Down syndrome` + (`heart rate variability` OR `baroreflex`)  
+5. **HRV methods (마취 비특이)**  
+   ultra-short HRV, LF/HF critique, Task Force — 기존 HRV-* seed 인용·관련 인용 추적  
 
-각 실행 시 기록: 실행 시각(Asia/Seoul), PubMed 필터, hit 수, 검토자 이니셜.
+포함: 인간, 영어 또는 한국어 초록 가능, 원 연구·체계적 고찰·합의 표준.  
+제외: 동물만, DS 미확인, 용량/약물 추천 단독 서술, 제품 마케팅, 원장과 무관한 유전자 치료 등.
 
-## 5. 후보 표 스키마 (FACT 전)
+## 5. Staging 표 형식 (원장에 직접 쓰지 말 것)
 
-| 열 | 내용 |
+별도 파일 예: `docs/research/_staging/LIT_CANDIDATES_YYYYMMDD.csv` (커밋 시 PHI·환자자료 금지)
+
+| 필드 | 내용 |
 | --- | --- |
-| candidate_id | `CAND-YYYYMMDD-##` |
-| pmid / doi | 필수 하나 이상 |
-| title / year | |
-| study_design | |
-| population_age / context | 소아? sevoflurane? 비마취? |
-| claimed_numbers | 초록·표에서 **그대로** 옮겨 적기 (계산·반올림 금지) |
-| conflict_with | 기존 claim_id (있으면) |
-| screen | include / exclude + 이유 |
-| audit_status | `NEEDS_FULLTEXT` / `READY_FOR_AUDITOR` / `HOLD` |
-| proposed_ledger_status | 제안만; Auditor가 최종 |
+| candidate_id | `CAND-YYYYMMDD-###` |
+| pubmed_id | 숫자만 |
+| linked_question_id | Q1–Q9 등 기존 질문 |
+| proposed_status | 제안일 뿐; Auditor가 확정 |
+| one_line_claim_ko | 과장 없는 한 문장 |
+| population_context | 연령·약제·단계 |
+| quantitative_fields | 초록/본문에 **명시된 것만**; 없으면 비움 |
+| conflict_with_ledger | 기존 claim과 충돌 여부 |
+| action | `HOLD` / `REQUEST_FULLTEXT` / `SUBMIT_TO_AUDITOR` |
 
-**금지:** 초록 분모가 안 맞으면(CLN-003 유형) 숫자를 고치지 말고 `HOLD` + reconciliation 요청.
+**금지:** staging 숫자를 IR·데모·지식베이스 본문에 복사.
 
-## 6. Auditor FACT 승격 체크리스트
+## 6. Auditor 승격 기준 (요약)
 
-Auditor는 다음을 모두 만족할 때만 ledger에 행을 추가·수정한다.
+승격(`VERIFIED_CLINICAL_EVIDENCE` 등) 전에 확인:
 
-1. ☐ PMID/DOI로 원문 또는 신뢰 가능한 전문 표 확인  
-2. ☐ population / exposure / window / comparator가 claim 문장과 일치  
-3. ☐ 정량은 표·본문에서 재확인; 초록-only면 `LIMITED` 또는 HOLD  
-4. ☐ 기존 VERIFIED와 상충 시 둘 다 남기고 limitations에 명시 (조용히 덮어쓰지 않음)  
-5. ☐ `research_implication`에 제품 금지 문구 포함  
-6. ☐ [`literature.bib`](../../research/literature.bib) 항목 추가  
-7. ☐ Summary·Knowledge Base·금지 claim 문서 동기화 PR  
-8. ☐ 날짜·Auditor 이니셜을 PR description에 기록  
+- [ ] 전문(또는 합의 표준 원문)과 초록 수치 일치  
+- [ ] 인구·노출·comparator·window가 claim 문장에 묶여 있음  
+- [ ] 단일 센터·후향·소표본 한계가 `limitations`에 남음  
+- [ ] 제품 금지 주장(예측·예방·투약·보편 위험)으로 읽히지 않음  
+- [ ] GEN-002/003류(atropine hypersensitivity, 감량 %)는 현대 비교 근거 없이 승격하지 않음  
 
-승격 전 제품 UI·IR·데모 스크립트에 후보 수치를 넣지 않는다.
+반려 시: `LIMITED_EVIDENCE` 또는 `UNSUPPORTED_OR_REJECTED`로만 기록. “근거 없음” ≠ “현상 절대 없음”.
 
-## 7. 기존 seed에 대한 고정 대기열
+## 7. 지식베이스·창업자 문서 반영 규칙
 
-| 항목 | 이유 | 다음 액션 |
+| 문서 | Auditor 전 | Auditor 후 |
 | --- | --- | --- |
-| PMID 40376277 hypotension 15/28 | CLN-003 분모 불일치 | full-text/table; 15/28 재인용 금지 유지 |
-| PMID 21109130 exact bradycardia rate | 초록에 exact rate 없음 | full-text rate만 Auditor 후 인용 |
-| Atropine / 감량% (GEN-002~003) | seed 부족 | 약리 리뷰 후에도 제품 규칙 금지 기본; FACT면 ledger만 |
-| HRV-006 (PMID 41946377) | resting methods | DS 마취 cutoff로 승격 금지; LIMITED 유지 원칙 |
+| `EVIDENCE_LEDGER.csv` | 변경 없음 (staging만) | 행 추가/status 갱신 |
+| `EVIDENCE_SUMMARY.md` | 변경 없음 | 질문별 판정 문단 개정 |
+| `MEDICAL_KNOWLEDGE_BASE_KR.md` | 링크·절차만 | VERIFIED/LIMITED 표 갱신 |
+| Founder packs / IR | 기존 허용 문장만 | 승격 claim만 인용 |
 
-## 8. 산출물 경로
+`clinical_validation=false` · Shadow · Path B는 문헌 새로고침만으로 바뀌지 않는다.
 
-| 단계 | 경로 |
+## 8. 창업자용 짧은 안내
+
+- 검색을 했다고 해서 **새 논문 숫자로 병원·투자자 설명을 바꾸지 마세요.**  
+- “검토 중(CANDIDATE)”과 “원장에 오른 근거(VERIFIED)”를 말로 구분해 주세요.  
+- 철회·정정 알림이 오면 제품 문장을 쓰기 전에 Auditor 게이트를 먼저 요청하세요.
+
+## 9. 변경 로그
+
+| 날짜 (KST) | 내용 |
 | --- | --- |
-| 후보 초안 | `docs/research/_candidates/` 또는 이슈 본문 (원장 아님) |
-| FACT 원장 | `docs/research/EVIDENCE_LEDGER.csv` |
-| 서술 합성 | `docs/research/EVIDENCE_SUMMARY.md`, `MEDICAL_KNOWLEDGE_BASE_KR.md` |
-| Bib | `research/literature.bib` |
-
-## 9. Definition of Done (한 번의 refresh)
-
-- [ ] 질의·날짜·hit 수 기록됨  
-- [ ] 후보 표에 screen 완료  
-- [ ] Auditor 큐에 READY/HOLD 분류됨  
-- [ ] **FACT 반영은 Auditor 승인 PR만**  
-- [ ] FACT 없는 수치가 Knowledge Base·제품·IR에 유입되지 않음  
-
-이 계획 자체는 문헌 검색 허가가 아니며, 기관 도서관·라이선스·전문 접근 규칙을 따른다.
+| 2026-09-06 | 최초 계획 — seed는 2026-09-02 원장 기준; FACT 자동 승격 없음 |
